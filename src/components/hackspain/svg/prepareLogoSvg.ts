@@ -1,4 +1,5 @@
-const LOGO_VIEW = 'viewBox="4 86 242 72" preserveAspectRatio="xMidYMid meet"';
+const LOGO_VIEW =
+  'viewBox="0 82 250 80" preserveAspectRatio="xMidYMid meet" overflow="visible"';
 
 export function prepareLogoSvg(raw: string): string {
   let out = raw

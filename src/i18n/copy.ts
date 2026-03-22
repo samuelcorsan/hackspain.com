@@ -3,6 +3,8 @@ import type { Locale } from "./locales";
 export type Copy = {
   skipLink: string;
   regionAria: string;
+  scrollHint: string;
+  scrollHintNextAria: string;
   sectionNav: string[];
   copyright: string;
   bottomFollow: string;
@@ -77,6 +79,8 @@ export type Copy = {
 const en: Copy = {
   skipLink: "Skip to main content",
   regionAria: "HackSpain 2026 — move between sections with wheel, touch swipe, or arrow keys",
+  scrollHint: "Scroll",
+  scrollHintNextAria: "Go to next section",
   sectionNav: [
     "Home",
     "Mission",
@@ -160,6 +164,8 @@ const en: Copy = {
 const es: Copy = {
   skipLink: "Ir al contenido principal",
   regionAria: "HackSpain 2026 — cambia de sección con la rueda del ratón, deslizamiento o flechas",
+  scrollHint: "Scroll",
+  scrollHintNextAria: "Ir a la siguiente sección",
   sectionNav: [
     "Inicio",
     "Misión",

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { InlineSvg } from "./InlineSvg";
 import { MosaicBackground } from "./MosaicBackground";
 import { vp } from "./Panel";
+import { ScrollSectionHint } from "./ScrollSectionHint";
 import { INK, NUM_SECTIONS, SPRING, slideVariants } from "./constants";
 import { CELLS } from "./cells";
 import { ILLS } from "./assets";
@@ -255,6 +256,14 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
       ))}
 
       <MosaicBackground className="absolute inset-0 h-full w-full pointer-events-none" strokeOnly aria-hidden />
+
+      <ScrollSectionHint
+        label={copy.scrollHint}
+        nextSectionAria={copy.scrollHintNextAria}
+        visible={section < NUM_SECTIONS - 1}
+        reducedMotion={reducedMotion}
+        onNext={() => advance(1)}
+      />
     </div>
   );
 }
