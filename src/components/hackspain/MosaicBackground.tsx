@@ -20,7 +20,7 @@ export function MosaicBackground({ className = "", strokeOnly = false, "aria-hid
 
       {/* Top center */}
       <polygon points="480,0 700,0 700,180 480,180"  fill={f("var(--color-hs-paper)")}  stroke="var(--color-hs-ink)" strokeWidth={sw} strokeLinejoin="miter" />
-      <polygon points="480,0 700,180 480,180"        fill={f("var(--color-hs-gold)")}   stroke="var(--color-hs-ink)" strokeWidth={sw} strokeLinejoin="miter" />
+      <polygon points="480,0 700,0 700,180"          fill={f("var(--color-hs-gold)")}   stroke="var(--color-hs-ink)" strokeWidth={sw} strokeLinejoin="miter" />
 
       {/* Top right */}
       <polygon points="700,0 880,0 880,140 700,140"    fill={f("var(--color-hs-paper)")}  stroke="var(--color-hs-ink)" strokeWidth={sw} strokeLinejoin="miter" />

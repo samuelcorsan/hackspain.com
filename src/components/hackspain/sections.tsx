@@ -2,7 +2,7 @@ import type { Locale } from "../../i18n/locales";
 import { getCopy } from "../../i18n/copy";
 import { InlineSvg } from "./InlineSvg";
 import { P } from "./Panel";
-import { INK, X_SVG } from "./constants";
+import { X_SVG } from "./constants";
 import { logoSvg, googleSvg, exaLogo, falLogo, kfundLogo } from "./assets";
 
 const B = "font-bungee";
@@ -81,8 +81,8 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       year: (
         <div className="relative h-full w-full">
-          <span className={`absolute bottom-[14%] left-[8%] ${B} text-[clamp(2.2rem,5.5vw,4.5rem)] text-white leading-none drop-shadow-sm`}>20</span>
-          <span className={`absolute top-[8%] right-[8%] ${B} text-[clamp(2.2rem,5.5vw,4.5rem)] leading-none`} style={{ color: INK }}>26</span>
+          <span className={`absolute bottom-[14%] left-[8%] ${B} text-[clamp(2.2rem,5.5vw,4.5rem)] text-hs-ink leading-none`}>20</span>
+          <span className={`absolute top-[8%] right-[8%] ${B} text-[clamp(2.2rem,5.5vw,4.5rem)] text-white leading-none drop-shadow-sm`}>26</span>
         </div>
       ),
       r2c: (
