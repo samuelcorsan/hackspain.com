@@ -10,6 +10,7 @@ import {
   trophySvg,
   windmillSvg,
 } from "./assets";
+import type { LayoutProfile } from "./artboard";
 import { TRI_R1A } from "./constants";
 
 const SVG_MAP = {
@@ -65,6 +66,20 @@ function slot5Geometry(art: IllArt | null): Pick<IllDef, "x" | "y" | "w" | "h" |
   return { x: 160, y: 120, w: 140, h: 220 };
 }
 
+function slot4GeometryCompact(art: IllArt | null): Pick<IllDef, "x" | "y" | "w" | "h" | "clip"> {
+  if (art === "spark" || art === "medal") {
+    return { x: 940, y: 260, w: 500, h: 240 };
+  }
+  return { x: -20, y: 260, w: 500, h: 240 };
+}
+
+function slot5GeometryCompact(art: IllArt | null): Pick<IllDef, "x" | "y" | "w" | "h" | "clip"> {
+  if (art === "code") {
+    return { x: 940, y: 460, w: 500, h: 200 };
+  }
+  return { x: -20, y: 460, w: 500, h: 200 };
+}
+
 function boxFor(slotIndex: number, art: IllArt | null): string {
   if (slotIndex === 4 && (art === "spark" || art === "medal")) {
     return "items-stretch justify-stretch p-0 min-h-0 min-w-0";
@@ -116,8 +131,12 @@ function imgFor(slotIndex: number, art: IllArt | null): string {
 
 const SLOT_IDS = ["ill-tl", "ill-tr", "ill-horse", "ill-br", "ill-slot-4", "ill-slot-5"] as const;
 
-export function illustrationsForSection(sectionIndex: number): IllDef[] {
+export function illustrationsForSection(
+  sectionIndex: number,
+  profile: LayoutProfile = "desktop",
+): IllDef[] {
   const row = SCHEDULE[Math.max(0, Math.min(SCHEDULE.length - 1, sectionIndex))]!;
+  const compact = profile === "compact";
   return SLOT_IDS.map((id, i) => {
     const art = i === 2 ? "horse" : (row[i] ?? null);
     const svg = art ? SVG_MAP[art] : null;
@@ -128,7 +147,33 @@ export function illustrationsForSection(sectionIndex: number): IllDef[] {
     let h: number;
     let clip: string | undefined;
 
-    if (i === 0) {
+    if (compact) {
+      if (i === 0) {
+        x = -40;
+        y = -10;
+        w = 500;
+        h = 300;
+      } else if (i === 1) {
+        x = 980;
+        y = -10;
+        w = 500;
+        h = 300;
+      } else if (i === 2) {
+        x = -20;
+        y = -10;
+        w = 400;
+        h = 300;
+      } else if (i === 3) {
+        x = 960;
+        y = 260;
+        w = 500;
+        h = 340;
+      } else if (i === 4) {
+        ({ x, y, w, h, clip } = slot4GeometryCompact(art));
+      } else {
+        ({ x, y, w, h, clip } = slot5GeometryCompact(art));
+      }
+    } else if (i === 0) {
       x = 0;
       y = 0;
       w = 200;

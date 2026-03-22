@@ -5,11 +5,13 @@ import { MosaicBackground } from "./MosaicBackground";
 import { vp } from "./Panel";
 import { ScrollSectionHint } from "./ScrollSectionHint";
 import {
-  HORSE_ARTBOARD,
   HORSE_CELL_FAR_RIGHT_X,
+  HORSE_CELL_FAR_RIGHT_X_COMPACT,
   HORSE_CELL_LATE_PULL_MAX_ARTBOARD_PX,
   HORSE_CELL_LATE_PULL_X0,
+  HORSE_CELL_LATE_PULL_X0_COMPACT,
   HORSE_CELL_LATE_PULL_X1,
+  HORSE_CELL_LATE_PULL_X1_COMPACT,
   HORSE_CELL_REVEAL_DELAY_FAR_RIGHT_MS,
   HORSE_CELL_REVEAL_DELAY_MS,
   HORSE_ILLUSTRATION_INDEX,
@@ -22,9 +24,11 @@ import {
   SPRING,
   slideVariants,
 } from "./constants";
+import { artboardFor, horseArtboardFor } from "./artboard";
 import { HorseMissionTransition } from "./HorseMissionTransition";
-import { CELLS, type CellDef } from "./cells";
+import { cellsForProfile, type CellDef } from "./cells";
 import { illustrationsForSection } from "./illustrationThemes";
+import { useLayoutProfile } from "./useLayoutProfile";
 import { buildSections } from "./sections";
 import { keywordsForSectionIndex, seoForSectionIndex } from "../../data/landingMeta";
 import {
@@ -36,10 +40,12 @@ import { getCopy } from "../../i18n/copy";
 import type { Locale } from "../../i18n/locales";
 import { localeFromNavigator } from "../../i18n/locales";
 
-function horseRevealLatePullArtboard(x: number): number {
-  if (x <= HORSE_CELL_LATE_PULL_X0) return 0;
-  const span = HORSE_CELL_LATE_PULL_X1 - HORSE_CELL_LATE_PULL_X0;
-  const t = Math.min(1, Math.max(0, (x - HORSE_CELL_LATE_PULL_X0) / span));
+function horseRevealLatePullArtboard(x: number, compact: boolean): number {
+  const x0 = compact ? HORSE_CELL_LATE_PULL_X0_COMPACT : HORSE_CELL_LATE_PULL_X0;
+  const x1 = compact ? HORSE_CELL_LATE_PULL_X1_COMPACT : HORSE_CELL_LATE_PULL_X1;
+  if (x <= x0) return 0;
+  const span = x1 - x0;
+  const t = Math.min(1, Math.max(0, (x - x0) / span));
   return t * HORSE_CELL_LATE_PULL_MAX_ARTBOARD_PX;
 }
 
@@ -47,13 +53,15 @@ function horseCellRevealThresholdPx(
   cell: CellDef,
   scale: number,
   margin: number,
+  compact: boolean,
 ): number {
-  const pull = horseRevealLatePullArtboard(cell.x) * scale;
+  const pull = horseRevealLatePullArtboard(cell.x, compact) * scale;
   return cell.x * scale - margin + pull;
 }
 
-function horseCellRevealDelayMs(cell: CellDef): number {
-  return cell.x >= HORSE_CELL_FAR_RIGHT_X
+function horseCellRevealDelayMs(cell: CellDef, compact: boolean): number {
+  const far = compact ? HORSE_CELL_FAR_RIGHT_X_COMPACT : HORSE_CELL_FAR_RIGHT_X;
+  return cell.x >= far
     ? HORSE_CELL_REVEAL_DELAY_FAR_RIGHT_MS
     : HORSE_CELL_REVEAL_DELAY_MS;
 }
@@ -140,9 +148,18 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
   const activeLocaleRef = useRef(activeLocale);
   activeLocaleRef.current = activeLocale;
 
+  const layoutProfile = useLayoutProfile();
+
+  const artboard = useMemo(() => artboardFor(layoutProfile), [layoutProfile]);
+  const cells = useMemo(() => cellsForProfile(layoutProfile), [layoutProfile]);
+  const horseBox = useMemo(() => horseArtboardFor(layoutProfile), [layoutProfile]);
+
   const sections = useMemo(() => buildSections(activeLocale), [activeLocale]);
   const copy = useMemo(() => getCopy(activeLocale), [activeLocale]);
-  const ills = useMemo(() => illustrationsForSection(section), [section]);
+  const ills = useMemo(
+    () => illustrationsForSection(section, layoutProfile),
+    [section, layoutProfile],
+  );
 
   useEffect(() => {
     if (urlMode === "root") return;
@@ -221,32 +238,37 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
     [section, goToSection, reducedMotion, clearHorseRevealTimeouts],
   );
 
-  const onHorseRideX = useCallback((tx: number, travelTotal: number) => {
-    if (travelTotal <= 0) return;
-    const iw = window.innerWidth;
-    const scale = iw / 1440;
-    const horseL = HORSE_ARTBOARD.x * scale;
-    const horseW = HORSE_ARTBOARD.w * scale;
-    const leading = horseL + tx + horseW;
-    const margin = Math.max(6, 16 * scale);
-    for (const c of CELLS) {
-      if (horseRevealedRef.current.has(c.id)) continue;
-      if (horseRevealTimeoutsRef.current.has(c.id)) continue;
-      const thresh = horseCellRevealThresholdPx(c, scale, margin);
-      if (leading < thresh) continue;
-      const cellId = c.id;
-      const tid = window.setTimeout(() => {
-        horseRevealTimeoutsRef.current.delete(cellId);
-        setHorseRevealed((prev) => {
-          if (prev.has(cellId)) return prev;
-          const next = new Set(prev);
-          next.add(cellId);
-          return next;
-        });
-      }, horseCellRevealDelayMs(c));
-      horseRevealTimeoutsRef.current.set(cellId, tid);
-    }
-  }, []);
+  const onHorseRideX = useCallback(
+    (tx: number, travelTotal: number) => {
+      if (travelTotal <= 0) return;
+      const iw = window.innerWidth;
+      const scale = iw / artboard.w;
+      const hb = horseArtboardFor(layoutProfile);
+      const horseL = hb.x * scale;
+      const horseW = hb.w * scale;
+      const leading = horseL + tx + horseW;
+      const margin = Math.max(6, 16 * scale);
+      const compact = layoutProfile === "compact";
+      for (const c of cellsForProfile(layoutProfile)) {
+        if (horseRevealedRef.current.has(c.id)) continue;
+        if (horseRevealTimeoutsRef.current.has(c.id)) continue;
+        const thresh = horseCellRevealThresholdPx(c, scale, margin, compact);
+        if (leading < thresh) continue;
+        const cellId = c.id;
+        const tid = window.setTimeout(() => {
+          horseRevealTimeoutsRef.current.delete(cellId);
+          setHorseRevealed((prev) => {
+            if (prev.has(cellId)) return prev;
+            const next = new Set(prev);
+            next.add(cellId);
+            return next;
+          });
+        }, horseCellRevealDelayMs(c, compact));
+        horseRevealTimeoutsRef.current.set(cellId, tid);
+      }
+    },
+    [layoutProfile, artboard.w],
+  );
 
   useEffect(() => {
     if (horseToUnique !== "horse_video") return;
@@ -274,17 +296,20 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
       clearHorseRevealTimeouts();
 
       const iw = window.innerWidth;
-      const scale = iw / 1440;
+      const scale = iw / artboard.w;
       const margin = Math.max(6, 16 * scale);
-      const horseL = HORSE_ARTBOARD.x * scale;
-      const horseW = HORSE_ARTBOARD.w * scale;
+      const hb = horseArtboardFor(layoutProfile);
+      const horseL = hb.x * scale;
+      const horseW = hb.w * scale;
       const leadingEnd = horseL + travelTotal + horseW;
+      const compact = layoutProfile === "compact";
+      const layoutCells = cellsForProfile(layoutProfile);
 
       const missed: string[] = [];
-      for (const c of CELLS) {
+      for (const c of layoutCells) {
         if (horseRevealedRef.current.has(c.id)) continue;
         if (pending.includes(c.id)) continue;
-        const thresh = horseCellRevealThresholdPx(c, scale, margin);
+        const thresh = horseCellRevealThresholdPx(c, scale, margin, compact);
         if (leadingEnd >= thresh) missed.push(c.id);
       }
 
@@ -313,7 +338,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
         finishOut();
       }
     },
-    [goToSection, clearHorseRevealTimeouts],
+    [goToSection, clearHorseRevealTimeouts, layoutProfile, artboard.w],
   );
 
   useEffect(() => {
@@ -327,7 +352,8 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
     };
     const onTouchEnd = (e: TouchEvent) => {
       const dy = touchY - e.changedTouches[0].clientY;
-      if (Math.abs(dy) > 40) advance(dy > 0 ? 1 : -1);
+      if (Math.abs(dy) <= 40) return;
+      advance(dy > 0 ? 1 : -1);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" || e.key === " ") {
@@ -383,17 +409,16 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
   const uniqueCells = sections[SECTION_UNIQUE_INDEX] ?? {};
   const liveLabel = copy.sectionNav[section] ?? copy.sectionNav[0];
 
-  return (
-    <div
-      className="fixed inset-0 font-sans"
-      style={{ background: INK }}
-      role="region"
-      aria-label={copy.regionAria}
-    >
-      <p className="sr-only" aria-live="polite" aria-atomic="true">
-        {liveLabel}
-      </p>
-      <MosaicBackground className="absolute inset-0 h-full w-full" aria-hidden />
+  const isCompact = layoutProfile === "compact";
+  const tileMotionClass = "absolute inset-0";
+
+  const stageContent = (
+    <>
+      <MosaicBackground
+        className="absolute inset-0 h-full w-full"
+        variant={layoutProfile}
+        aria-hidden
+      />
 
       {section === SECTION_MISSION_INDEX && horseToUnique !== "horse_video" ? (
         <video
@@ -412,15 +437,15 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
             key={ill.id}
             className="pointer-events-none absolute overflow-hidden"
             style={{
-              ...vp(ill.x, ill.y, ill.w, ill.h),
-              ...(ill.clip ? { clipPath: ill.clip } : {}),
+              ...vp(ill.x, ill.y, ill.w, ill.h, artboard),
+              ...(ill.clip && !isCompact ? { clipPath: ill.clip } : {}),
             }}
             aria-hidden
           >
             <AnimatePresence mode="popLayout" custom={dir} initial={false}>
               <motion.div
                 key={`${ill.id}-${section}-${activeLocale}`}
-                className={`absolute inset-0 flex ${ill.box}`}
+                className={`absolute inset-0 flex min-h-0 ${ill.box}`}
                 custom={dir}
                 variants={variants}
                 initial="enter"
@@ -450,7 +475,9 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
         ) : null,
       )}
 
-      {CELLS.map((cell) => {
+      {cells.map((cell) => {
+        if (isCompact && cell.w === 0 && cell.h === 0) return null;
+
         const horse = horseToUnique === "horse_video";
         const revealed = horseRevealed.has(cell.id);
         const missionPhase =
@@ -466,23 +493,22 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
             section === SECTION_MISSION_INDEX && !!missionCells[cell.id]
           );
 
+        if (isCompact && !missionPhase && !uniqueHorsePhase && !defaultTile) return null;
+
         return (
           <div
             key={cell.id}
             className="absolute overflow-hidden"
             style={{
-              ...vp(cell.x, cell.y, cell.w, cell.h),
+              ...vp(cell.x, cell.y, cell.w, cell.h, artboard),
               ...(cell.clip ? { clipPath: cell.clip } : {}),
-            }}
-            onClick={() => {
-              console.log(cell.id);
             }}
           >
             <AnimatePresence mode="popLayout" custom={dir} initial={false}>
               {missionPhase ? (
                 <motion.div
                   key={`${cell.id}-${SECTION_MISSION_INDEX}-${activeLocale}`}
-                  className="absolute inset-0"
+                  className={tileMotionClass}
                   custom={dir}
                   variants={variants}
                   initial="enter"
@@ -500,7 +526,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
               {uniqueHorsePhase ? (
                 <motion.div
                   key={`${cell.id}-${SECTION_UNIQUE_INDEX}-${activeLocale}`}
-                  className="absolute inset-0"
+                  className={tileMotionClass}
                   custom={dir}
                   variants={variants}
                   initial="enter"
@@ -518,7 +544,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
               {defaultTile ? (
                 <motion.div
                   key={`${cell.id}-${section}-${activeLocale}`}
-                  className="absolute inset-0"
+                  className={tileMotionClass}
                   custom={dir}
                   variants={variants}
                   initial={
@@ -542,7 +568,36 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
         );
       })}
 
-      <MosaicBackground className="absolute inset-0 h-full w-full pointer-events-none" strokeOnly aria-hidden />
+      <MosaicBackground
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        strokeOnly
+        variant={layoutProfile}
+        aria-hidden
+      />
+
+      {horseToUnique === "horse_video" ? (
+        <HorseMissionTransition
+          horseBox={horseBox}
+          artboard={artboard}
+          onComplete={onHorseMissionTransitionComplete}
+          onRideX={onHorseRideX}
+          onVideoReady={() => setHorseChromaSvgHidden(true)}
+        />
+      ) : null}
+    </>
+  );
+
+  return (
+    <div
+      className="fixed inset-0 font-sans"
+      style={{ background: INK }}
+      role="region"
+      aria-label={copy.regionAria}
+    >
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {liveLabel}
+      </p>
+      <div className="absolute inset-0">{stageContent}</div>
 
       <ScrollSectionHint
         label={copy.scrollHint}
@@ -551,14 +606,6 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
         reducedMotion={reducedMotion}
         onNext={() => advance(1)}
       />
-
-      {horseToUnique === "horse_video" ? (
-        <HorseMissionTransition
-          onComplete={onHorseMissionTransitionComplete}
-          onRideX={onHorseRideX}
-          onVideoReady={() => setHorseChromaSvgHidden(true)}
-        />
-      ) : null}
     </div>
   );
 }

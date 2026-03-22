@@ -1,10 +1,19 @@
-export function vp(x: number, y: number, w: number, h: number): React.CSSProperties {
+import type { Artboard } from "./artboard";
+import { ARTBOARD_DESKTOP } from "./artboard";
+
+export function vp(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  artboard: Artboard = ARTBOARD_DESKTOP,
+): React.CSSProperties {
   return {
     position: "absolute",
-    left:   `${(x / 1440) * 100}%`,
-    top:    `${(y / 900)  * 100}%`,
-    width:  `${(w / 1440) * 100}%`,
-    height: `${(h / 900)  * 100}%`,
+    left:   `${(x / artboard.w) * 100}%`,
+    top:    `${(y / artboard.h) * 100}%`,
+    width:  `${(w / artboard.w) * 100}%`,
+    height: `${(h / artboard.h) * 100}%`,
   };
 }
 

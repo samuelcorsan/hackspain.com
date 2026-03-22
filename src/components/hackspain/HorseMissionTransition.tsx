@@ -6,10 +6,10 @@ import {
   useMotionValue,
   useMotionValueEvent,
 } from "motion/react";
+import type { Artboard } from "./artboard";
 import { ChromaKeyVideo } from "./ChromaKeyVideo";
 import { vp } from "./Panel";
 import {
-  HORSE_ARTBOARD,
   HORSE_RETURN_DURATION_S,
   HORSE_RETURN_TELEPORT_FADE_IN_S,
   HORSE_RETURN_TELEPORT_FADE_OUT_S,
@@ -20,8 +20,6 @@ import {
   HORSE_VIDEO_CHROMA_TOLERANCE,
   HORSE_VIDEO_SRC,
 } from "./constants";
-
-const HORSE = HORSE_ARTBOARD;
 
 const OPACITY_IN_S = 0.22;
 const X_DELAY_S = 0.1;
@@ -34,13 +32,19 @@ const OFF_LEFT_MARGIN_PX = 28;
 
 const chromaEnabled = Boolean(HORSE_VIDEO_CHROMA_KEY_HEX);
 
+type HorseBox = { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+
 type Props = {
+  horseBox: HorseBox;
+  artboard: Artboard;
   onComplete: (travelTotal: number) => void;
   onRideX?: (tx: number, travelTotal: number) => void;
   onVideoReady?: () => void;
 };
 
 export function HorseMissionTransition({
+  horseBox,
+  artboard,
   onComplete,
   onRideX,
   onVideoReady,
@@ -94,7 +98,7 @@ export function HorseMissionTransition({
     travelTotalRef.current = tx;
     xOffLeftRef.current = -(rect.left + rect.width + OFF_LEFT_MARGIN_PX);
     setTravelX(tx);
-  }, []);
+  }, [horseBox.x, horseBox.y, horseBox.w, horseBox.h, artboard.w, artboard.h]);
 
   useMotionValueEvent(x, "change", (latest) => {
     const total = travelTotalRef.current;
@@ -233,7 +237,7 @@ export function HorseMissionTransition({
       ref={wrapRef}
       className="pointer-events-none absolute z-40 overflow-visible"
       style={{
-        ...vp(HORSE.x, HORSE.y, HORSE.w, HORSE.h),
+        ...vp(horseBox.x, horseBox.y, horseBox.w, horseBox.h, artboard),
         x,
         opacity,
       }}

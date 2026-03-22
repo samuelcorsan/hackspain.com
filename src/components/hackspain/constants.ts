@@ -9,6 +9,12 @@ export const HORSE_ILLUSTRATION_INDEX = 2;
 
 export const HORSE_ARTBOARD = { x: 0, y: 340, w: 200, h: 220 } as const;
 
+export const HORSE_ARTBOARD_COMPACT = { x: 0, y: 0, w: 200, h: 280 } as const;
+
+export const HORSE_CELL_FAR_RIGHT_X_COMPACT = 960;
+export const HORSE_CELL_LATE_PULL_X0_COMPACT = 420;
+export const HORSE_CELL_LATE_PULL_X1_COMPACT = 1240;
+
 export const HORSE_VIDEO_SRC = "/horse.mp4";
 
 export const HORSE_RETURN_DURATION_S = 2.45;

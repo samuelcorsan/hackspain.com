@@ -1,4 +1,6 @@
+import type { LayoutProfile } from "./artboard";
 import { TRI_BL, TRI_R1A } from "./constants";
+import { CELLS_COMPACT } from "./cellsCompact";
 
 export type CellDef = {
   id: string;
@@ -47,3 +49,20 @@ export const CELLS: CellDef[] = [
   { id: "r5c",  x: 720,  y: 740, w: 360, h: 160, delay: 0.07 },
   { id: "r5d",  x: 1080, y: 740, w: 360, h: 160, delay: 0.09 },
 ];
+
+const DESKTOP_CELL_ORDER = new Map(CELLS.map((c, i) => [c.id, i] as const));
+
+export function cellsForProfile(profile: LayoutProfile): CellDef[] {
+  if (profile !== "compact") return CELLS;
+  const merged = CELLS_COMPACT.map((c) => {
+    const d = CELLS.find((x) => x.id === c.id);
+    return {
+      ...c,
+      delay: d?.delay ?? c.delay,
+      clip: undefined,
+    };
+  });
+  return [...merged].sort(
+    (a, b) => (DESKTOP_CELL_ORDER.get(a.id) ?? 0) - (DESKTOP_CELL_ORDER.get(b.id) ?? 0),
+  );
+}
