@@ -83,8 +83,9 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
   const copy = useMemo(() => getCopy(activeLocale), [activeLocale]);
 
   useEffect(() => {
+    if (urlMode === "root") return;
     setActiveLocale(locale);
-  }, [locale]);
+  }, [locale, urlMode]);
 
   useEffect(() => {
     if (urlMode !== "root") return;
