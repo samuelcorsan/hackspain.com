@@ -59,7 +59,6 @@ export type Copy = {
     moreWay: string;
     prizesLbl: string;
     prizesBody: string;
-    mozartSr: string;
   };
   s5: {
     label: string;
@@ -69,7 +68,6 @@ export type Copy = {
     goalLbl: string;
     inkBody: string;
     largest: string;
-    navyBody: string;
     goldBody: string;
   };
 };
@@ -141,7 +139,6 @@ const en: Copy = {
     moreWay: "and more\non the way...",
     prizesLbl: "PRIZES",
     prizesBody: "Great rewards for the hackers",
-    mozartSr: "Mozart AI — HackSpain sponsor, hackathon Madrid and Spain",
   },
   s5: {
     label: "LONG-TERM VISION",
@@ -152,7 +149,6 @@ const en: Copy = {
     inkBody:
       "HackSpain isn't a one-off. It's the cornerstone of a movement positioning Spain as a European tech leader.",
     largest: "LARGEST HACKATHON IN EUROPE",
-    navyBody: "Each edition bigger and more impactful.\n5,000 participants next year.",
     goldBody: "The largest hackathon movement in Southern Europe.",
   },
 };
@@ -224,7 +220,6 @@ const es: Copy = {
     moreWay: "y más\nen camino...",
     prizesLbl: "PREMIOS",
     prizesBody: "Grandes recompensas para l@s hackers",
-    mozartSr: "Mozart AI — patrocinador HackSpain, hackathon España y Madrid",
   },
   s5: {
     label: "VISIÓN A LARGO PLAZO",
@@ -235,7 +230,6 @@ const es: Copy = {
     inkBody:
       "HackSpain no es un evento puntual. Es la base de un movimiento que posiciona a España como líder tech en Europa.",
     largest: "EL MAYOR HACKATHON DE EUROPA",
-    navyBody: "Cada edición más grande e impactante.\n5.000 participantes el próximo año.",
     goldBody: "El mayor movimiento de hackathones del sur de Europa.",
   },
 };

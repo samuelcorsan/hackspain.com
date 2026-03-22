@@ -3,7 +3,8 @@ import quixoteRaw  from "../../assets/illustration-quixote.svg?raw";
 import sunRaw      from "../../assets/illustration-sun.svg?raw";
 import windmillRaw from "../../assets/illustration-windmill.svg?raw";
 import logoRaw     from "../../assets/logo.svg?raw";
-import googleRaw   from "../../assets/sponsors/google.svg?raw";
+import googlePng   from "../../assets/sponsors/google.png";
+import mozartPng   from "../../assets/sponsors/mozart.png";
 import exaPng      from "../../assets/sponsors/exa.png";
 import falPng      from "../../assets/sponsors/fal.png";
 import kfundPng    from "../../assets/sponsors/kfund.png";
@@ -15,11 +16,12 @@ export const horseSvg    = prepareIllustrationSvg(horseRaw);
 export const sunSvg      = prepareIllustrationSvg(sunRaw);
 export const quixoteSvg  = prepareIllustrationSvg(quixoteRaw);
 export const logoSvg     = prepareLogoSvg(logoRaw);
-export const googleSvg   = googleRaw;
+export const googleLogo = googlePng;
 
 export const exaLogo   = exaPng;
 export const falLogo   = falPng;
 export const kfundLogo = kfundPng;
+export const mozartLogo = mozartPng;
 
 export type IllDef = {
   x: number; y: number; w: number; h: number;

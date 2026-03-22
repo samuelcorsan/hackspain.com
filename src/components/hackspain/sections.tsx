@@ -4,11 +4,12 @@ import { InlineSvg } from "./InlineSvg";
 import { ParticipantsCountUp } from "./ParticipantsCountUp";
 import { P } from "./Panel";
 import { X_SVG } from "./constants";
-import { logoSvg, googleSvg, exaLogo, falLogo, kfundLogo } from "./assets";
+import { logoSvg, googleLogo, exaLogo, falLogo, kfundLogo, mozartLogo } from "./assets";
 
 const B = "font-bungee";
 const D = "font-sans";
 const LBL = `${D} text-xs font-black tracking-widest uppercase mb-1`;
+const BD = `${D} text-[clamp(1.08rem,2.35vw,1.4rem)] font-bold leading-relaxed`;
 
 const BOTTOM_CELLS = ["r5a", "r5b", "r5c", "r5d"] as const;
 
@@ -69,7 +70,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
   const kEx = locale === "es" ? "inversión hackathon España" : "venture capital sponsor hackathon Spain";
   const fEx = locale === "es" ? "IA hackathon Madrid" : "AI infrastructure hackathon Spain";
   const eEx = locale === "es" ? "búsqueda hackathon España" : "search hackathon Spain";
-  const mSr = c.s4.mozartSr;
+  const mEx = locale === "es" ? "IA agentes hackathon España" : "AI agents hackathon Spain";
 
   return [
     {
@@ -86,11 +87,11 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <span className={`absolute top-[8%] right-[8%] ${B} text-[clamp(2.2rem,5.5vw,4.5rem)] text-white leading-none drop-shadow-sm`}>26</span>
         </div>
       ),
-      r2c: (
+      r4d: (
         <P bg="bg-hs-gold">
           <ParticipantsCountUp
             ariaLabel={`+300 ${c.s0.participants}`}
-            className={`${B} text-[clamp(2.4rem,5vw,4.2rem)] text-hs-ink leading-none`}
+            className={`${B} text-[clamp(2rem,4.5vw,3.6rem)] text-hs-ink leading-none`}
           />
           <p className={`mt-1 ${LBL} text-hs-ink`}>{c.s0.participants}</p>
         </P>
@@ -126,12 +127,12 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       r3b: (
         <P bg="bg-hs-paper" align="start">
           <p className={`${LBL} text-hs-ink/40`}>{c.s1.drivenLbl}</p>
-          <p className={`${D} text-base font-bold text-hs-ink leading-relaxed`}>{c.s1.drivenBody}</p>
+          <p className={`${BD} text-hs-ink`}>{c.s1.drivenBody}</p>
         </P>
       ),
       r4b: (
         <P bg="bg-hs-teal">
-          <p className={`${D} text-base font-bold text-white text-center leading-relaxed`}>{c.s1.tealBody}</p>
+          <p className={`${BD} text-center text-white`}>{c.s1.tealBody}</p>
         </P>
       ),
       ...bottomRow(1, c),
@@ -145,30 +146,30 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s2.unique1}</p>
+          <p className={`${BD} text-hs-paper`}>{c.s2.unique1}</p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-navy" align="start">
           <p className={`${LBL} text-hs-gold`}>{c.s2.mediaLbl}</p>
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s2.mediaBody}</p>
+          <p className={`${BD} text-hs-paper`}>{c.s2.mediaBody}</p>
         </P>
       ),
       r2c: (
         <P bg="bg-hs-gold" align="start">
           <p className={`${LBL} text-hs-ink/60`}>{c.s2.ambLbl}</p>
-          <p className={`${D} text-base font-bold text-hs-ink leading-relaxed`}>{c.s2.ambBody}</p>
+          <p className={`${BD} text-hs-ink`}>{c.s2.ambBody}</p>
         </P>
       ),
       r2g: (
         <P bg="bg-hs-teal" align="start">
           <p className={`${LBL} text-white/60`}>{c.s2.contentLbl}</p>
-          <p className={`${D} text-base font-bold text-white leading-relaxed`}>{c.s2.contentBody}</p>
+          <p className={`${BD} text-white`}>{c.s2.contentBody}</p>
         </P>
       ),
       r4c: (
         <P bg="bg-hs-orange">
-          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>{c.s2.orangeBody}</p>
+          <p className={`${BD} text-center text-hs-paper`}>{c.s2.orangeBody}</p>
         </P>
       ),
       ...bottomRow(2, c),
@@ -183,23 +184,27 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       r3a: (
         <P bg="bg-hs-ink" align="start">
           <p className={`${LBL} text-hs-gold`}>{c.s3.mlLbl}</p>
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s3.mlBody}</p>
+          <p className={`${BD} text-hs-paper`}>{c.s3.mlBody}</p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-navy" align="start">
           <p className={`${LBL} text-hs-gold`}>{c.s3.ntLbl}</p>
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s3.ntBody}</p>
+          <p className={`${BD} text-hs-paper`}>{c.s3.ntBody}</p>
         </P>
       ),
-      r2e: (
-        <P bg="bg-hs-gold">
-          <span className={`${B} text-lg text-hs-ink`}>{c.s3.freeCompute}</span>
-        </P>
+      r1e: (
+        <div className="flex h-full w-full flex-col items-center justify-center bg-hs-gold px-1 py-0">
+          <span
+            className={`${B} text-center leading-[1.12] text-hs-ink text-[clamp(0.62rem,1.65vw,0.95rem)]`}
+          >
+            {brLines(c.s3.freeCompute.replace(/ /, "\n"))}
+          </span>
+        </div>
       ),
       r4b: (
         <P bg="bg-hs-orange">
-          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>{c.s3.orangeBody}</p>
+          <p className={`${BD} text-center text-hs-paper`}>{c.s3.orangeBody}</p>
         </P>
       ),
       r2f: (
@@ -218,12 +223,20 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r2c: (
         <P bg="bg-hs-red">
-          <InlineSvg svg={googleSvg} className="h-[clamp(1.8rem,4vw,3rem)] w-auto" label={c.sponsorAlt("Google", gEx)} />
+          <img
+            src={googleLogo.src}
+            alt={c.sponsorAlt("Google", gEx)}
+            className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain"
+          />
         </P>
       ),
       r2g: (
         <P bg="bg-hs-navy">
-          <img src={kfundLogo.src} alt={c.sponsorAlt("K Fund", kEx)} className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img
+            src={mozartLogo.src}
+            alt={c.sponsorAlt("Mozart AI", mEx)}
+            className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+          />
         </P>
       ),
       r3a: (
@@ -238,12 +251,11 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r4c: (
         <P bg="bg-hs-ink">
-          <span className="block text-center">
-            <span className="sr-only">{mSr}</span>
-            <span className={`${B} text-[clamp(1.4rem,3vw,2.4rem)] text-hs-gold`} aria-hidden>
-              Mozart AI
-            </span>
-          </span>
+          <img
+            src={kfundLogo.src}
+            alt={c.sponsorAlt("K Fund", kEx)}
+            className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+          />
         </P>
       ),
       r2d: (
@@ -278,7 +290,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${D} text-base font-medium text-hs-paper leading-relaxed`}>{c.s5.inkBody}</p>
+          <p className={`${BD} text-hs-paper`}>{c.s5.inkBody}</p>
         </P>
       ),
       r3b: (
@@ -286,14 +298,9 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <span className={`${B} text-[clamp(1rem,2.2vw,1.8rem)] text-hs-gold text-center leading-tight`}>{c.s5.largest}</span>
         </P>
       ),
-      r4c: (
-        <P bg="bg-hs-navy">
-          <p className={`${D} text-base font-medium text-hs-paper text-center leading-relaxed`}>{brLines(c.s5.navyBody)}</p>
-        </P>
-      ),
       r4b: (
         <P bg="bg-hs-gold">
-          <p className={`${D} text-base font-bold text-hs-ink text-center`}>{c.s5.goldBody}</p>
+          <p className={`${BD} text-center text-hs-ink`}>{c.s5.goldBody}</p>
         </P>
       ),
       ...bottomRow(5, c),

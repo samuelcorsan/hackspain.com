@@ -1,4 +1,6 @@
-export const INK = "#2a170f";
+import { HS_PALETTE } from "./palette";
+
+export const INK = HS_PALETTE.ink;
 export const NUM_SECTIONS = 6;
 
 export const SECTION_MISSION_INDEX = 1;

@@ -446,6 +446,9 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
               ...vp(cell.x, cell.y, cell.w, cell.h),
               ...(cell.clip ? { clipPath: cell.clip } : {}),
             }}
+            onClick={() => {
+              console.log(cell.id);
+            }}
           >
             <AnimatePresence mode="popLayout" custom={dir} initial={false}>
               {missionPhase ? (

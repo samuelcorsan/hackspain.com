@@ -17,6 +17,7 @@ export const CELLS: CellDef[] = [
   { id: "r1b",  x: 700,  y: 0,   w: 180, h: 140, delay: 0.03 },
   { id: "r1c",  x: 1140, y: 0,   w: 160, h: 120, delay: 0.05 },
   { id: "r1d",  x: 1300, y: 0,   w: 140, h: 180, delay: 0.02, clip: TRI_BL },
+  { id: "r1e",  x: 300,  y: 120, w: 180, h: 60,  delay: 0.015 },
 
   // Row 2 (y 120-340)
   { id: "r2a",  x: 0,    y: 180, w: 160, h: 160, delay: 0.04 },
