@@ -26,6 +26,11 @@
       "sourceType": "github",
       "computedHash": "6cc3ffae0a66c2f3165c3d4bae6784ebe44e8f6ac661d3f4e40ae56d9af35cb8"
     },
+    "seo-aeo-best-practices": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "computedHash": "72c2a194b5cbf1185244be75cbb11de620db77b8d0ce62d6b96bea299571c407"
+    },
     "svg-animation-engineer": {
       "source": "liuyunlong2021-wq/svg-skills",
       "sourceType": "github",

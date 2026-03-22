@@ -1,0 +1,19 @@
+---
+import LegacyRedirectHead from "../components/LegacyRedirectHead.astro";
+
+const slug = "tracks" as const;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<LegacyRedirectHead slug={slug} />
+	</head>
+	<body style="margin: 0; padding: 1rem; font-family: system-ui, sans-serif">
+		<p>
+			<a href={`/en/${slug}`}>English</a>
+			·
+			<a href={`/es/${slug}`}>Español</a>
+		</p>
+	</body>
+</html>

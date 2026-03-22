@@ -1,29 +1,127 @@
 ---
 import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
+import {
+	jsonLdEvent,
+	jsonLdFaq,
+	jsonLdOrganization,
+	keywordsForSectionIndex,
+	seoForSectionIndex,
+} from '../data/landingMeta';
+import { pathFromSectionIndex } from '../data/sectionRoutes';
+import { getCopy } from '../i18n/copy';
+import type { Locale } from '../i18n/locales';
 
 interface Props {
+	locale: Locale;
 	title?: string;
+	description?: string;
+	ogImageAlt?: string;
+	sectionIndex?: number;
 }
 
-const { title = 'HACKSPAIN 2026' } = Astro.props;
+const locale = Astro.props.locale;
+const t = getCopy(locale);
+const sectionIndex = Astro.props.sectionIndex ?? 0;
+const seo = seoForSectionIndex(locale, sectionIndex);
+const {
+	title = seo.title,
+	description = seo.description,
+	ogImageAlt = seo.ogImageAlt,
+} = Astro.props;
+
+const canonicalPath = pathFromSectionIndex(locale, sectionIndex);
+const canonical = new URL(canonicalPath, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+const ogImageUrl = ogImage.href;
+const keywords = keywordsForSectionIndex(locale, sectionIndex);
+
+const hrefLangEn = new URL(pathFromSectionIndex('en', sectionIndex), Astro.site).href;
+const hrefLangEs = new URL(pathFromSectionIndex('es', sectionIndex), Astro.site).href;
+
+const ogLocale = locale === 'es' ? 'es_ES' : 'en_US';
+const ogLocaleAlt = locale === 'es' ? 'en_US' : 'es_ES';
+
+const googleVerify = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const bingVerify = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
+const yandexVerify = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
+
+const orgJson = JSON.stringify(jsonLdOrganization(locale));
+const eventJson = JSON.stringify(jsonLdEvent(locale));
+const faqJson = JSON.stringify(jsonLdFaq(locale));
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="alternate" type="text/markdown" href="/llms.txt" title="LLM and AI discovery (llms.txt)" />
+		<link rel="canonical" href={canonical.href} />
+		<link rel="alternate" hreflang="en" href={hrefLangEn} />
+		<link rel="alternate" hreflang="es" href={hrefLangEs} />
+		<link rel="alternate" hreflang="x-default" href={hrefLangEn} />
+		<meta name="description" content={description} />
+		<meta
+			name="robots"
+			content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+		/>
+		<meta
+			name="googlebot"
+			content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+		/>
+		<meta name="author" content="HackSpain" />
+		<meta name="publisher" content="HackSpain" />
+		<meta name="application-name" content="HackSpain" />
+		<meta name="theme-color" content="#eab619" />
+		<meta name="color-scheme" content="light" />
+		<meta name="referrer" content="strict-origin-when-cross-origin" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="keywords" content={keywords} />
+
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical.href} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="HackSpain" />
+		<meta property="og:locale" content={ogLocale} />
+		<meta property="og:locale:alternate" content={ogLocaleAlt} />
+		<meta property="og:image" content={ogImageUrl} />
+		<meta property="og:image:secure_url" content={ogImageUrl} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:alt" content={ogImageAlt} />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageUrl} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
+		<meta name="twitter:site" content="@hackspain26" />
+
+		{googleVerify && <meta name="google-site-verification" content={googleVerify} />}
+		{bingVerify && <meta name="msvalidate.01" content={bingVerify} />}
+		{yandexVerify && <meta name="yandex-verification" content={yandexVerify} />}
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:ital,opsz,wght@0,9..40,700;0,9..40,800;1,9..40,700&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Bungee&family=DM_Sans:ital,opsz,wght@0,9..40,700;0,9..40,800;1,9..40,700&display=swap"
 			rel="stylesheet"
 		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script type="application/ld+json" set:html={orgJson} />
+		<script type="application/ld+json" set:html={eventJson} />
+		<script type="application/ld+json" set:html={faqJson} />
+		<Analytics />
 	</head>
-	<body class="h-dvh antialiased text-hs-ink overflow-hidden">
+	<body class="h-dvh antialiased font-sans text-hs-ink overflow-hidden">
+		<a href="#main" class="skip-link font-sans">{t.skipLink}</a>
 		<slot />
 	</body>
 </html>
@@ -44,7 +142,7 @@ const { title = 'HACKSPAIN 2026' } = Astro.props;
 			transparent 4px
 		);
 	}
-	.sr-only {
+	.skip-link {
 		position: absolute;
 		width: 1px;
 		height: 1px;
@@ -54,5 +152,25 @@ const { title = 'HACKSPAIN 2026' } = Astro.props;
 		clip: rect(0, 0, 0, 0);
 		white-space: nowrap;
 		border-width: 0;
+	}
+	.skip-link:focus {
+		position: fixed;
+		left: 0.75rem;
+		top: 0.75rem;
+		z-index: 100;
+		width: auto;
+		height: auto;
+		margin: 0;
+		padding: 0.5rem 0.75rem;
+		overflow: visible;
+		clip: auto;
+		white-space: normal;
+		border-radius: 0.25rem;
+		background: var(--color-hs-gold);
+		color: var(--color-hs-ink);
+		font-weight: 800;
+		outline: 2px solid var(--color-hs-ink);
+		outline-offset: 2px;
+		text-decoration: none;
 	}
 </style>

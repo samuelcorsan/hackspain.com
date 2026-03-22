@@ -1,6 +1,6 @@
-type Props = { className?: string; strokeOnly?: boolean };
+type Props = { className?: string; strokeOnly?: boolean; "aria-hidden"?: boolean };
 
-export function MosaicBackground({ className = "", strokeOnly = false }: Props) {
+export function MosaicBackground({ className = "", strokeOnly = false, "aria-hidden": ariaHidden = true }: Props) {
   const f = (color: string) => strokeOnly ? "none" : color;
   const sw = strokeOnly ? 6 : 5;
   return (
@@ -8,7 +8,7 @@ export function MosaicBackground({ className = "", strokeOnly = false }: Props) 
       className={className}
       viewBox="0 0 1440 900"
       preserveAspectRatio="none"
-      aria-hidden
+      aria-hidden={ariaHidden}
     >
       {!strokeOnly && <rect width="1440" height="900" fill="var(--color-hs-paper)" />}
 

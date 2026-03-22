@@ -10,12 +10,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "og:generate": "node scripts/generate-og.mjs",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.1",
+    "@astrojs/sitemap": "^3.7.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vercel/analytics": "^2.0.1",
     "astro": "^6.0.8",
     "motion": "^12.38.0",
     "react": "^19.2.4",
@@ -24,6 +27,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
-    "postcss": "^8.5.8"
+    "postcss": "^8.5.8",
+    "sharp": "^0.34.5"
   }
 }

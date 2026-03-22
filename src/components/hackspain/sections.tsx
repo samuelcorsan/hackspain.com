@@ -1,18 +1,30 @@
+import type { Locale } from "../../i18n/locales";
+import { getCopy } from "../../i18n/copy";
 import { InlineSvg } from "./InlineSvg";
 import { P } from "./Panel";
 import { INK, X_SVG } from "./constants";
 import { logoSvg, googleSvg, exaLogo, falLogo, kfundLogo } from "./assets";
 
-const B   = "font-['Bungee']";
-const D   = "font-['DM_Sans']";
+const B = "font-bungee";
+const D = "font-sans";
 const LBL = `${D} text-xs font-black tracking-widest uppercase mb-1`;
 
 const BOTTOM_CELLS = ["r5a", "r5b", "r5c", "r5d"] as const;
 
-function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
-  const copy = (
+function brLines(s: string) {
+  const lines = s.split("\n");
+  return lines.map((line, i) => (
+    <span key={i}>
+      {i > 0 ? <br /> : null}
+      {line}
+    </span>
+  ));
+}
+
+function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<string, React.ReactNode> {
+  const copyEl = (
     <P bg="bg-hs-paper">
-      <p className={`${D} text-sm font-bold tracking-widest text-hs-ink/40 text-center uppercase`}>© 2026 HackSpain</p>
+      <p className={`${D} text-sm font-bold tracking-widest text-hs-ink/40 text-center uppercase`}>{c.copyright}</p>
     </P>
   );
 
@@ -20,42 +32,50 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
     <P bg="bg-hs-paper">
       <a href="https://x.com/hackspain26" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-hs-ink">
         <span className="h-5 w-5 shrink-0" dangerouslySetInnerHTML={{ __html: X_SVG }} />
-        <span className={`${D} text-base font-bold`}>@hackspain26</span>
+        <span className={`${D} text-base font-bold`}>{c.bottomFollow}</span>
       </a>
     </P>,
     <P bg="bg-hs-paper">
       <p className={`${D} text-base font-bold text-hs-ink text-center`}>
-        Made with ♥ by{' '}
-        <a href="https://x.com/mrloldev" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Leo</a>
+        {c.bottomMade}{" "}
+        <a href="https://x.com/mrloldev" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+          {c.bottomMadeLeo}
+        </a>
       </p>
     </P>,
     <P bg="bg-hs-paper">
       <a href="https://github.com/hackspain" target="_blank" rel="noopener noreferrer" className={`${D} text-base font-bold text-hs-ink underline underline-offset-2`}>
-        Check this code →
+        {c.bottomCode}
       </a>
     </P>,
     <P bg="bg-hs-paper">
       <a href="mailto:leo@hackspain.com" className={`${D} text-base font-bold text-hs-ink underline underline-offset-2`}>
-        leo@hackspain.com
+        {c.bottomEmail}
       </a>
     </P>,
   ];
 
   const i = sectionIdx % 4;
   const actionCell = BOTTOM_CELLS[i];
-  const copyCell   = BOTTOM_CELLS[(i + 2) % 4];
+  const copyCell = BOTTOM_CELLS[(i + 2) % 4];
 
-  return { [actionCell]: actions[i], [copyCell]: copy };
+  return { [actionCell]: actions[i], [copyCell]: copyEl };
 }
 
-export function buildSections(): Record<string, React.ReactNode>[] {
+export function buildSections(locale: Locale): Record<string, React.ReactNode>[] {
+  const c = getCopy(locale);
+  const gEx = locale === "es" ? "hackathon España Google, hackathon Spain" : "Google sponsor hackathon Madrid and Spain";
+  const kEx = locale === "es" ? "inversión hackathon España" : "venture capital sponsor hackathon Spain";
+  const fEx = locale === "es" ? "IA hackathon Madrid" : "AI infrastructure hackathon Spain";
+  const eEx = locale === "es" ? "búsqueda hackathon España" : "search hackathon Spain";
+  const mSr = c.s4.mozartSr;
+
   return [
-    // 0: Hero
     {
       hero: (
         <P bg="bg-hs-paper">
           <div className="w-full max-w-[380px]">
-            <InlineSvg svg={logoSvg} className="w-full h-auto" />
+            <InlineSvg svg={logoSvg} className="w-full h-auto" label={c.logoAria} />
           </div>
         </P>
       ),
@@ -68,248 +88,216 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r2c: (
         <P bg="bg-hs-gold">
           <span className={`${B} text-[clamp(2.4rem,5vw,4.2rem)] text-hs-ink leading-none`}>+300</span>
-          <p className={`mt-1 ${LBL} text-hs-ink`}>PARTICIPANTS</p>
+          <p className={`mt-1 ${LBL} text-hs-ink`}>{c.s0.participants}</p>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-orange">
-          <p className={`${LBL} text-hs-paper/60`}>HACKATHON</p>
-          <span className={`${B} text-[clamp(1.3rem,2.8vw,2.2rem)] text-hs-paper leading-tight text-center`}>
-            MADRID · JUNE
-          </span>
+          <p className={`${LBL} text-hs-paper/60`}>{c.s0.hackathon}</p>
+          <span className={`${B} text-[clamp(1.3rem,2.8vw,2.2rem)] text-hs-paper leading-tight text-center`}>{c.s0.madrid}</span>
         </P>
       ),
       r2g: (
         <P bg="bg-hs-red">
           <span className={`${B} text-[clamp(2.6rem,5.5vw,4.5rem)] text-hs-paper leading-none`}>24</span>
-          <p className={`mt-1 ${LBL} text-hs-paper`}>HOURS</p>
+          <p className={`mt-1 ${LBL} text-hs-paper`}>{c.s0.hours}</p>
         </P>
       ),
-      ...bottomRow(0),
+      ...bottomRow(0, c),
     },
-
-    // 1: Mission
     {
       hero: (
         <P bg="bg-hs-navy">
-          <p className={`${LBL} text-hs-gold`}>MISSION</p>
+          <p className={`${LBL} text-hs-gold`}>{c.s1.label}</p>
           <h2 className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-paper leading-tight`}>
-            BRING TOGETHER<br />YOUNG, <span className="text-hs-red">TALENTED</span><br />SPANISH CODERS
+            {c.s1.l1}
+            <br />
+            {c.s1.l2}
+            <span className="text-hs-red">{c.s1.l3}</span>
+            <br />
+            {c.s1.l4}
           </h2>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-paper" align="start">
-          <p className={`${LBL} text-hs-ink/40`}>MISSION-DRIVEN</p>
-          <p className={`${D} text-base font-bold text-hs-ink leading-relaxed`}>
-            Positioning Spain as a European leader in young tech talent.
-          </p>
+          <p className={`${LBL} text-hs-ink/40`}>{c.s1.drivenLbl}</p>
+          <p className={`${D} text-base font-bold text-hs-ink leading-relaxed`}>{c.s1.drivenBody}</p>
         </P>
       ),
       r2d: (
         <P bg="bg-hs-ink">
-          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>
-            We are fully<br />mission-driven.
-          </p>
+          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>{brLines(c.s1.fullMission)}</p>
         </P>
       ),
       r4b: (
         <P bg="bg-hs-teal">
-          <p className={`${D} text-base font-bold text-white text-center leading-relaxed`}>
-            24 intense hours of building with Spain's brightest young coders.
-          </p>
+          <p className={`${D} text-base font-bold text-white text-center leading-relaxed`}>{c.s1.tealBody}</p>
         </P>
       ),
-      ...bottomRow(1),
+      ...bottomRow(1, c),
     },
-
-    // 2: What makes us unique
     {
       hero: (
         <P bg="bg-hs-sand">
-          <p className={`${LBL} text-hs-ink/40`}>HACKSPAIN 2026</p>
-          <h2 className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-ink leading-tight`}>
-            WHAT MAKES<br />US UNIQUE?
-          </h2>
+          <p className={`${LBL} text-hs-ink/40`}>{c.s2.label}</p>
+          <h2 className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-ink leading-tight`}>{brLines(c.s2.title)}</h2>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>
-            We are fully mission-driven.
-          </p>
+          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s2.unique1}</p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-navy" align="start">
-          <p className={`${LBL} text-hs-gold`}>MEDIA FOCUS</p>
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>
-            We plan to expand our social media presence.
-          </p>
+          <p className={`${LBL} text-hs-gold`}>{c.s2.mediaLbl}</p>
+          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s2.mediaBody}</p>
         </P>
       ),
       r2c: (
         <P bg="bg-hs-gold" align="start">
-          <p className={`${LBL} text-hs-ink/60`}>AMBASSADORS</p>
-          <p className={`${D} text-base font-bold text-hs-ink leading-relaxed`}>
-            From universities and education centres
-          </p>
+          <p className={`${LBL} text-hs-ink/60`}>{c.s2.ambLbl}</p>
+          <p className={`${D} text-base font-bold text-hs-ink leading-relaxed`}>{c.s2.ambBody}</p>
         </P>
       ),
       r2g: (
         <P bg="bg-hs-teal" align="start">
-          <p className={`${LBL} text-white/60`}>HIGH-QUALITY CONTENT</p>
-          <p className={`${D} text-base font-bold text-white leading-relaxed`}>
-            Focused on telling the stories of the hackers
-          </p>
+          <p className={`${LBL} text-white/60`}>{c.s2.contentLbl}</p>
+          <p className={`${D} text-base font-bold text-white leading-relaxed`}>{c.s2.contentBody}</p>
         </P>
       ),
       r4c: (
         <P bg="bg-hs-orange">
-          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>
-            Original tracks designed for different skill levels.
-          </p>
+          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>{c.s2.orangeBody}</p>
         </P>
       ),
-      ...bottomRow(2),
+      ...bottomRow(2, c),
     },
-
-    // 3: Original Tracks
     {
       hero: (
         <P bg="bg-hs-teal">
-          <p className={`${LBL} text-white/60`}>HACKSPAIN 2026</p>
-          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-white leading-tight`}>ORIGINAL<br />TRACKS</h2>
+          <p className={`${LBL} text-white/60`}>{c.s3.label}</p>
+          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-white leading-tight`}>{brLines(c.s3.title)}</h2>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${LBL} text-hs-gold`}>ML TRACK</p>
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>
-            ML challenges using free computing resources
-          </p>
+          <p className={`${LBL} text-hs-gold`}>{c.s3.mlLbl}</p>
+          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s3.mlBody}</p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-navy" align="start">
-          <p className={`${LBL} text-hs-gold`}>NON-TECH TRACK</p>
-          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>
-            We'll teach non-technical people how to code high-quality software.
-          </p>
+          <p className={`${LBL} text-hs-gold`}>{c.s3.ntLbl}</p>
+          <p className={`${D} text-base font-bold text-hs-paper leading-relaxed`}>{c.s3.ntBody}</p>
         </P>
       ),
       r2e: (
         <P bg="bg-hs-gold">
-          <span className={`${B} text-lg text-hs-ink`}>FREE COMPUTE</span>
+          <span className={`${B} text-lg text-hs-ink`}>{c.s3.freeCompute}</span>
         </P>
       ),
       r4b: (
         <P bg="bg-hs-orange">
-          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>
-            Designed for all skill levels — from beginners to experts.
-          </p>
+          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>{c.s3.orangeBody}</p>
         </P>
       ),
       r2f: (
         <P bg="bg-hs-red">
-          <span className={`${B} text-lg text-hs-paper text-center leading-tight`}>FOR<br />EVERYONE</span>
+          <span className={`${B} text-lg text-hs-paper text-center leading-tight`}>{brLines(c.s3.forEveryone)}</span>
         </P>
       ),
-      ...bottomRow(3),
+      ...bottomRow(3, c),
     },
-
-    // 4: Sponsors
     {
       hero: (
         <P bg="bg-hs-gold">
-          <p className={`${LBL} text-hs-ink/50`}>HACKSPAIN 2026</p>
-          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-ink leading-tight`}>BACKED BY<br />THE BEST</h2>
+          <p className={`${LBL} text-hs-ink/50`}>{c.s4.label}</p>
+          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-ink leading-tight`}>{brLines(c.s4.title)}</h2>
         </P>
       ),
       r2c: (
         <P bg="bg-hs-red">
-          <InlineSvg svg={googleSvg} className="h-[clamp(1.8rem,4vw,3rem)] w-auto" />
+          <InlineSvg svg={googleSvg} className="h-[clamp(1.8rem,4vw,3rem)] w-auto" label={c.sponsorAlt("Google", gEx)} />
         </P>
       ),
       r2g: (
         <P bg="bg-hs-navy">
-          <img src={kfundLogo.src} alt="K Fund" className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img src={kfundLogo.src} alt={c.sponsorAlt("K Fund", kEx)} className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
         </P>
       ),
       r3a: (
         <P bg="bg-hs-teal">
-          <img src={falLogo.src} alt="fal.ai" className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img src={falLogo.src} alt={c.sponsorAlt("fal.ai", fEx)} className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
         </P>
       ),
       r3b: (
         <P bg="bg-hs-orange">
-          <img src={exaLogo.src} alt="Exa" className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img src={exaLogo.src} alt={c.sponsorAlt("Exa", eEx)} className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
         </P>
       ),
       r4c: (
         <P bg="bg-hs-ink">
-          <span className={`${B} text-[clamp(1.4rem,3vw,2.4rem)] text-hs-gold`}>Mozart AI</span>
+          <span className="block text-center">
+            <span className="sr-only">{mSr}</span>
+            <span className={`${B} text-[clamp(1.4rem,3vw,2.4rem)] text-hs-gold`} aria-hidden>
+              Mozart AI
+            </span>
+          </span>
         </P>
       ),
       r2d: (
         <P bg="bg-hs-paper">
-          <p className={`${B} text-[clamp(0.9rem,2vw,1.5rem)] text-hs-ink/40 italic text-center leading-snug`}>and more<br />on the way...</p>
+          <p className={`${B} text-[clamp(0.9rem,2vw,1.5rem)] text-hs-ink/40 italic text-center leading-snug`}>{brLines(c.s4.moreWay)}</p>
         </P>
       ),
       r4d: (
         <P bg="bg-hs-cream" align="start">
-          <p className={`${LBL} text-hs-ink/40`}>PRIZES</p>
-          <p className={`${B} text-lg text-hs-ink leading-tight`}>Great rewards for the hackers</p>
+          <p className={`${LBL} text-hs-ink/40`}>{c.s4.prizesLbl}</p>
+          <p className={`${B} text-lg text-hs-ink leading-tight`}>{c.s4.prizesBody}</p>
         </P>
       ),
-      ...bottomRow(4),
+      ...bottomRow(4, c),
     },
-
-    // 5: Vision
     {
       hero: (
         <P bg="bg-hs-red">
-          <p className={`${LBL} text-hs-gold`}>LONG-TERM VISION</p>
+          <p className={`${LBL} text-hs-gold`}>{c.s5.label}</p>
           <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-paper leading-tight`}>
-            FROM MADRID<br /><span className="text-hs-gold">TO THE WORLD</span>
+            {c.s5.title1}
+            <br />
+            <span className="text-hs-gold">{c.s5.title2}</span>
           </h2>
         </P>
       ),
       r2c: (
         <P bg="bg-hs-orange">
-          <span className={`${B} text-[clamp(2rem,4.5vw,3.6rem)] text-hs-paper leading-none`}>5,000</span>
-          <p className={`mt-1 ${LBL} text-hs-paper`}>GOAL NEXT YEAR</p>
+          <span className={`${B} text-[clamp(2rem,4.5vw,3.6rem)] text-hs-paper leading-none`}>{c.s5.goalNum}</span>
+          <p className={`mt-1 ${LBL} text-hs-paper`}>{c.s5.goalLbl}</p>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${D} text-base font-medium text-hs-paper leading-relaxed`}>
-            HackSpain isn't a one-off. It's the cornerstone of a movement positioning Spain as a European tech leader.
-          </p>
+          <p className={`${D} text-base font-medium text-hs-paper leading-relaxed`}>{c.s5.inkBody}</p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-red">
-          <span className={`${B} text-[clamp(1rem,2.2vw,1.8rem)] text-hs-gold text-center leading-tight`}>
-            LARGEST HACKATHON IN EUROPE
-          </span>
+          <span className={`${B} text-[clamp(1rem,2.2vw,1.8rem)] text-hs-gold text-center leading-tight`}>{c.s5.largest}</span>
         </P>
       ),
       r4c: (
         <P bg="bg-hs-navy">
-          <p className={`${D} text-base font-medium text-hs-paper text-center leading-relaxed`}>
-            Each edition bigger and more impactful.<br />5,000 participants next year.
-          </p>
+          <p className={`${D} text-base font-medium text-hs-paper text-center leading-relaxed`}>{brLines(c.s5.navyBody)}</p>
         </P>
       ),
       r4b: (
         <P bg="bg-hs-gold">
-          <p className={`${D} text-base font-bold text-hs-ink text-center`}>
-            The largest hackathon movement in Southern Europe.
-          </p>
+          <p className={`${D} text-base font-bold text-hs-ink text-center`}>{c.s5.goldBody}</p>
         </P>
       ),
-      ...bottomRow(5),
+      ...bottomRow(5, c),
     },
   ];
 }

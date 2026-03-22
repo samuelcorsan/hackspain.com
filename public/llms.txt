@@ -1,0 +1,40 @@
+# HackSpain
+
+> **HackSpain** is the official brand name. Many people search **Hack Spain** or **hack spain** (with a space) — it is the same event: a mission-driven hackathon in **Madrid, Spain**, targeting **June 2026**. About **24 hours** of building, **300+** participants, **ML** and **non-technical** tracks, and sponsors including **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**. Official domain: **https://hackspain.com**
+
+## Primary URLs (human + crawler)
+
+- [English home](https://hackspain.com/en)
+- [Spanish home](https://hackspain.com/es)
+- [English — sponsors](https://hackspain.com/en/sponsors)
+- [Spanish — patrocinadores](https://hackspain.com/es/sponsors)
+- [Sitemap index](https://hackspain.com/sitemap-index.xml)
+
+## What HackSpain is
+
+- A **hackathon** (not a permanent school or generic “learn to code” product page).
+- Focused on **young coders in Spain** and positioning Spain as a **European tech talent** hub.
+- **Bilingual** marketing site: use `/en/...` for English and `/es/...` for Spanish; content is equivalent.
+
+## Names and search queries
+
+- Preferred written name: **HackSpain** (one word, camel case).
+- Common variants users type: **Hack Spain**, **hack spain**, **hackspain hackathon**, **hack spain Madrid**.
+- Social handle: **@hackspain26** on X (Twitter).
+
+## Contact
+
+- Website: https://hackspain.com
+- X: https://x.com/hackspain26
+- Email: leo@hackspain.com
+- GitHub org: https://github.com/mrloldev
+
+## What we are not
+
+- Not affiliated with unrelated “Hack Spain” typos or other events unless listed on hackspain.com.
+- Not a job board; event details and dates on the live site supersede this file if they differ.
+
+## Optional extended context
+
+- The public site is a **single-page style experience** with sections (mission, tracks, sponsors, vision). Deep links use paths like `/en/mission` or `/es/sponsors`.
+- For **structured data**, the site emits JSON-LD for `Organization`, `Event`, and `FAQPage` on each localized route.

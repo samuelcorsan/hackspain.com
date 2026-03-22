@@ -7,20 +7,105 @@ import { INK, NUM_SECTIONS, SPRING, slideVariants } from "./constants";
 import { CELLS } from "./cells";
 import { ILLS } from "./assets";
 import { buildSections } from "./sections";
+import { keywordsForSectionIndex, seoForSectionIndex } from "../../data/landingMeta";
+import { pathFromSectionIndex, parsePath } from "../../data/sectionRoutes";
+import { getCopy } from "../../i18n/copy";
+import type { Locale } from "../../i18n/locales";
 
-export function LandingPage() {
-  const [section, setSection] = useState(0);
+function applySeoToDocument(locale: Locale, sectionIdx: number) {
+  if (typeof document === "undefined") return;
+  const { title, description, ogImageAlt } = seoForSectionIndex(locale, sectionIdx);
+  const keywords = keywordsForSectionIndex(locale, sectionIdx);
+  document.title = title;
+  document.documentElement.lang = locale;
+  const setMeta = (sel: string, attr: string, val: string) => {
+    const el = document.querySelector(sel);
+    if (el) el.setAttribute(attr, val);
+  };
+  setMeta('meta[name="description"]', "content", description);
+  setMeta('meta[name="keywords"]', "content", keywords);
+  setMeta('meta[property="og:title"]', "content", title);
+  setMeta('meta[property="og:description"]', "content", description);
+  setMeta('meta[property="og:url"]', "content", window.location.href);
+  setMeta('meta[property="og:image:alt"]', "content", ogImageAlt);
+  setMeta('meta[property="og:locale"]', "content", locale === "es" ? "es_ES" : "en_US");
+  setMeta('meta[property="og:locale:alternate"]', "content", locale === "es" ? "en_US" : "es_ES");
+  setMeta('meta[name="twitter:title"]', "content", title);
+  setMeta('meta[name="twitter:description"]', "content", description);
+  setMeta('meta[name="twitter:image:alt"]', "content", ogImageAlt);
+  const path = pathFromSectionIndex(locale, sectionIdx);
+  const canon = `${window.location.origin}${path}`;
+  const link = document.querySelector('link[rel="canonical"]');
+  if (link) link.setAttribute("href", canon);
+  const enPath = pathFromSectionIndex("en", sectionIdx);
+  const esPath = pathFromSectionIndex("es", sectionIdx);
+  const origin = window.location.origin;
+  document.querySelectorAll('link[rel="alternate"][hreflang="en"]').forEach((el) => {
+    el.setAttribute("href", `${origin}${enPath}`);
+  });
+  document.querySelectorAll('link[rel="alternate"][hreflang="es"]').forEach((el) => {
+    el.setAttribute("href", `${origin}${esPath}`);
+  });
+}
+
+type Props = { locale: Locale; initialSection?: number };
+
+export function LandingPage({ locale, initialSection = 0 }: Props) {
+  const [section, setSection] = useState(initialSection);
+  const [activeLocale, setActiveLocale] = useState(locale);
   const [dir, setDir] = useState(1);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const locked = useRef(false);
-  const sections = useMemo(buildSections, []);
+  const sections = useMemo(() => buildSections(activeLocale), [activeLocale]);
+  const copy = useMemo(() => getCopy(activeLocale), [activeLocale]);
 
-  const advance = useCallback((d: 1 | -1) => {
+  useEffect(() => {
+    setActiveLocale(locale);
+  }, [locale]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const fn = () => setReducedMotion(mq.matches);
+    mq.addEventListener("change", fn);
+    return () => mq.removeEventListener("change", fn);
+  }, []);
+
+  const variants = useMemo(
+    () =>
+      reducedMotion
+        ? {
+            enter: { opacity: 0 },
+            center: { opacity: 1 },
+            exit: { opacity: 0 },
+          }
+        : slideVariants,
+    [reducedMotion],
+  );
+
+  const goToSection = useCallback((next: number, d: 1 | -1) => {
     if (locked.current) return;
     locked.current = true;
     setDir(d);
-    setSection(s => Math.max(0, Math.min(NUM_SECTIONS - 1, s + d)));
-    setTimeout(() => { locked.current = false; }, 700);
-  }, []);
+    setSection(next);
+    const path = pathFromSectionIndex(activeLocale, next);
+    if (typeof window !== "undefined" && window.location.pathname !== path) {
+      window.history.pushState({ section: next, locale: activeLocale }, "", path);
+    }
+    applySeoToDocument(activeLocale, next);
+    setTimeout(() => {
+      locked.current = false;
+    }, 700);
+  }, [activeLocale]);
+
+  const advance = useCallback(
+    (d: 1 | -1) => {
+      const next = Math.max(0, Math.min(NUM_SECTIONS - 1, section + d));
+      if (next === section) return;
+      goToSection(next, d);
+    },
+    [section, goToSection],
+  );
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
@@ -28,14 +113,22 @@ export function LandingPage() {
       if (Math.abs(e.deltaY) > 5) advance(e.deltaY > 0 ? 1 : -1);
     };
     let touchY = 0;
-    const onTouchStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; };
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = e.touches[0].clientY;
+    };
     const onTouchEnd = (e: TouchEvent) => {
       const dy = touchY - e.changedTouches[0].clientY;
       if (Math.abs(dy) > 40) advance(dy > 0 ? 1 : -1);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown" || e.key === " ") { e.preventDefault(); advance(1); }
-      if (e.key === "ArrowUp")                     { e.preventDefault(); advance(-1); }
+      if (e.key === "ArrowDown" || e.key === " ") {
+        e.preventDefault();
+        advance(1);
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        advance(-1);
+      }
     };
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -49,31 +142,68 @@ export function LandingPage() {
     };
   }, [advance]);
 
+  useEffect(() => {
+    const onPop = () => {
+      const { locale: loc, sectionIndex } = parsePath(window.location.pathname);
+      setActiveLocale(loc);
+      setDir(1);
+      setSection(sectionIndex);
+      applySeoToDocument(loc, sectionIndex);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   const current = sections[section] ?? {};
+  const liveLabel = copy.sectionNav[section] ?? copy.sectionNav[0];
 
   return (
-    <div className="fixed inset-0" style={{ background: INK }}>
-      <MosaicBackground className="absolute inset-0 h-full w-full" />
+    <div
+      className="fixed inset-0 font-sans"
+      style={{ background: INK }}
+      role="region"
+      aria-label={copy.regionAria}
+    >
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {liveLabel}
+      </p>
+      <MosaicBackground className="absolute inset-0 h-full w-full" aria-hidden />
 
       {ILLS.map((ill, i) => (
-        <div key={i} className={`absolute overflow-hidden flex ${ill.box}`} style={vp(ill.x, ill.y, ill.w, ill.h)}>
-          <InlineSvg svg={ill.svg} className={ill.img} />
+        <div
+          key={i}
+          className={`absolute overflow-hidden flex ${ill.box}`}
+          style={vp(ill.x, ill.y, ill.w, ill.h)}
+          aria-hidden
+        >
+          <InlineSvg svg={ill.svg} className={ill.img} decorative />
         </div>
       ))}
 
-      {CELLS.map(cell => (
-        <div key={cell.id} className="absolute overflow-hidden" style={{ ...vp(cell.x, cell.y, cell.w, cell.h), ...(cell.clip ? { clipPath: cell.clip } : {}) }}>
+      {CELLS.map((cell) => (
+        <div
+          key={cell.id}
+          className="absolute overflow-hidden"
+          style={{
+            ...vp(cell.x, cell.y, cell.w, cell.h),
+            ...(cell.clip ? { clipPath: cell.clip } : {}),
+          }}
+        >
           <AnimatePresence mode="popLayout" custom={dir} initial={false}>
             {current[cell.id] && (
               <motion.div
-                key={`${cell.id}-${section}`}
+                key={`${cell.id}-${section}-${activeLocale}`}
                 className="absolute inset-0"
                 custom={dir}
-                variants={slideVariants}
+                variants={variants}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ ...SPRING, delay: cell.delay }}
+                transition={
+                  reducedMotion
+                    ? { type: "tween", duration: 0.2, delay: cell.delay * 0.3 }
+                    : { ...SPRING, delay: cell.delay }
+                }
               >
                 {current[cell.id]}
               </motion.div>
@@ -82,20 +212,7 @@ export function LandingPage() {
         </div>
       ))}
 
-      <MosaicBackground className="absolute inset-0 h-full w-full pointer-events-none" strokeOnly />
-
-      <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-        {Array.from({ length: NUM_SECTIONS }, (_, i) => (
-          <button
-            key={i}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              i === section ? "w-6 bg-hs-gold" : "w-2 bg-hs-ink/30"
-            }`}
-            onClick={() => { setDir(i > section ? 1 : -1); setSection(i); }}
-            aria-label={`Go to section ${i + 1}`}
-          />
-        ))}
-      </div>
+      <MosaicBackground className="absolute inset-0 h-full w-full pointer-events-none" strokeOnly aria-hidden />
     </div>
   );
 }

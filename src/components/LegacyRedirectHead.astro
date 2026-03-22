@@ -1,0 +1,32 @@
+---
+import type { SectionSlug } from "../data/sectionRoutes";
+
+interface Props {
+	slug: SectionSlug;
+}
+
+const { slug } = Astro.props;
+const fallback = `/en/${slug}`;
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta http-equiv="refresh" content={`0;url=${fallback}`} />
+<title>Redirecting…</title>
+<script is:inline define:vars={{ slug }}>
+	(function () {
+		var loc = "en";
+		try {
+			var L = navigator.languages || [navigator.language || "en"];
+			for (var i = 0; i < L.length; i++) {
+				if (String(L[i]).toLowerCase().startsWith("es")) {
+					loc = "es";
+					break;
+				}
+			}
+		} catch (e) {}
+		var path = "/" + loc + "/" + slug;
+		if (location.pathname.replace(/\/$/, "") !== path) location.replace(path);
+	})();
+</script>
