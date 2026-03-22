@@ -28,8 +28,6 @@ export type Copy = {
     l4: string;
     drivenLbl: string;
     drivenBody: string;
-    fullMission: string;
-    missionBody: string;
     tealBody: string;
   };
   s2: {
@@ -112,8 +110,6 @@ const en: Copy = {
     l4: "SPANISH CODERS",
     drivenLbl: "MISSION-DRIVEN",
     drivenBody: "Positioning Spain as a European leader in young tech talent.",
-    fullMission: "We are fully\nmission-driven.",
-    missionBody: "24 intense hours of building with Spain's brightest young coders.",
     tealBody: "24 intense hours of building with Spain's brightest young coders.",
   },
   s2: {
@@ -197,8 +193,6 @@ const es: Copy = {
     l4: "CODERS ESPAÑOLES",
     drivenLbl: "MISIÓN",
     drivenBody: "Posicionar a España como líder europeo en talento tech joven.",
-    fullMission: "Somos 100%\nimpulsados por la misión.",
-    missionBody: "24 horas intensas construyendo con l@s mejores jóvenes programadores de España.",
     tealBody: "24 horas intensas construyendo con l@s mejores jóvenes programadores de España.",
   },
   s2: {

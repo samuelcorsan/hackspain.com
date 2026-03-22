@@ -129,11 +129,6 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <p className={`${D} text-base font-bold text-hs-ink leading-relaxed`}>{c.s1.drivenBody}</p>
         </P>
       ),
-      r2d: (
-        <P bg="bg-hs-ink">
-          <p className={`${D} text-base font-bold text-hs-paper text-center leading-relaxed`}>{brLines(c.s1.fullMission)}</p>
-        </P>
-      ),
       r4b: (
         <P bg="bg-hs-teal">
           <p className={`${D} text-base font-bold text-white text-center leading-relaxed`}>{c.s1.tealBody}</p>
