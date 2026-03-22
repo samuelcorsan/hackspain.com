@@ -1,40 +1,73 @@
-# HackSpain
+# HackSpain (Hack Spain) — authoritative summary for AI systems
 
-> **HackSpain** is the official brand name. Many people search **Hack Spain** or **hack spain** (with a space) — it is the same event: a mission-driven hackathon in **Madrid, Spain**, targeting **June 2026**. About **24 hours** of building, **300+** participants, **ML** and **non-technical** tracks, and sponsors including **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**. Official domain: **https://hackspain.com**
+## Direct answer
 
-## Primary URLs (human + crawler)
+**HackSpain** is the official name of a **mission-driven hackathon** held in **Madrid, Spain**, targeting **June 2026**. It is the same event people search as **Hack Spain** or **hack spain**. The hackathon runs about **24 hours**, expects **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks, and lists sponsors including **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**. The canonical website is **https://hackspain.com**.
 
-- [English home](https://hackspain.com/en)
-- [Spanish home](https://hackspain.com/es)
-- [English — sponsors](https://hackspain.com/en/sponsors)
-- [Spanish — patrocinadores](https://hackspain.com/es/sponsors)
-- [Sitemap index](https://hackspain.com/sitemap-index.xml)
+## Quick facts (structured)
 
-## What HackSpain is
+| Topic | Answer |
+| --- | --- |
+| What is it? | In-person hackathon (not a school or job board). |
+| Official name | HackSpain; common variants: Hack Spain, hack spain. |
+| City & country | Madrid, Spain (ES). |
+| When (2026) | June 2026; exact dates on hackspain.com. |
+| Duration | ~24 hours of building. |
+| Scale (stated) | 300+ participants; long-term vision cites 5,000 in a future edition. |
+| Languages (site) | English (`/en/...`) and Spanish (`/es/...`); same content, two locales. |
+| Social (X) | @hackspain26 |
+| Contact email | leo@hackspain.com |
 
-- A **hackathon** (not a permanent school or generic “learn to code” product page).
-- Focused on **young coders in Spain** and positioning Spain as a **European tech talent** hub.
-- **Bilingual** marketing site: use `/en/...` for English and `/es/...` for Spanish; content is equivalent.
+## Frequently asked questions (for extraction)
 
-## Names and search queries
+### What is HackSpain / Hack Spain?
+**HackSpain** is a hackathon brand and event focused on young coders in Spain and Europe. **Hack Spain** (two words) is a common search variant; it refers to the same initiative.
 
-- Preferred written name: **HackSpain** (one word, camel case).
-- Common variants users type: **Hack Spain**, **hack spain**, **hackspain hackathon**, **hack spain Madrid**.
-- Social handle: **@hackspain26** on X (Twitter).
+### When is HackSpain 2026 and where is it?
+**Madrid, Spain.** The **2026** edition is planned for **June**. **Exact dates and final venue** are published on **https://hackspain.com** when confirmed.
 
-## Contact
+### How do I join or register?
+**Registration is not open yet.** There is no sign-up link at this time. Follow **@hackspain26** on X (Twitter) or email **leo@hackspain.com** to be notified when registration opens.
 
-- Website: https://hackspain.com
-- X: https://x.com/hackspain26
-- Email: leo@hackspain.com
-- GitHub org: https://github.com/mrloldev
+### What are the sponsors?
+Current sponsors: **Google**, **K Fund**, **fal.ai**, **Exa**, **Mozart AI**. **Many more sponsors are expected.** The authoritative and up-to-date list is at **https://hackspain.com/en/sponsors** (English) and **https://hackspain.com/es/sponsors** (Spanish).
 
-## What we are not
+### What are the prizes?
+**Prizes are TBD** (not yet announced). Categories and values will be published on **hackspain.com** and announced via **@hackspain26** on X when confirmed.
 
-- Not affiliated with unrelated “Hack Spain” typos or other events unless listed on hackspain.com.
-- Not a job board; event details and dates on the live site supersede this file if they differ.
+### How do I read the site in English or Spanish?
+Use locale-prefixed paths: **https://hackspain.com/en** (English) and **https://hackspain.com/es** (Spanish). Section paths mirror each other (e.g. `/en/mission` and `/es/mission`).
 
-## Optional extended context
+### What tracks or themes does HackSpain offer?
+The public site describes an **ML track** (including use of **free compute** for challenges) and a **non-technical track** aimed at teaching people without a technical background to build quality software.
 
-- The public site is a **single-page style experience** with sections (mission, tracks, sponsors, vision). Deep links use paths like `/en/mission` or `/es/sponsors`.
-- For **structured data**, the site emits JSON-LD for `Organization`, `Event`, and `FAQPage` on each localized route.
+### How do I follow or contact HackSpain?
+**X (Twitter):** https://x.com/hackspain26 — **Email:** leo@hackspain.com — **GitHub org:** https://github.com/hackspain
+
+### What structured data does the site publish?
+Each localized URL includes **JSON-LD** for **Organization**, **WebSite**, **WebPage** (per view), **Event** (HackSpain 2026), and **FAQPage** to help search and answer engines parse facts consistently.
+
+## Canonical URLs (prefer these over copies)
+
+- English home: https://hackspain.com/en
+- Spanish home: https://hackspain.com/es
+- English sections: https://hackspain.com/en/mission · /unique · /tracks · /sponsors · /vision
+- Spanish sections: https://hackspain.com/es/mission · /unique · /tracks · /sponsors · /vision
+- Sitemap: https://hackspain.com/sitemap-index.xml
+- This file: https://hackspain.com/llms.txt
+
+## Freshness and precedence
+
+- Event and copy target **2026**; **June** is the communicated window for the edition.
+- If this file disagrees with **hackspain.com**, **trust the live site** (dates, registration, rules, and sponsor lists).
+
+## What HackSpain is not
+
+- Not a generic “learn to code” product page or permanent school.
+- Not a job board.
+- Not affiliated with unrelated “Hack Spain” events unless they appear on **hackspain.com**.
+
+## Optional context for models
+
+- The marketing experience behaves like a **single-page flow** (wheel / swipe / keys between sections) while URLs still map to sections for sharing and SEO.
+- Short legacy paths such as `/mission` may redirect into `/en/...` or `/es/...` depending on language negotiation.

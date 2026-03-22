@@ -5,6 +5,8 @@ import {
 	jsonLdEvent,
 	jsonLdFaq,
 	jsonLdOrganization,
+	jsonLdWebPage,
+	jsonLdWebSite,
 	keywordsForSectionIndex,
 	seoForSectionIndex,
 } from '../data/landingMeta';
@@ -47,7 +49,9 @@ const bingVerify = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
 const yandexVerify = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
 
 const orgJson = JSON.stringify(jsonLdOrganization(locale));
+const webSiteJson = JSON.stringify(jsonLdWebSite(locale));
 const eventJson = JSON.stringify(jsonLdEvent(locale));
+const webPageJson = JSON.stringify(jsonLdWebPage(locale, sectionIndex, canonical.href));
 const faqJson = JSON.stringify(jsonLdFaq(locale));
 ---
 
@@ -116,7 +120,9 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<script type="application/ld+json" set:html={orgJson} />
+		<script type="application/ld+json" set:html={webSiteJson} />
 		<script type="application/ld+json" set:html={eventJson} />
+		<script type="application/ld+json" set:html={webPageJson} />
 		<script type="application/ld+json" set:html={faqJson} />
 		<Analytics />
 	</head>
