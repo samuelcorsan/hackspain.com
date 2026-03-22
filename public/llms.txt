@@ -14,7 +14,7 @@
 | When (2026) | June 2026; exact dates on hackspain.com. |
 | Duration | ~24 hours of building. |
 | Scale (stated) | 300+ participants; long-term vision cites 5,000 in a future edition. |
-| Languages (site) | English (`/en/...`) and Spanish (`/es/...`); same content, two locales. |
+| Languages (site) | Root URLs (`/`, `/mission`, …) pick **English or Spanish from the visitor’s browser**; `/en/...` and `/es/...` **force** that language. |
 | Social (X) | @hackspain26 |
 | Contact email | leo@hackspain.com |
 
@@ -36,7 +36,8 @@ Current sponsors: **Google**, **K Fund**, **fal.ai**, **Exa**, **Mozart AI**. **
 **Prizes are TBD** (not yet announced). Categories and values will be published on **hackspain.com** and announced via **@hackspain26** on X when confirmed.
 
 ### How do I read the site in English or Spanish?
-Use locale-prefixed paths: **https://hackspain.com/en** (English) and **https://hackspain.com/es** (Spanish). Section paths mirror each other (e.g. `/en/mission` and `/es/mission`).
+- **Force a language:** **https://hackspain.com/en** or **https://hackspain.com/es** (and `/en/mission`, `/es/mission`, etc.).
+- **Default from the browser:** **https://hackspain.com/** and paths like **/mission** (no locale prefix) render in Spanish or English based on the visitor’s language settings; `/en/...` and `/es/...` are the explicit variants for SEO and sharing.
 
 ### What tracks or themes does HackSpain offer?
 The public site describes an **ML track** (including use of **free compute** for challenges) and a **non-technical track** aimed at teaching people without a technical background to build quality software.
@@ -49,10 +50,9 @@ Each localized URL includes **JSON-LD** for **Organization**, **WebSite**, **Web
 
 ## Canonical URLs (prefer these over copies)
 
-- English home: https://hackspain.com/en
-- Spanish home: https://hackspain.com/es
-- English sections: https://hackspain.com/en/mission · /unique · /tracks · /sponsors · /vision
-- Spanish sections: https://hackspain.com/es/mission · /unique · /tracks · /sponsors · /vision
+- Root (indexable; language follows browser): https://hackspain.com/ and https://hackspain.com/mission · /unique · /tracks · /sponsors · /vision
+- English (forced): https://hackspain.com/en and matching `/en/...` sections
+- Spanish (forced): https://hackspain.com/es and matching `/es/...` sections
 - Sitemap: https://hackspain.com/sitemap-index.xml
 - This file: https://hackspain.com/llms.txt
 
@@ -70,4 +70,4 @@ Each localized URL includes **JSON-LD** for **Organization**, **WebSite**, **Web
 ## Optional context for models
 
 - The marketing experience behaves like a **single-page flow** (wheel / swipe / keys between sections) while URLs still map to sections for sharing and SEO.
-- Short legacy paths such as `/mission` may redirect into `/en/...` or `/es/...` depending on language negotiation.
+- Root paths (`/`, `/mission`, …) are real pages Google can index; `hreflang` points crawlers to `/en/...` and `/es/...` as explicit language versions.
