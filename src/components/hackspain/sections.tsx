@@ -1,6 +1,7 @@
 import type { Locale } from "../../i18n/locales";
 import { getCopy } from "../../i18n/copy";
 import { InlineSvg } from "./InlineSvg";
+import { ParticipantsCountUp } from "./ParticipantsCountUp";
 import { P } from "./Panel";
 import { X_SVG } from "./constants";
 import { logoSvg, googleSvg, exaLogo, falLogo, kfundLogo } from "./assets";
@@ -87,7 +88,10 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r2c: (
         <P bg="bg-hs-gold">
-          <span className={`${B} text-[clamp(2.4rem,5vw,4.2rem)] text-hs-ink leading-none`}>+300</span>
+          <ParticipantsCountUp
+            ariaLabel={`+300 ${c.s0.participants}`}
+            className={`${B} text-[clamp(2.4rem,5vw,4.2rem)] text-hs-ink leading-none`}
+          />
           <p className={`mt-1 ${LBL} text-hs-ink`}>{c.s0.participants}</p>
         </P>
       ),
