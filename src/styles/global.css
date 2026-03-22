@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --color-hs-paper: #f4ecd8;
+  --color-hs-sand: #e8dcc4;
+  --color-hs-cream: #f4ecd8;
+  --color-hs-gold: #eab619;
+  --color-hs-orange: #d96b2a;
+  --color-hs-red: #cc291f;
+  --color-hs-brown: #4a2c1f;
+  --color-hs-slate: #8fb8d1;
+  --color-hs-teal: #35858a;
+  --color-hs-navy: #1e3958;
+  --color-hs-ink: #2a170f;
+}
