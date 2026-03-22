@@ -9,7 +9,7 @@ import { logoSvg, googleLogo, exaLogo, falLogo, kfundLogo, mozartLogo } from "./
 const B = "font-bungee";
 const D = "font-sans";
 const LBL = `${D} text-xs font-black tracking-widest uppercase mb-1`;
-const BD = `${D} text-[clamp(1.08rem,2.35vw,1.4rem)] font-bold leading-relaxed`;
+const BD = `${D} text-[clamp(0.68rem,2.35vw,1.4rem)] font-bold leading-relaxed`;
 
 const BOTTOM_CELLS = ["r5a", "r5b", "r5c", "r5d"] as const;
 
@@ -34,11 +34,11 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
     <P bg="bg-hs-paper">
       <a href="https://x.com/hackspain26" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-hs-ink">
         <span className="h-5 w-5 shrink-0" dangerouslySetInnerHTML={{ __html: X_SVG }} />
-        <span className={`${D} text-base font-bold`}>{c.bottomFollow}</span>
+        <span className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold`}>{c.bottomFollow}</span>
       </a>
     </P>,
     <P bg="bg-hs-paper">
-      <p className={`${D} text-base font-bold text-hs-ink text-center`}>
+      <p className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink text-center`}>
         {c.bottomMade}{" "}
         <a href="https://x.com/mrloldev" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
           {c.bottomMadeLeo}
@@ -46,12 +46,12 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
       </p>
     </P>,
     <P bg="bg-hs-paper">
-      <a href="https://github.com/hackspain" target="_blank" rel="noopener noreferrer" className={`${D} text-base font-bold text-hs-ink underline underline-offset-2`}>
+      <a href="https://github.com/hackspain" target="_blank" rel="noopener noreferrer" className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink underline underline-offset-2`}>
         {c.bottomCode}
       </a>
     </P>,
     <P bg="bg-hs-paper">
-      <a href="mailto:leo@hackspain.com" className={`${D} text-base font-bold text-hs-ink underline underline-offset-2`}>
+      <a href="mailto:leo@hackspain.com" className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink underline underline-offset-2`}>
         {c.bottomEmail}
       </a>
     </P>,
@@ -83,15 +83,15 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       year: (
         <div className="relative h-full w-full">
-          <span className={`absolute bottom-[14%] left-[8%] ${B} text-[clamp(2.2rem,5.5vw,4.5rem)] text-hs-ink leading-none`}>20</span>
-          <span className={`absolute top-[8%] right-[8%] ${B} text-[clamp(2.2rem,5.5vw,4.5rem)] text-white leading-none drop-shadow-sm`}>26</span>
+          <span className={`absolute bottom-[14%] left-[8%] ${B} text-[clamp(1.3rem,5.5vw,4.5rem)] text-hs-ink leading-none`}>20</span>
+          <span className={`absolute top-[8%] right-[8%] ${B} text-[clamp(1.3rem,5.5vw,4.5rem)] text-white leading-none drop-shadow-sm`}>26</span>
         </div>
       ),
       r4d: (
         <P bg="bg-hs-gold">
           <ParticipantsCountUp
             ariaLabel={`+300 ${c.s0.participants}`}
-            className={`${B} text-[clamp(2rem,4.5vw,3.6rem)] text-hs-ink leading-none`}
+            className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-ink leading-none`}
           />
           <p className={`mt-1 ${LBL} text-hs-ink`}>{c.s0.participants}</p>
         </P>
@@ -99,12 +99,12 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       r3a: (
         <P bg="bg-hs-orange">
           <p className={`${LBL} text-hs-paper/60`}>{c.s0.hackathon}</p>
-          <span className={`${B} text-[clamp(1.3rem,2.8vw,2.2rem)] text-hs-paper leading-tight text-center`}>{c.s0.madrid}</span>
+          <span className={`${B} text-[clamp(0.85rem,2.8vw,2.2rem)] text-hs-paper leading-tight text-center`}>{c.s0.madrid}</span>
         </P>
       ),
       r2g: (
         <P bg="bg-hs-red">
-          <span className={`${B} text-[clamp(2.6rem,5.5vw,4.5rem)] text-hs-paper leading-none`}>24</span>
+          <span className={`${B} text-[clamp(1.3rem,5.5vw,4.5rem)] text-hs-paper leading-none`}>24</span>
           <p className={`mt-1 ${LBL} text-hs-paper`}>{c.s0.hours}</p>
         </P>
       ),
@@ -196,7 +196,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       r1e: (
         <div className="flex h-full w-full flex-col items-center justify-center bg-hs-gold px-1 py-0">
           <span
-            className={`${B} text-center leading-[1.12] text-hs-ink text-[clamp(0.62rem,1.65vw,0.95rem)]`}
+            className={`${B} text-center leading-[1.12] text-hs-ink text-[clamp(0.5rem,1.65vw,0.95rem)]`}
           >
             {brLines(c.s3.freeCompute.replace(/ /, "\n"))}
           </span>
@@ -209,7 +209,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r2f: (
         <P bg="bg-hs-red">
-          <span className={`${B} text-lg text-hs-paper text-center leading-tight`}>{brLines(c.s3.forEveryone)}</span>
+          <span className={`${B} text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-paper text-center leading-tight`}>{brLines(c.s3.forEveryone)}</span>
         </P>
       ),
       ...bottomRow(3, c),
@@ -226,7 +226,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <img
             src={googleLogo.src}
             alt={c.sponsorAlt("Google", gEx)}
-            className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain"
+            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain"
           />
         </P>
       ),
@@ -235,18 +235,18 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <img
             src={mozartLogo.src}
             alt={c.sponsorAlt("Mozart AI", mEx)}
-            className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
           />
         </P>
       ),
       r3a: (
         <P bg="bg-hs-teal">
-          <img src={falLogo.src} alt={c.sponsorAlt("fal.ai", fEx)} className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img src={falLogo.src} alt={c.sponsorAlt("fal.ai", fEx)} className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
         </P>
       ),
       r3b: (
         <P bg="bg-hs-orange">
-          <img src={exaLogo.src} alt={c.sponsorAlt("Exa", eEx)} className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img src={exaLogo.src} alt={c.sponsorAlt("Exa", eEx)} className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
         </P>
       ),
       r4c: (
@@ -254,19 +254,19 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <img
             src={kfundLogo.src}
             alt={c.sponsorAlt("K Fund", kEx)}
-            className="h-[clamp(1.8rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
           />
         </P>
       ),
       r2d: (
         <P bg="bg-hs-paper">
-          <p className={`${B} text-[clamp(0.9rem,2vw,1.5rem)] text-hs-ink/40 italic text-center leading-snug`}>{brLines(c.s4.moreWay)}</p>
+          <p className={`${B} text-[clamp(0.6rem,2vw,1.5rem)] text-hs-ink/40 italic text-center leading-snug`}>{brLines(c.s4.moreWay)}</p>
         </P>
       ),
       r4d: (
         <P bg="bg-hs-cream" align="start">
           <p className={`${LBL} text-hs-ink/40`}>{c.s4.prizesLbl}</p>
-          <p className={`${B} text-lg text-hs-ink leading-tight`}>{c.s4.prizesBody}</p>
+          <p className={`${B} text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-ink leading-tight`}>{c.s4.prizesBody}</p>
         </P>
       ),
       ...bottomRow(4, c),
@@ -284,7 +284,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r2c: (
         <P bg="bg-hs-orange">
-          <span className={`${B} text-[clamp(2rem,4.5vw,3.6rem)] text-hs-paper leading-none`}>{c.s5.goalNum}</span>
+          <span className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-paper leading-none`}>{c.s5.goalNum}</span>
           <p className={`mt-1 ${LBL} text-hs-paper`}>{c.s5.goalLbl}</p>
         </P>
       ),
@@ -295,7 +295,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       ),
       r3b: (
         <P bg="bg-hs-red">
-          <span className={`${B} text-[clamp(1rem,2.2vw,1.8rem)] text-hs-gold text-center leading-tight`}>{c.s5.largest}</span>
+          <span className={`${B} text-[clamp(0.65rem,2.2vw,1.8rem)] text-hs-gold text-center leading-tight`}>{c.s5.largest}</span>
         </P>
       ),
       r4b: (

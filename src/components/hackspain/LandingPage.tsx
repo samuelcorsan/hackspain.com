@@ -498,7 +498,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
         return (
           <div
             key={cell.id}
-            className="absolute overflow-hidden"
+            className="absolute overflow-hidden @container"
             style={{
               ...vp(cell.x, cell.y, cell.w, cell.h, artboard),
               ...(cell.clip ? { clipPath: cell.clip } : {}),

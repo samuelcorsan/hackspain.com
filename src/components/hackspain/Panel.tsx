@@ -21,5 +21,5 @@ export function P({ bg = "bg-hs-paper", align = "center", children }: {
   bg?: string; align?: "center" | "start"; children: React.ReactNode;
 }) {
   const a = align === "start" ? "items-start justify-start" : "items-center justify-center";
-  return <div className={`flex h-full w-full flex-col ${a} gap-2 p-3 ${bg}`}>{children}</div>;
+  return <div className={`flex h-full w-full flex-col ${a} gap-1 p-1.5 @[180px]:gap-2 @[180px]:p-3 ${bg}`}>{children}</div>;
 }
