@@ -10,7 +10,7 @@ import {
   keywordsForSectionIndex,
   seoForSectionIndex,
 } from "../data/landingMeta";
-import { pathFromSectionIndex } from "../data/sectionRoutes";
+import { pathFromSectionIndex, pathRootFromSectionIndex } from "../data/sectionRoutes";
 import { getCopy } from "../i18n/copy";
 import type { Locale } from "../i18n/locales";
 
@@ -20,9 +20,11 @@ interface Props {
   description?: string;
   ogImageAlt?: string;
   sectionIndex?: number;
+  pathMode?: "locale-prefix" | "root";
 }
 
 const locale = Astro.props.locale;
+const pathMode = Astro.props.pathMode ?? "locale-prefix";
 const t = getCopy(locale);
 const sectionIndex = Astro.props.sectionIndex ?? 0;
 const seo = seoForSectionIndex(locale, sectionIndex);
@@ -32,7 +34,10 @@ const {
   ogImageAlt = seo.ogImageAlt,
 } = Astro.props;
 
-const canonicalPath = pathFromSectionIndex(locale, sectionIndex);
+const canonicalPath =
+  pathMode === "root"
+    ? pathRootFromSectionIndex(sectionIndex)
+    : pathFromSectionIndex(locale, sectionIndex);
 const canonical = new URL(canonicalPath, Astro.site);
 const ogImage = new URL("/og.png", Astro.site);
 const ogImageUrl = ogImage.href;
@@ -42,6 +47,13 @@ const hrefLangEn = new URL(pathFromSectionIndex("en", sectionIndex), Astro.site)
   .href;
 const hrefLangEs = new URL(pathFromSectionIndex("es", sectionIndex), Astro.site)
   .href;
+
+const hrefLangXDefault = new URL(
+  pathMode === "root"
+    ? pathRootFromSectionIndex(sectionIndex)
+    : pathFromSectionIndex("en", sectionIndex),
+  Astro.site,
+).href;
 
 const ogLocale = locale === "es" ? "es_ES" : "en_US";
 const ogLocaleAlt = locale === "es" ? "en_US" : "es_ES";
@@ -76,7 +88,7 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" hreflang="en" href={hrefLangEn} />
     <link rel="alternate" hreflang="es" href={hrefLangEs} />
-    <link rel="alternate" hreflang="x-default" href={hrefLangEn} />
+    <link rel="alternate" hreflang="x-default" href={hrefLangXDefault} />
     <meta name="description" content={description} />
     <meta
       name="robots"

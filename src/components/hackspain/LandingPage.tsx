@@ -8,16 +8,25 @@ import { CELLS } from "./cells";
 import { ILLS } from "./assets";
 import { buildSections } from "./sections";
 import { keywordsForSectionIndex, seoForSectionIndex } from "../../data/landingMeta";
-import { pathFromSectionIndex, parsePath } from "../../data/sectionRoutes";
+import {
+  parsePath,
+  pathFromSectionIndex,
+  pathRootFromSectionIndex,
+} from "../../data/sectionRoutes";
 import { getCopy } from "../../i18n/copy";
 import type { Locale } from "../../i18n/locales";
+import { localeFromNavigator } from "../../i18n/locales";
 
-function applySeoToDocument(locale: Locale, sectionIdx: number) {
+function applySeoToDocument(
+  loc: Locale,
+  sectionIdx: number,
+  pathStrategy: "prefixed" | "root",
+) {
   if (typeof document === "undefined") return;
-  const { title, description, ogImageAlt } = seoForSectionIndex(locale, sectionIdx);
-  const keywords = keywordsForSectionIndex(locale, sectionIdx);
+  const { title, description, ogImageAlt } = seoForSectionIndex(loc, sectionIdx);
+  const keywords = keywordsForSectionIndex(loc, sectionIdx);
   document.title = title;
-  document.documentElement.lang = locale;
+  document.documentElement.lang = loc;
   const setMeta = (sel: string, attr: string, val: string) => {
     const el = document.querySelector(sel);
     if (el) el.setAttribute(attr, val);
@@ -26,42 +35,63 @@ function applySeoToDocument(locale: Locale, sectionIdx: number) {
   setMeta('meta[name="keywords"]', "content", keywords);
   setMeta('meta[property="og:title"]', "content", title);
   setMeta('meta[property="og:description"]', "content", description);
-  setMeta('meta[property="og:url"]', "content", window.location.href);
+  const path =
+    pathStrategy === "root"
+      ? pathRootFromSectionIndex(sectionIdx)
+      : pathFromSectionIndex(loc, sectionIdx);
+  const pageUrl = `${window.location.origin}${path}`;
+  setMeta('meta[property="og:url"]', "content", pageUrl);
   setMeta('meta[property="og:image:alt"]', "content", ogImageAlt);
-  setMeta('meta[property="og:locale"]', "content", locale === "es" ? "es_ES" : "en_US");
-  setMeta('meta[property="og:locale:alternate"]', "content", locale === "es" ? "en_US" : "es_ES");
+  setMeta('meta[property="og:locale"]', "content", loc === "es" ? "es_ES" : "en_US");
+  setMeta('meta[property="og:locale:alternate"]', "content", loc === "es" ? "en_US" : "es_ES");
   setMeta('meta[name="twitter:title"]', "content", title);
   setMeta('meta[name="twitter:description"]', "content", description);
   setMeta('meta[name="twitter:image:alt"]', "content", ogImageAlt);
-  const path = pathFromSectionIndex(locale, sectionIdx);
-  const canon = `${window.location.origin}${path}`;
   const link = document.querySelector('link[rel="canonical"]');
-  if (link) link.setAttribute("href", canon);
+  if (link) link.setAttribute("href", pageUrl);
+  const origin = window.location.origin;
   const enPath = pathFromSectionIndex("en", sectionIdx);
   const esPath = pathFromSectionIndex("es", sectionIdx);
-  const origin = window.location.origin;
   document.querySelectorAll('link[rel="alternate"][hreflang="en"]').forEach((el) => {
     el.setAttribute("href", `${origin}${enPath}`);
   });
   document.querySelectorAll('link[rel="alternate"][hreflang="es"]').forEach((el) => {
     el.setAttribute("href", `${origin}${esPath}`);
   });
+  const xDefault = document.querySelector('link[rel="alternate"][hreflang="x-default"]');
+  if (xDefault) {
+    const defPath =
+      pathStrategy === "root" ? pathRootFromSectionIndex(sectionIdx) : enPath;
+    xDefault.setAttribute("href", `${origin}${defPath}`);
+  }
 }
 
-type Props = { locale: Locale; initialSection?: number };
+type UrlMode = "prefixed" | "root";
 
-export function LandingPage({ locale, initialSection = 0 }: Props) {
+type Props = { locale: Locale; initialSection?: number; urlMode?: UrlMode };
+
+export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }: Props) {
   const [section, setSection] = useState(initialSection);
   const [activeLocale, setActiveLocale] = useState(locale);
   const [dir, setDir] = useState(1);
   const [reducedMotion, setReducedMotion] = useState(false);
   const locked = useRef(false);
+  const activeLocaleRef = useRef(activeLocale);
+  activeLocaleRef.current = activeLocale;
+
   const sections = useMemo(() => buildSections(activeLocale), [activeLocale]);
   const copy = useMemo(() => getCopy(activeLocale), [activeLocale]);
 
   useEffect(() => {
     setActiveLocale(locale);
   }, [locale]);
+
+  useEffect(() => {
+    if (urlMode !== "root") return;
+    const d = localeFromNavigator();
+    setActiveLocale(d);
+    applySeoToDocument(d, initialSection, "root");
+  }, [urlMode, initialSection]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -83,20 +113,26 @@ export function LandingPage({ locale, initialSection = 0 }: Props) {
     [reducedMotion],
   );
 
-  const goToSection = useCallback((next: number, d: 1 | -1) => {
-    if (locked.current) return;
-    locked.current = true;
-    setDir(d);
-    setSection(next);
-    const path = pathFromSectionIndex(activeLocale, next);
-    if (typeof window !== "undefined" && window.location.pathname !== path) {
-      window.history.pushState({ section: next, locale: activeLocale }, "", path);
-    }
-    applySeoToDocument(activeLocale, next);
-    setTimeout(() => {
-      locked.current = false;
-    }, 700);
-  }, [activeLocale]);
+  const goToSection = useCallback(
+    (next: number, d: 1 | -1) => {
+      if (locked.current) return;
+      locked.current = true;
+      setDir(d);
+      setSection(next);
+      const path =
+        urlMode === "root"
+          ? pathRootFromSectionIndex(next)
+          : pathFromSectionIndex(activeLocale, next);
+      if (typeof window !== "undefined" && window.location.pathname !== path) {
+        window.history.pushState({ section: next, locale: activeLocale }, "", path);
+      }
+      applySeoToDocument(activeLocale, next, urlMode);
+      setTimeout(() => {
+        locked.current = false;
+      }, 700);
+    },
+    [activeLocale, urlMode],
+  );
 
   const advance = useCallback(
     (d: 1 | -1) => {
@@ -144,11 +180,16 @@ export function LandingPage({ locale, initialSection = 0 }: Props) {
 
   useEffect(() => {
     const onPop = () => {
-      const { locale: loc, sectionIndex } = parsePath(window.location.pathname);
-      setActiveLocale(loc);
+      const parsed = parsePath(window.location.pathname);
       setDir(1);
-      setSection(sectionIndex);
-      applySeoToDocument(loc, sectionIndex);
+      if (parsed.mode === "prefixed") {
+        setActiveLocale(parsed.locale);
+        setSection(parsed.sectionIndex);
+        applySeoToDocument(parsed.locale, parsed.sectionIndex, "prefixed");
+      } else {
+        setSection(parsed.sectionIndex);
+        applySeoToDocument(activeLocaleRef.current, parsed.sectionIndex, "root");
+      }
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);

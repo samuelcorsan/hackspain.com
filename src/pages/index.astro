@@ -1,31 +1,10 @@
 ---
+import { LandingPage } from "../components/hackspain";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="robots" content="noindex" />
-		<meta http-equiv="refresh" content="0;url=/en" />
-		<title>Redirecting…</title>
-		<script is:inline>
-			(function () {
-				var loc = "en";
-				try {
-					var L = navigator.languages || [navigator.language || "en"];
-					for (var i = 0; i < L.length; i++) {
-						if (String(L[i]).toLowerCase().startsWith("es")) {
-							loc = "es";
-							break;
-						}
-					}
-				} catch (e) {}
-				var target = "/" + loc;
-				if (location.pathname.replace(/\/$/, "") !== target) location.replace(target);
-			})();
-		</script>
-	</head>
-	<body style="margin:0">
-	</body>
-</html>
+<Layout locale="en" sectionIndex={0} pathMode="root">
+	<main id="main" class="contents">
+		<LandingPage client:load locale="en" initialSection={0} urlMode="root" />
+	</main>
+</Layout>

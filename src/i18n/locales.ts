@@ -14,3 +14,14 @@ export function preferredLocale(acceptLanguage: string | null): Locale {
   }
   return "en";
 }
+
+export function localeFromNavigator(): Locale {
+  if (typeof navigator === "undefined") return "en";
+  const list = navigator.languages?.length ? navigator.languages : [navigator.language || "en"];
+  for (const raw of list) {
+    const tag = String(raw).toLowerCase();
+    if (tag.startsWith("es")) return "es";
+    if (tag.startsWith("en")) return "en";
+  }
+  return "en";
+}

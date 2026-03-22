@@ -1,19 +1,13 @@
 ---
-import LegacyRedirectHead from "../components/LegacyRedirectHead.astro";
+import { LandingPage } from "../components/hackspain";
+import Layout from "../layouts/Layout.astro";
+import { SECTION_SLUGS } from "../data/sectionRoutes";
 
-const slug = "mission" as const;
+const sectionIndex = SECTION_SLUGS.indexOf("mission") + 1;
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<LegacyRedirectHead slug={slug} />
-	</head>
-	<body style="margin: 0; padding: 1rem; font-family: system-ui, sans-serif">
-		<p>
-			<a href={`/en/${slug}`}>English</a>
-			·
-			<a href={`/es/${slug}`}>Español</a>
-		</p>
-	</body>
-</html>
+<Layout locale="en" sectionIndex={sectionIndex} pathMode="root">
+	<main id="main" class="contents">
+		<LandingPage client:load locale="en" initialSection={sectionIndex} urlMode="root" />
+	</main>
+</Layout>
