@@ -13,6 +13,8 @@ export function prepareIllustrationSvg(raw: string): string {
   out = out.replace(/#401a05/gi, 'var(--color-hs-ink)');
   out = out.replace(/#33211a/gi, 'var(--color-hs-ink)');
   out = out.replace(/#3f291e/gi, 'var(--color-hs-ink)');
+  out = out.replace(/#3b2719/gi, 'var(--color-hs-ink)');
+  out = out.replace(/#010b1b/gi, 'var(--color-hs-ink)');
   out = out.replace(/#000000/gi, 'var(--color-hs-ink)');
   out = out.replace(/#000\b/gi, 'var(--color-hs-ink)');
 

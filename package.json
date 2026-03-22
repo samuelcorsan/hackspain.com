@@ -7,6 +7,8 @@
   },
   "scripts": {
     "assets:quiver": "bun scripts/quiver-generate-assets.mjs",
+    "assets:quiver:tiles": "node scripts/quiver-generate-tile-illustrations.mjs",
+    "assets:quiver:tiles+heroes": "node scripts/quiver-generate-tile-illustrations.mjs --with-heroes",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

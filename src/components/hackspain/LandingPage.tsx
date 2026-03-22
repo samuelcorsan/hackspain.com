@@ -24,7 +24,7 @@ import {
 } from "./constants";
 import { HorseMissionTransition } from "./HorseMissionTransition";
 import { CELLS, type CellDef } from "./cells";
-import { ILLS } from "./assets";
+import { illustrationsForSection } from "./illustrationThemes";
 import { buildSections } from "./sections";
 import { keywordsForSectionIndex, seoForSectionIndex } from "../../data/landingMeta";
 import {
@@ -142,6 +142,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
 
   const sections = useMemo(() => buildSections(activeLocale), [activeLocale]);
   const copy = useMemo(() => getCopy(activeLocale), [activeLocale]);
+  const ills = useMemo(() => illustrationsForSection(section), [section]);
 
   useEffect(() => {
     if (urlMode === "root") return;
@@ -405,22 +406,49 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
         />
       ) : null}
 
-      {ILLS.map((ill, i) => (
-        <div
-          key={i}
-          className={`absolute overflow-hidden flex ${ill.box}`}
-          style={vp(ill.x, ill.y, ill.w, ill.h)}
-          aria-hidden
-          hidden={
-            horseToUnique === "horse_video" &&
-            !!HORSE_VIDEO_CHROMA_KEY_HEX &&
-            horseChromaSvgHidden &&
-            i === HORSE_ILLUSTRATION_INDEX
-          }
-        >
-          <InlineSvg svg={ill.svg} className={ill.img} decorative />
-        </div>
-      ))}
+      {ills.map((ill, i) =>
+        ill.svg ? (
+          <div
+            key={ill.id}
+            className="pointer-events-none absolute overflow-hidden"
+            style={{
+              ...vp(ill.x, ill.y, ill.w, ill.h),
+              ...(ill.clip ? { clipPath: ill.clip } : {}),
+            }}
+            aria-hidden
+          >
+            <AnimatePresence mode="popLayout" custom={dir} initial={false}>
+              <motion.div
+                key={`${ill.id}-${section}-${activeLocale}`}
+                className={`absolute inset-0 flex ${ill.box}`}
+                custom={dir}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={
+                  reducedMotion
+                    ? { type: "tween", duration: 0.2, delay: ill.delay * 0.2 }
+                    : { ...SPRING, delay: ill.delay }
+                }
+                hidden={
+                  horseToUnique === "horse_video" &&
+                  !!HORSE_VIDEO_CHROMA_KEY_HEX &&
+                  horseChromaSvgHidden &&
+                  i === HORSE_ILLUSTRATION_INDEX
+                }
+              >
+                <InlineSvg
+                  svg={ill.svg}
+                  className={ill.img}
+                  fill={ill.fill}
+                  decorative
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        ) : null,
+      )}
 
       {CELLS.map((cell) => {
         const horse = horseToUnique === "horse_video";
