@@ -51,7 +51,14 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
         >
           <span className="h-5 w-5" dangerouslySetInnerHTML={{ __html: INSTAGRAM_SVG }} />
         </a>
-        <span className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold`}>{c.bottomFollow}</span>
+        <a
+          href="https://x.com/hackspain26"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold underline underline-offset-2`}
+        >
+          {c.bottomFollow}
+        </a>
       </div>
     </P>,
     <P bg="bg-hs-paper">
@@ -59,6 +66,10 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
         {c.bottomMade}{" "}
         <a href="https://x.com/mrloldev" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
           {c.bottomMadeLeo}
+        </a>
+        {c.bottomMadeAnd}
+        <a href="https://x.com/disamdev" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+          {c.bottomMadeSamu}
         </a>
       </p>
     </P>,

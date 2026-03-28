@@ -12,6 +12,8 @@ export type Copy = {
   bottomSocialInstagramAria: string;
   bottomMade: string;
   bottomMadeLeo: string;
+  bottomMadeAnd: string;
+  bottomMadeSamu: string;
   bottomCode: string;
   bottomEmail: string;
   logoAria: string;
@@ -118,6 +120,8 @@ const en: Copy = {
   bottomSocialInstagramAria: "HackSpain on Instagram (@hackspain26)",
   bottomMade: "Made with ♥ by",
   bottomMadeLeo: "Leo",
+  bottomMadeAnd: " & ",
+  bottomMadeSamu: "Samu",
   bottomCode: "Check this code →",
   bottomEmail: "leo@hackspain.com",
   logoAria: "HackSpain, also known as Hack Spain — hackathon Madrid, Spain and Europe, 2026",
@@ -230,6 +234,8 @@ const es: Copy = {
   bottomSocialInstagramAria: "HackSpain en Instagram (@hackspain26)",
   bottomMade: "Hecho con ♥ por",
   bottomMadeLeo: "Leo",
+  bottomMadeAnd: " y ",
+  bottomMadeSamu: "Samu",
   bottomCode: "Ver el código →",
   bottomEmail: "leo@hackspain.com",
   logoAria: "HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026",
