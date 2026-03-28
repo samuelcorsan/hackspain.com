@@ -92,8 +92,13 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
   return { [actionCell]: actions[i], [copyCell]: copyEl };
 }
 
+function signupFormHref(loc: Locale): string {
+  return loc === "es" ? "/es/signup" : "/signup";
+}
+
 export function buildSections(locale: Locale): Record<string, React.ReactNode>[] {
   const c = getCopy(locale);
+  const signupHref = signupFormHref(locale);
   const gEx = locale === "es" ? "hackathon España Google, hackathon Spain" : "Google sponsor hackathon Madrid and Spain";
   const kEx = locale === "es" ? "inversión hackathon España" : "venture capital sponsor hackathon Spain";
   const fEx = locale === "es" ? "IA hackathon Madrid" : "AI infrastructure hackathon Spain";
@@ -104,8 +109,15 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
     {
       hero: (
         <P bg="bg-hs-paper">
-          <div className="w-full max-w-[380px]">
+          <div className="flex w-full max-w-[380px] flex-col items-center gap-2 @[220px]:gap-3">
             <InlineSvg svg={logoSvg} className="w-full h-auto" label={c.logoAria} />
+            <a
+              href={signupHref}
+              className={`shrink-0 border-[3px] border-hs-ink bg-hs-gold px-4 py-2 ${B} text-[clamp(0.75rem,2.4vw,1rem)] text-hs-ink tracking-wide transition-[filter] hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hs-navy`}
+              aria-label={c.s0.signupCtaAria}
+            >
+              {c.s0.signupCta}
+            </a>
           </div>
         </P>
       ),

@@ -23,6 +23,8 @@ export type Copy = {
     hackathon: string;
     madrid: string;
     hours: string;
+    signupCta: string;
+    signupCtaAria: string;
   };
   s1: {
     label: string;
@@ -137,6 +139,8 @@ const en: Copy = {
     hackathon: "HACKATHON",
     madrid: "MADRID · JUNE",
     hours: "HOURS",
+    signupCta: "Apply",
+    signupCtaAria: "Apply to HackSpain — open application form",
   },
   s1: {
     label: "MISSION",
@@ -257,6 +261,8 @@ const es: Copy = {
     hackathon: "HACKATHON",
     madrid: "MADRID · JUNIO",
     hours: "HORAS",
+    signupCta: "Apúntate",
+    signupCtaAria: "Solicitar plaza en HackSpain — abrir formulario",
   },
   s1: {
     label: "MISIÓN",
