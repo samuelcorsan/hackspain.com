@@ -210,8 +210,8 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <ButtonLink
             href={ambassadorHref}
             variant="teal"
-            size="compact"
-            className="mt-3 shrink-0 self-start"
+            size="micro"
+            className="mt-1.5 shrink-0 self-start @[220px]:mt-2"
             aria-label={c.s2.ambCtaAria}
           >
             {c.s2.ambCta}
