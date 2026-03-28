@@ -119,6 +119,32 @@ export function signupSeo(locale: Locale): PageSeo {
   };
 }
 
+const AMBASSADOR_KEYWORDS_EN =
+  "HackSpain ambassador, hackathon campus rep Spain, university hackathon Madrid 2026, student ambassador hackathon";
+const AMBASSADOR_KEYWORDS_ES =
+  "embajador HackSpain, campus hackathon España, universidad hackathon Madrid 2026, embajador estudiantil hackathon";
+
+export function ambassadorKeywords(locale: Locale): string {
+  return locale === "es" ? AMBASSADOR_KEYWORDS_ES : AMBASSADOR_KEYWORDS_EN;
+}
+
+export function ambassadorSeo(locale: Locale): PageSeo {
+  if (locale === "es") {
+    return {
+      title: "Embajadores — HACKSPAIN 2026 | hackathon Madrid",
+      description:
+        "Programa de embajadores HackSpain: lleva el hackathon a tu universidad, perks y solicitud online. Madrid 2026.",
+      ogImageAlt: "HackSpain 2026 — programa de embajadores",
+    };
+  }
+  return {
+    title: "Ambassadors — HACKSPAIN 2026 | hackathon Madrid Spain",
+    description:
+      "HackSpain ambassador program: represent the hackathon on your campus, unlock perks, and apply online. Madrid 2026.",
+    ogImageAlt: "HackSpain 2026 — ambassador program",
+  };
+}
+
 const KEYWORDS_BASE_EN =
   "hack spain, Hack Spain, hack spain hackathon, hack spain Madrid, hack spain 2026, hackathon Madrid, hackathon Spain, hackathon España, HackSpain, young coders Spain, hack day Madrid, programming Madrid, hackspain.com";
 

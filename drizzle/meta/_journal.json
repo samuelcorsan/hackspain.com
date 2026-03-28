@@ -8,6 +8,13 @@
       "when": 1774703408798,
       "tag": "0000_small_sabretooth",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774722361682,
+      "tag": "0001_illegal_genesis",
+      "breakpoints": true
     }
   ]
 }

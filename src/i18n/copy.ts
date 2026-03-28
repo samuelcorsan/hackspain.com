@@ -107,6 +107,53 @@ export type Copy = {
     errorInvalidEmail: string;
     errorAccessDenied: string;
   };
+  ambassador: {
+    backHome: string;
+    heroKicker: string;
+    heroTitle: string;
+    heroLead: string;
+    heroCta: string;
+    dutiesTitle: string;
+    duties: [string, string, string];
+    selectionNoteTitle: string;
+    selectionNoteBody: string;
+    perksTitle: string;
+    perksIntro: string;
+    perksItems: [string, string, string, string, string, string];
+    perksTravelInfoAria: string;
+    perksTravelTooltip: string;
+    formTitle: string;
+    formSubtitle: string;
+    fullName: string;
+    email: string;
+    institution: string;
+    cityRegion: string;
+    socialsTitle: string;
+    socialsRequiredHint: string;
+    x: string;
+    linkedin: string;
+    github: string;
+    web: string;
+    socialXPlaceholder: string;
+    socialLinkedinPlaceholder: string;
+    socialGithubPlaceholder: string;
+    motivation: string;
+    motivationHint: string;
+    outreachPlan: string;
+    outreachPlanHint: string;
+    submit: string;
+    submitting: string;
+    applicationReceived: string;
+    alreadyApplied: string;
+    applyAgain: string;
+    errorGeneric: string;
+    errorDuplicate: string;
+    errorSocialRequired: string;
+    errorInvalidSocialUrl: string;
+    errorInvalidEmail: string;
+    errorAccessDenied: string;
+    errorRequiredFields: string;
+  };
 };
 
 const en: Copy = {
@@ -230,6 +277,72 @@ const en: Copy = {
     errorInvalidEmail: "Please enter a valid email address.",
     errorAccessDenied:
       "We couldn’t verify this request. Refresh the page and try again, or use a normal browser with JavaScript enabled.",
+  },
+  ambassador: {
+    backHome: "← Home",
+    heroKicker: "Ambassador program",
+    heroTitle: "Be the face of HackSpain at your campus.",
+    heroLead:
+      "Rally builders, spread the word, and nudge people toward signup — we’ll keep you on top of dates and official links, help if you’re unsure about facts, and you’ve got a direct line to the team for Madrid 2026.",
+    heroCta: "Apply below",
+    dutiesTitle: "What ambassadors do",
+    duties: [
+      "Post about HackSpain on the apps you already use. We’ll give you the dates, official links, and anything you need so facts stay right—but you write and shoot it yourself, in your own voice.",
+      "Mention it in real conversations: the class group chat, the society you’re in, friends who code or might want to try. If they’re interested, point them to hackspain.com or the signup form.",
+      "When we publish something important—applications opening, deadlines, big news—reshare it or drop it in your stories so it doesn’t get buried.",
+    ],
+    selectionNoteTitle: "Reach matters in selection",
+    selectionNoteBody:
+      "We give extra weight to applicants who already move numbers on a platform — a solid following, steady posts, or a profile people actually watch. Mention which network and rough reach in your application so we can see the fit.",
+    perksTitle: "What every ambassador gets",
+    perksIntro: "Same package for everyone in the program — no tiers, no favourites.",
+    perksItems: [
+      "Guaranteed spot at the hackathon",
+      "Exclusive merch",
+      "X (Twitter) profile badge",
+      "Letter of recommendation from the HackSpain team",
+      "Physical certificate",
+      "Travel reimbursement",
+    ],
+    perksTravelInfoAria: "More about travel reimbursement",
+    perksTravelTooltip:
+      "We’ll cover travel up to a fixed cap per ambassador — the exact amount and how to claim it are spelled out when you’re onboarded, so expectations stay clear and fair for everyone.",
+    formTitle: "Ambassador application",
+    formSubtitle: "Tell us who you are, where you study, and how you’d represent HackSpain 2026.",
+    fullName: "Full name",
+    email: "Email",
+    institution: "University, bootcamp, or organisation",
+    cityRegion: "City / region",
+    socialsTitle: "Socials & links",
+    socialsRequiredHint: "Add at least one link (X, LinkedIn, GitHub, or your website).",
+    x: "X (Twitter)",
+    linkedin: "LinkedIn",
+    github: "GitHub",
+    web: "Website",
+    socialXPlaceholder: "you, @you, or paste a link",
+    socialLinkedinPlaceholder: "in/you, company/page, or paste a link",
+    socialGithubPlaceholder: "you or you/repo — or paste a link",
+    motivation: "Why do you want to be an ambassador?",
+    motivationHint: "A few sentences on what drives you — community, tech, your campus, reaching new people…",
+    outreachPlan: "How would you promote HackSpain?",
+    outreachPlanHint:
+      "Which platforms you’d use, which chats or circles you’d tap for word of mouth, and how you’d keep HackSpain in the conversation.",
+    submit: "Send application",
+    submitting: "Sending…",
+    applicationReceived:
+      "Thanks — we’ve received your ambassador application. We’ll email you soon with next steps.",
+    alreadyApplied:
+      "You already sent an ambassador application from this browser. Use “Apply again” only if you need to submit another one.",
+    applyAgain: "Apply again",
+    errorGeneric: "Something went wrong. Try again in a moment.",
+    errorDuplicate: "This email already has an ambassador application.",
+    errorSocialRequired: "Please add at least one profile or website link.",
+    errorInvalidSocialUrl:
+      "One or more links are not valid for that field (check X, LinkedIn, GitHub, or your website).",
+    errorInvalidEmail: "Please enter a valid email address.",
+    errorAccessDenied:
+      "We couldn’t verify this request. Refresh the page and try again, or use a normal browser with JavaScript enabled.",
+    errorRequiredFields: "Please fill in all required fields.",
   },
 };
 
@@ -355,6 +468,73 @@ const es: Copy = {
     errorInvalidEmail: "Introduce un correo electrónico válido.",
     errorAccessDenied:
       "No hemos podido verificar la solicitud. Recarga la página e inténtalo de nuevo, o usa un navegador normal con JavaScript activado.",
+  },
+  ambassador: {
+    backHome: "← Inicio",
+    heroKicker: "Programa de embajadores",
+    heroTitle: "Sé la cara de HackSpain en tu campus.",
+    heroLead:
+      "Junta builders, mueve el boca a boca y empuja hacia el registro — te mantenemos al día con fechas y enlaces oficiales, te aclaramos dudas si las tienes, y tienes contacto directo con el equipo para Madrid 2026.",
+    heroCta: "Solicitar abajo",
+    dutiesTitle: "Qué hacen l@s embajadores",
+    duties: [
+      "Hablar de HackSpain en las redes que ya usas. Te damos fechas, enlaces oficiales y lo imprescindible para no equivocarte, pero el post lo escribes y grabas tú, con tu rollo.",
+      "Comentarlo en la vida real: el grupo de la asignatura, el Discord del grado, la asociación, amig@s a los que les encaje. Si quieren saber más, que miren hackspain.com o el formulario de registro.",
+      "Cuando publiquemos algo gordo—abren plazas, fechas límite, noticias—compártelo o súbelo a historias para que no pase desapercibido.",
+    ],
+    selectionNoteTitle: "El alcance cuenta en la selección",
+    selectionNoteBody:
+      "Damos más peso a quien ya mueve cifras en alguna red — audiencia sólida, publicación constante o un perfil que la gente sigue. Indica qué red y un alcance aproximado en la solicitud para que veamos el encaje.",
+    perksTitle: "Lo que recibe cada embajador/a",
+    perksIntro: "El mismo paquete para tod@s l@s del programa — sin niveles ni excepciones.",
+    perksItems: [
+      "Participación asegurada en el hackathon",
+      "Merch exclusivo",
+      "Badge en X (Twitter)",
+      "Carta de recomendación del equipo HackSpain",
+      "Certificado físico",
+      "Reembolso de viaje",
+    ],
+    perksTravelInfoAria: "Más información sobre el reembolso de viaje",
+    perksTravelTooltip:
+      "Cubrimos el viaje hasta un tope fijo por embajador/a — la cifra exacta y cómo solicitarlo te lo explicamos al incorporarte, para que las expectativas sean claras y justas para tod@s.",
+    formTitle: "Solicitud de embajador/a",
+    formSubtitle: "Cuéntanos quién eres, dónde estudias y cómo representarías HackSpain 2026.",
+    fullName: "Nombre completo",
+    email: "Email",
+    institution: "Universidad, bootcamp u organización",
+    cityRegion: "Ciudad / región",
+    socialsTitle: "Redes y enlaces",
+    socialsRequiredHint:
+      "Añade al menos un enlace (X, LinkedIn, GitHub o tu web).",
+    x: "X (Twitter)",
+    linkedin: "LinkedIn",
+    github: "GitHub",
+    web: "Web",
+    socialXPlaceholder: "usuario, @usuario o pega un enlace",
+    socialLinkedinPlaceholder: "in/usuario, company/página o pega un enlace",
+    socialGithubPlaceholder: "usuario o usuario/repo — o pega un enlace",
+    motivation: "¿Por qué quieres ser embajador/a?",
+    motivationHint: "Unas frases sobre qué te mueve — comunidad, tech, tu campus, llegar a gente nueva…",
+    outreachPlan: "¿Cómo promocionarías HackSpain?",
+    outreachPlanHint:
+      "Qué redes usarías, por qué chats o círculos moverías el boca a boca y cómo mantendrías HackSpain en la conversación.",
+    submit: "Enviar solicitud",
+    submitting: "Enviando…",
+    applicationReceived:
+      "¡Gracias! Hemos recibido tu solicitud de embajador/a. Te escribiremos pronto con los siguientes pasos.",
+    alreadyApplied:
+      "Ya enviaste una solicitud de embajador/a desde este navegador. Usa «Volver a solicitar» solo si necesitas mandar otra.",
+    applyAgain: "Volver a solicitar",
+    errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
+    errorDuplicate: "Este email ya tiene una solicitud de embajador/a.",
+    errorSocialRequired: "Añade al menos un enlace a perfil o web.",
+    errorInvalidSocialUrl:
+      "Uno o más enlaces no son válidos para ese campo (revisa X, LinkedIn, GitHub o tu web).",
+    errorInvalidEmail: "Introduce un correo electrónico válido.",
+    errorAccessDenied:
+      "No hemos podido verificar la solicitud. Recarga la página e inténtalo de nuevo, o usa un navegador normal con JavaScript activado.",
+    errorRequiredFields: "Rellena todos los campos obligatorios.",
   },
 };
 

@@ -148,7 +148,7 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
   return out.length > SIGNUP_MAX.url ? "" : out;
 }
 
-function socialField(kind: SocialKind) {
+export function socialField(kind: SocialKind) {
   return z.string().max(SIGNUP_MAX.url).transform((raw, ctx) => {
     const trimmed = raw.trim();
     const expanded =

@@ -1,0 +1,38 @@
+---
+export const prerender = true;
+import { AmbassadorPage } from "../../components/hackspain";
+import AmbassadorNavbar from "../../components/hackspain/AmbassadorNavbar.astro";
+import Layout from "../../layouts/Layout.astro";
+import { ambassadorKeywords, ambassadorSeo } from "../../data/landingMeta";
+import { isLocale, type Locale } from "../../i18n/locales";
+
+export function getStaticPaths() {
+  return [{ params: { locale: "es" } }];
+}
+
+const { locale: loc } = Astro.params;
+const locale: Locale = typeof loc === "string" && isLocale(loc) ? loc : "es";
+const seo = ambassadorSeo(locale);
+const kw = ambassadorKeywords(locale);
+---
+
+<Layout
+  locale={locale}
+  sectionIndex={0}
+  allowScroll
+  title={seo.title}
+  description={seo.description}
+  ogImageAlt={seo.ogImageAlt}
+  canonicalPathOverride="/es/ambassador"
+  hrefLangEnPathOverride="/ambassador"
+  hrefLangEsPathOverride="/es/ambassador"
+  hrefLangXDefaultPathOverride="/ambassador"
+  keywordsOverride={kw}
+>
+  <main id="main" class="relative min-h-dvh w-full">
+    <div class="relative z-10 mx-auto max-w-5xl px-3 pt-6 sm:px-4 sm:pt-10">
+      <AmbassadorNavbar locale={locale} />
+    </div>
+    <AmbassadorPage client:load locale={locale} />
+  </main>
+</Layout>

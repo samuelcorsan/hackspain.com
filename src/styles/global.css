@@ -21,6 +21,12 @@ body {
   font-family: var(--font-sans);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 .sr-only {
 	position: absolute;
 	width: 1px;
