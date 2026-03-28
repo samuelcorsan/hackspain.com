@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { hackathonSignups } from "../../db/schema";
+import { notifyDiscordNewSignup } from "../../lib/discordSignupWebhook";
 import { parseSignupBody } from "../../lib/signupValidation";
 
 export const prerender = false;
@@ -53,6 +54,17 @@ export const POST: APIRoute = async ({ request }) => {
       webUrl: emptyToNull(webUrl),
       achievements: emptyToNull(achievements),
       freeTime: emptyToNull(freeTime),
+    });
+
+    await notifyDiscordNewSignup({
+      fullName,
+      email,
+      xUrl,
+      linkedinUrl,
+      githubUrl,
+      webUrl,
+      achievements,
+      freeTime,
     });
 
     return Response.json({ ok: true });

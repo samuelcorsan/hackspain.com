@@ -2,6 +2,8 @@
 
 interface ImportMetaEnv {
   readonly DATABASE_URL?: string;
+  /** Discord channel webhook URL (server-only). */
+  readonly DISCORD_WEBHOOK_URL?: string;
 }
 
 interface ImportMeta {
