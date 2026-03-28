@@ -3,6 +3,7 @@ import { getCopy } from "../../i18n/copy";
 import { InlineSvg } from "./InlineSvg";
 import { ParticipantsCountUp } from "./ParticipantsCountUp";
 import { P } from "./Panel";
+import { ButtonLink } from "./ui/Button";
 import { INSTAGRAM_SVG, X_SVG } from "./constants";
 import { logoSvg, googleLogo, exaLogo, falLogo, kfundLogo, mozartLogo } from "./assets";
 
@@ -96,9 +97,14 @@ function signupFormHref(loc: Locale): string {
   return loc === "es" ? "/es/signup" : "/signup";
 }
 
+function ambassadorPageHref(loc: Locale): string {
+  return loc === "es" ? "/es/ambassador" : "/ambassador";
+}
+
 export function buildSections(locale: Locale): Record<string, React.ReactNode>[] {
   const c = getCopy(locale);
   const signupHref = signupFormHref(locale);
+  const ambassadorHref = ambassadorPageHref(locale);
   const gEx = locale === "es" ? "hackathon España Google, hackathon Spain" : "Google sponsor hackathon Madrid and Spain";
   const kEx = locale === "es" ? "inversión hackathon España" : "venture capital sponsor hackathon Spain";
   const fEx = locale === "es" ? "IA hackathon Madrid" : "AI infrastructure hackathon Spain";
@@ -111,13 +117,15 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
         <P bg="bg-hs-paper">
           <div className="flex w-full max-w-[380px] flex-col items-center gap-2 @[220px]:gap-3">
             <InlineSvg svg={logoSvg} className="w-full h-auto" label={c.logoAria} />
-            <a
+            <ButtonLink
               href={signupHref}
-              className={`shrink-0 border-[3px] border-hs-ink bg-hs-gold px-4 py-2 ${B} text-[clamp(0.75rem,2.4vw,1rem)] text-hs-ink tracking-wide transition-[filter] hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hs-navy`}
+              variant="gold"
+              size="compact"
+              className="shrink-0"
               aria-label={c.s0.signupCtaAria}
             >
               {c.s0.signupCta}
-            </a>
+            </ButtonLink>
           </div>
         </P>
       ),
@@ -199,6 +207,15 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
         <P bg="bg-hs-gold" align="start">
           <p className={`${LBL} text-hs-ink/60`}>{c.s2.ambLbl}</p>
           <p className={`${BD} text-hs-ink`}>{c.s2.ambBody}</p>
+          <ButtonLink
+            href={ambassadorHref}
+            variant="teal"
+            size="compact"
+            className="mt-3 shrink-0 self-start"
+            aria-label={c.s2.ambCtaAria}
+          >
+            {c.s2.ambCta}
+          </ButtonLink>
         </P>
       ),
       r2g: (

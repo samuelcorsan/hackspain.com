@@ -42,7 +42,22 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ error: parsed.error }, { status: parsed.status });
   }
 
-  const { fullName, email, xUrl, linkedinUrl, githubUrl, webUrl, achievements, freeTime } = parsed.data;
+  const {
+    fullName,
+    email,
+    xUrl,
+    linkedinUrl,
+    githubUrl,
+    webUrl,
+    achievements,
+    freeTime,
+    wantsAmbassador,
+    ambassadorMotivation,
+    ambassadorStudyWhere,
+  } = parsed.data;
+
+  const motivationDb = wantsAmbassador ? emptyToNull(ambassadorMotivation) : null;
+  const studyDb = wantsAmbassador ? emptyToNull(ambassadorStudyWhere) : null;
 
   try {
     const db = getDb();
@@ -64,6 +79,9 @@ export const POST: APIRoute = async ({ request }) => {
       webUrl: emptyToNull(webUrl),
       achievements: emptyToNull(achievements),
       freeTime: emptyToNull(freeTime),
+      wantsAmbassador,
+      ambassadorMotivation: motivationDb,
+      ambassadorStudyWhere: studyDb,
     });
 
     await notifyDiscordNewSignup({
@@ -75,6 +93,9 @@ export const POST: APIRoute = async ({ request }) => {
       webUrl,
       achievements,
       freeTime,
+      wantsAmbassador,
+      ambassadorMotivation: wantsAmbassador ? ambassadorMotivation : "",
+      ambassadorStudyWhere: wantsAmbassador ? ambassadorStudyWhere : "",
     });
 
     return Response.json({ ok: true });

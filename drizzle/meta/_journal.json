@@ -15,6 +15,13 @@
       "when": 1774722361682,
       "tag": "0001_illegal_genesis",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774724776890,
+      "tag": "0002_hackathon_signups_ambassador_fields",
+      "breakpoints": true
     }
   ]
 }

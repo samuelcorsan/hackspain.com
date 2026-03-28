@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
 import { initBotId } from "botid/client/core";
+import { AnimatePresence, motion } from "motion/react";
 import { MosaicBackground } from "./MosaicBackground";
+import {
+  FormField,
+  Input,
+  SocialPrefixInput,
+  Textarea,
+} from "./form";
+import { Button, ButtonLink } from "./ui/Button";
 import { getCopy } from "../../i18n/copy";
 import type { Locale } from "../../i18n/locales";
-import { parseSignupBodyClient } from "../../lib/signupValidation";
+import { normalizeSocialUrl, parseSignupBodyClient } from "../../lib/signupValidation";
 import { useLayoutProfile } from "./useLayoutProfile";
 
 const STORAGE_KEY = "hackspain-signup-draft-v1";
@@ -41,6 +49,9 @@ type StoredFields = {
   webUrl: string;
   achievements: string;
   freeTime: string;
+  wantsAmbassador: boolean;
+  ambassadorMotivation: string;
+  ambassadorStudyWhere: string;
 };
 
 const EMPTY_FIELDS: StoredFields = {
@@ -52,6 +63,9 @@ const EMPTY_FIELDS: StoredFields = {
   webUrl: "",
   achievements: "",
   freeTime: "",
+  wantsAmbassador: false,
+  ambassadorMotivation: "",
+  ambassadorStudyWhere: "",
 };
 
 function readStoredFields(): StoredFields {
@@ -62,6 +76,8 @@ function readStoredFields(): StoredFields {
     const o = JSON.parse(raw) as Record<string, unknown>;
     const s = (k: keyof StoredFields) =>
       typeof o[k] === "string" ? (o[k] as string) : "";
+    const wantsAmbassador =
+      o.wantsAmbassador === true || o.wantsAmbassador === "true";
     return {
       fullName: s("fullName"),
       email: s("email"),
@@ -71,6 +87,9 @@ function readStoredFields(): StoredFields {
       webUrl: s("webUrl"),
       achievements: s("achievements"),
       freeTime: s("freeTime"),
+      wantsAmbassador,
+      ambassadorMotivation: s("ambassadorMotivation"),
+      ambassadorStudyWhere: s("ambassadorStudyWhere"),
     };
   } catch {
     return { ...EMPTY_FIELDS };
@@ -93,62 +112,27 @@ function clearStoredFields() {
   }
 }
 
-const inputClass =
-  "w-full rounded-sm border-[3px] border-hs-ink bg-hs-paper px-2 py-2 text-base text-hs-ink outline-none [color-scheme:light] placeholder:text-hs-ink/42 selection:bg-hs-gold/50 selection:text-hs-ink focus-visible:ring-2 focus-visible:ring-hs-navy focus-visible:ring-offset-2 focus-visible:ring-offset-hs-paper [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-hs-ink)] [&:-webkit-autofill]:shadow-[inset_0_0_0_1000px_var(--color-hs-paper)]";
-
-const sansLabelClass = "font-sans text-sm font-extrabold text-hs-ink sm:text-base";
-const hintClass = "font-sans text-sm leading-snug text-hs-brown sm:text-[0.95rem]";
-
 const X_PREFIX = "x.com/";
-const LINKEDIN_PREFIX = "linkedin.com/";
+const LINKEDIN_PREFIX = "linkedin.com/in/";
 const GITHUB_PREFIX = "github.com/";
 
-const socialComboWrapClass =
-  "flex w-full min-w-0 rounded-sm border-[3px] border-hs-ink bg-hs-paper focus-within:ring-2 focus-within:ring-hs-navy focus-within:ring-offset-2 focus-within:ring-offset-hs-paper [&:-webkit-autofill]:shadow-[inset_0_0_0_1000px_var(--color-hs-paper)]";
-
-const socialPrefixClass =
-  "inline-flex shrink-0 items-center self-stretch whitespace-nowrap border-r-[3px] border-hs-ink bg-hs-sand/45 px-2 font-mono text-[clamp(0.62rem,2.2vw,0.8125rem)] font-bold leading-tight tracking-tight text-hs-ink select-none sm:px-2.5 sm:text-sm";
-
-const socialInnerInputClass =
-  "font-sans min-w-0 flex-1 border-0 bg-transparent px-2 py-2 text-base text-hs-ink outline-none [color-scheme:light] placeholder:text-hs-ink/42 selection:bg-hs-gold/50 selection:text-hs-ink focus:ring-0 focus-visible:ring-0 [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-hs-ink)]";
-
-type SocialPrefixInputProps = {
-  id: string;
-  name: string;
-  prefix: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-};
-
-function SocialPrefixInput({ id, name, prefix, value, onChange, placeholder }: SocialPrefixInputProps) {
-  return (
-    <div className={socialComboWrapClass}>
-      <span className={socialPrefixClass} aria-hidden="true">
-        {prefix}
-      </span>
-      <input
-        id={id}
-        className={socialInnerInputClass}
-        name={name}
-        type="text"
-        inputMode="text"
-        autoComplete="off"
-        spellCheck={false}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
-}
+const cellBase = "border-b-[3px] border-hs-ink bg-hs-paper p-4";
+const cellLeftSm = `${cellBase} sm:border-r-[3px]`;
 
 type Props = { locale: Locale };
+
+function ambassadorQueryEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  const v = new URLSearchParams(window.location.search).get("ambassador");
+  return v === "1" || v === "true" || v === "yes";
+}
 
 export function SignupPage({ locale }: Props) {
   const t = getCopy(locale).signup;
   const profile = useLayoutProfile();
   const homeHref = locale === "es" ? "/es" : "/";
+  const ambassadorPageHref = locale === "es" ? "/es/ambassador" : "/ambassador";
+  const privacyHref = locale === "es" ? "/es/privacy" : "/privacy";
 
   const appliedOnLoad = readAppliedFlag();
   const initialFields = appliedOnLoad ? EMPTY_FIELDS : readStoredFields();
@@ -160,8 +144,19 @@ export function SignupPage({ locale }: Props) {
   const [webUrl, setWebUrl] = useState(initialFields.webUrl);
   const [achievements, setAchievements] = useState(initialFields.achievements);
   const [freeTime, setFreeTime] = useState(initialFields.freeTime);
+  const [wantsAmbassador, setWantsAmbassador] = useState(initialFields.wantsAmbassador);
+  const [ambassadorMotivation, setAmbassadorMotivation] = useState(
+    initialFields.ambassadorMotivation,
+  );
+  const [ambassadorStudyWhere, setAmbassadorStudyWhere] = useState(
+    initialFields.ambassadorStudyWhere,
+  );
   const [status, setStatus] = useState<FlowStatus>(() => (appliedOnLoad ? "alreadyApplied" : "idle"));
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (ambassadorQueryEnabled()) setWantsAmbassador(true);
+  }, []);
 
   function applyAgain() {
     clearAppliedFlag();
@@ -174,6 +169,9 @@ export function SignupPage({ locale }: Props) {
     setWebUrl("");
     setAchievements("");
     setFreeTime("");
+    setWantsAmbassador(false);
+    setAmbassadorMotivation("");
+    setAmbassadorStudyWhere("");
     setErrorMessage("");
     setStatus("idle");
   }
@@ -195,6 +193,9 @@ export function SignupPage({ locale }: Props) {
       webUrl,
       achievements,
       freeTime,
+      wantsAmbassador,
+      ambassadorMotivation,
+      ambassadorStudyWhere,
     });
   }, [
     fullName,
@@ -205,6 +206,9 @@ export function SignupPage({ locale }: Props) {
     webUrl,
     achievements,
     freeTime,
+    wantsAmbassador,
+    ambassadorMotivation,
+    ambassadorStudyWhere,
     status,
   ]);
 
@@ -220,6 +224,9 @@ export function SignupPage({ locale }: Props) {
       webUrl,
       achievements,
       freeTime,
+      wantsAmbassador,
+      ambassadorMotivation,
+      ambassadorStudyWhere,
     };
     const parsed = parseSignupBodyClient(payload);
     if (!parsed.ok) {
@@ -229,6 +236,10 @@ export function SignupPage({ locale }: Props) {
         setErrorMessage(t.errorInvalidSocialUrl);
       } else if (parsed.code === "invalid_email") {
         setErrorMessage(t.errorInvalidEmail);
+      } else if (parsed.code === "ambassador_motivation") {
+        setErrorMessage(t.errorAmbassadorMotivation);
+      } else if (parsed.code === "ambassador_study_where") {
+        setErrorMessage(t.errorAmbassadorStudyWhere);
       } else {
         setErrorMessage(t.errorGeneric);
       }
@@ -257,6 +268,10 @@ export function SignupPage({ locale }: Props) {
         setErrorMessage(t.errorSocialRequired);
       } else if (data.error === "invalid_social_url") {
         setErrorMessage(t.errorInvalidSocialUrl);
+      } else if (data.error === "ambassador_motivation_required") {
+        setErrorMessage(t.errorAmbassadorMotivation);
+      } else if (data.error === "ambassador_study_where_required") {
+        setErrorMessage(t.errorAmbassadorStudyWhere);
       } else {
         setErrorMessage(typeof data.error === "string" ? data.error : t.errorGeneric);
       }
@@ -300,19 +315,12 @@ export function SignupPage({ locale }: Props) {
                     {status === "alreadyApplied" ? t.alreadyApplied : t.applicationReceived}
                   </p>
                   <div className="flex w-full flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
-                    <a
-                      href={homeHref}
-                      className="inline-flex min-w-[8rem] flex-1 items-center justify-center border-[3px] border-hs-ink bg-hs-gold px-5 py-2.5 font-bungee text-sm text-hs-ink transition-[filter] hover:brightness-95 sm:flex-initial"
-                    >
+                    <ButtonLink href={homeHref} variant="gold" size="success">
                       {t.backHome.replace(/^\u2190\s*/, "").replace(/^←\s*/, "").trim() || t.backHome}
-                    </a>
-                    <button
-                      type="button"
-                      onClick={applyAgain}
-                      className="inline-flex min-w-[8rem] flex-1 items-center justify-center border-[3px] border-hs-ink bg-hs-teal/35 px-5 py-2.5 font-bungee text-sm text-hs-ink transition-[filter] hover:brightness-95 sm:flex-initial"
-                    >
+                    </ButtonLink>
+                    <Button type="button" variant="teal" size="success" onClick={applyAgain}>
                       {t.applyAgain}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -322,25 +330,22 @@ export function SignupPage({ locale }: Props) {
                 className="flex flex-col gap-0 border-t-[3px] border-hs-ink"
               >
                 <div className="grid gap-0 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4 sm:border-r-[3px]">
-                    <span className="font-bungee text-sm tracking-wide text-hs-ink">
-                      {t.fullName} *
-                    </span>
-                    <input
-                      className={inputClass}
+                  <FormField
+                    id="signup-full-name"
+                    label={t.fullName}
+                    required
+                    className={cellLeftSm}
+                  >
+                    <Input
                       name="fullName"
                       autoComplete="name"
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                     />
-                  </label>
-                  <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4">
-                    <span className="font-bungee text-sm tracking-wide text-hs-ink">
-                      {t.email} *
-                    </span>
-                    <input
-                      className={inputClass}
+                  </FormField>
+                  <FormField id="signup-email" label={t.email} required className={cellBase}>
+                    <Input
                       name="email"
                       type="email"
                       autoComplete="email"
@@ -348,7 +353,7 @@ export function SignupPage({ locale }: Props) {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
-                  </label>
+                  </FormField>
                 </div>
 
                 <div className="border-b-[3px] border-hs-ink bg-hs-teal/25 px-4 py-3">
@@ -360,43 +365,53 @@ export function SignupPage({ locale }: Props) {
                   </p>
                 </div>
                 <div className="grid gap-0 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4 sm:border-r-[3px]">
-                    <span className={sansLabelClass}>{t.x}</span>
+                  <FormField
+                    id="signup-x-url"
+                    label={t.x}
+                    labelVariant="sans"
+                    className={cellLeftSm}
+                  >
                     <SocialPrefixInput
-                      id="signup-x-url"
                       name="xUrl"
                       prefix={X_PREFIX}
+                      profileKind="x"
                       value={xUrl}
                       onChange={setXUrl}
                       placeholder={t.socialXPlaceholder}
                     />
-                  </label>
-                  <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4">
-                    <span className={sansLabelClass}>{t.linkedin}</span>
+                  </FormField>
+                  <FormField
+                    id="signup-linkedin-url"
+                    label={t.linkedin}
+                    labelVariant="sans"
+                    className={cellBase}
+                  >
                     <SocialPrefixInput
-                      id="signup-linkedin-url"
                       name="linkedinUrl"
                       prefix={LINKEDIN_PREFIX}
+                      profileKind="linkedin"
                       value={linkedinUrl}
                       onChange={setLinkedinUrl}
                       placeholder={t.socialLinkedinPlaceholder}
                     />
-                  </label>
-                  <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4 sm:border-r-[3px]">
-                    <span className={sansLabelClass}>{t.github}</span>
+                  </FormField>
+                  <FormField
+                    id="signup-github-url"
+                    label={t.github}
+                    labelVariant="sans"
+                    className={cellLeftSm}
+                  >
                     <SocialPrefixInput
-                      id="signup-github-url"
                       name="githubUrl"
                       prefix={GITHUB_PREFIX}
+                      profileKind="github"
                       value={githubUrl}
                       onChange={setGithubUrl}
                       placeholder={t.socialGithubPlaceholder}
                     />
-                  </label>
-                  <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4">
-                    <span className={sansLabelClass}>{t.web}</span>
-                    <input
-                      className={inputClass}
+                  </FormField>
+                  <FormField id="signup-web-url" label={t.web} labelVariant="sans" className={cellBase}>
+                    <Input
                       name="webUrl"
                       type="text"
                       inputMode="url"
@@ -404,37 +419,146 @@ export function SignupPage({ locale }: Props) {
                       placeholder="yoursite.com or https://..."
                       value={webUrl}
                       onChange={(e) => setWebUrl(e.target.value)}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const raw = e.clipboardData.getData("text/plain");
+                        const line =
+                          raw
+                            .split(/\r?\n/)
+                            .map((l) => l.trim())
+                            .find((l) => l.length > 0) ?? "";
+                        if (!line) return;
+                        const norm = normalizeSocialUrl(line, "web");
+                        setWebUrl(norm || line);
+                      }}
                     />
-                  </label>
+                  </FormField>
                 </div>
 
-                <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4">
-                  <span className="font-bungee text-sm tracking-wide text-hs-ink">
-                    {t.achievements}
-                  </span>
-                  <span className={hintClass}>{t.achievementsHint}</span>
-                  <textarea
-                    className={`${inputClass} min-h-[120px] resize-y`}
+                <FormField
+                  id="signup-achievements"
+                  label={t.achievements}
+                  hint={t.achievementsHint}
+                  className={cellBase}
+                >
+                  <Textarea
+                    className="min-h-[120px] resize-y"
                     name="achievements"
                     rows={5}
                     value={achievements}
                     onChange={(e) => setAchievements(e.target.value)}
                   />
-                </label>
+                </FormField>
 
-                <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4">
-                  <span className="font-bungee text-sm tracking-wide text-hs-ink">
-                    {t.freeTime}
-                  </span>
-                  <span className={hintClass}>{t.freeTimeHint}</span>
-                  <textarea
-                    className={`${inputClass} min-h-[120px] resize-y`}
+                <FormField
+                  id="signup-free-time"
+                  label={t.freeTime}
+                  hint={t.freeTimeHint}
+                  className={cellBase}
+                >
+                  <Textarea
+                    className="min-h-[120px] resize-y"
                     name="freeTime"
                     rows={5}
                     value={freeTime}
                     onChange={(e) => setFreeTime(e.target.value)}
                   />
-                </label>
+                </FormField>
+
+                <div className="border-b-[3px] border-hs-ink bg-hs-teal/15 px-4 py-4">
+                  <div className="flex items-start gap-3">
+                    <div className="relative mt-0.5 h-6 w-6 shrink-0">
+                      <input
+                        id="signup-wants-ambassador"
+                        name="wantsAmbassador"
+                        type="checkbox"
+                        checked={wantsAmbassador}
+                        onChange={(e) => setWantsAmbassador(e.target.checked)}
+                        className="peer absolute inset-0 z-10 h-6 w-6 cursor-pointer appearance-none opacity-0"
+                      />
+                      <div
+                        className="pointer-events-none flex h-6 w-6 items-center justify-center rounded-sm border-[3px] border-hs-ink bg-hs-paper shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow,border-color] duration-200 peer-hover:bg-hs-sand/55 peer-focus-visible:border-hs-navy peer-checked:bg-hs-gold [&_svg]:opacity-0 [&_svg]:transition-opacity [&_svg]:duration-200 [&_svg]:ease-out peer-checked:[&_svg]:opacity-100"
+                        aria-hidden
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="text-hs-ink"
+                        >
+                          <path
+                            d="M2.5 7.2 5.6 10.3 11.5 3.8"
+                            stroke="currentColor"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="min-w-0 font-sans text-base font-semibold leading-snug text-hs-ink sm:text-[1.05rem]">
+                      <label htmlFor="signup-wants-ambassador" className="cursor-pointer">
+                        {t.ambassadorCheckboxBefore}
+                      </label>
+                      <a
+                        href={ambassadorPageHref}
+                        className="font-extrabold text-hs-navy underline decoration-2 underline-offset-2 hover:text-hs-ink"
+                      >
+                        {t.ambassadorCheckboxLink}
+                      </a>
+                      <label htmlFor="signup-wants-ambassador" className="cursor-pointer">
+                        {t.ambassadorCheckboxAfter}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {wantsAmbassador ? (
+                    <motion.div
+                      key="signup-ambassador-fields"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden border-b-[3px] border-hs-ink"
+                    >
+                      <div className="grid gap-0">
+                        <FormField
+                          id="signup-ambassador-motivation"
+                          label={t.ambassadorWhyLabel}
+                          hint={t.ambassadorWhyHint}
+                          required
+                          className={cellBase}
+                        >
+                          <Textarea
+                            className="min-h-[100px] resize-y"
+                            name="ambassadorMotivation"
+                            rows={4}
+                            value={ambassadorMotivation}
+                            onChange={(e) => setAmbassadorMotivation(e.target.value)}
+                          />
+                        </FormField>
+                        <FormField
+                          id="signup-ambassador-study"
+                          label={t.ambassadorStudyLabel}
+                          hint={t.ambassadorStudyHint}
+                          required
+                          className="bg-hs-paper p-4"
+                        >
+                          <Input
+                            name="ambassadorStudyWhere"
+                            autoComplete="organization"
+                            value={ambassadorStudyWhere}
+                            onChange={(e) => setAmbassadorStudyWhere(e.target.value)}
+                          />
+                        </FormField>
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
 
                 {status === "error" && errorMessage ? (
                   <div
@@ -445,14 +569,25 @@ export function SignupPage({ locale }: Props) {
                   </div>
                 ) : null}
 
-                <div className="flex justify-end bg-hs-sand/30 p-4">
-                  <button
+                <div className="flex flex-col gap-4 bg-hs-sand/30 p-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+                  <p className="max-w-xl font-sans text-xs font-semibold leading-snug text-hs-ink sm:max-w-md sm:text-sm">
+                    {t.legalSubmitNoticeBefore}
+                    <a
+                      href={`${privacyHref}#privacy-policy`}
+                      className="font-extrabold text-hs-navy underline decoration-2 underline-offset-2 hover:text-hs-ink"
+                    >
+                      {t.legalPrivacyLinkLabel}
+                    </a>
+                    {t.legalSubmitNoticeAfter}
+                  </p>
+                  <Button
                     type="submit"
+                    variant="gold"
                     disabled={status === "submitting"}
-                    className="border-[3px] border-hs-ink bg-hs-gold px-6 py-2.5 font-bungee text-sm text-hs-ink hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="shrink-0 self-end sm:self-auto"
                   >
                     {status === "submitting" ? t.submitting : t.submit}
-                  </button>
+                  </Button>
                 </div>
               </form>
             )}

@@ -495,10 +495,15 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
 
         if (isCompact && !missionPhase && !uniqueHorsePhase && !defaultTile) return null;
 
+        const cellFrameClass =
+          cell.id === "r2c"
+            ? "absolute overflow-visible z-10 @container"
+            : "absolute overflow-hidden @container";
+
         return (
           <div
             key={cell.id}
-            className="absolute overflow-hidden @container"
+            className={cellFrameClass}
             style={{
               ...vp(cell.x, cell.y, cell.w, cell.h, artboard),
               ...(cell.clip ? { clipPath: cell.clip } : {}),

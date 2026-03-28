@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = getCopy(locale).ambassador;
+const t = getCopy(locale).signup;
 const homeHref = locale === "es" ? "/es" : "/";
 const backLabel = t.backHome.replace(/^\u2190\s*/, "").replace(/^←\s*/, "").trim();
 ---

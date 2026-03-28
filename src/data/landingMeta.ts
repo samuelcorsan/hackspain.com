@@ -145,6 +145,32 @@ export function ambassadorSeo(locale: Locale): PageSeo {
   };
 }
 
+const PRIVACY_KEYWORDS_EN =
+  "HackSpain privacy policy, sponsor data sharing, GDPR, personal data, hackathon registration, data processing Spain";
+const PRIVACY_KEYWORDS_ES =
+  "privacidad HackSpain, comunicación datos patrocinadores, RGPD, datos personales, registro hackathon, LOPDGDD";
+
+export function privacyKeywords(locale: Locale): string {
+  return locale === "es" ? PRIVACY_KEYWORDS_ES : PRIVACY_KEYWORDS_EN;
+}
+
+export function privacySeo(locale: Locale): PageSeo {
+  if (locale === "es") {
+    return {
+      title: "Política de privacidad — HACKSPAIN 2026",
+      description:
+        "Política de privacidad de la Asociación HackSpain: responsable del tratamiento, comunicación a patrocinadores, RGPD, LOPDGDD, derechos y tratamiento del registro (incl. análisis automatizado e IA).",
+      ogImageAlt: "HackSpain — política de privacidad",
+    };
+  }
+  return {
+    title: "Privacy policy — HACKSPAIN 2026",
+      description:
+        "Privacy policy of Asociación HackSpain (registered association in Spain): data controller, sharing with official sponsors, GDPR, your rights, and signup data use including automated analysis and third-party AI.",
+    ogImageAlt: "HackSpain — privacy policy",
+  };
+}
+
 const KEYWORDS_BASE_EN =
   "hack spain, Hack Spain, hack spain hackathon, hack spain Madrid, hack spain 2026, hackathon Madrid, hackathon Spain, hackathon España, HackSpain, young coders Spain, hack day Madrid, programming Madrid, hackspain.com";
 

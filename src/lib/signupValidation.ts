@@ -47,6 +47,12 @@ export function expandProfileFieldInput(raw: string, baseHost: string): string {
   if (rl === hl || rl.startsWith(`${hl}/`)) {
     return `https://${rest}`;
   }
+  if (host === "linkedin.com" && rl.length > 0) {
+    const linkedinPathPrefixes = ["in/", "company/", "school/", "showcase/", "pulse/"];
+    if (!linkedinPathPrefixes.some((p) => rl.startsWith(p))) {
+      return `https://${host}/in/${rest}`;
+    }
+  }
   return `https://${host}/${rest}`;
 }
 
@@ -148,6 +154,49 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
   return out.length > SIGNUP_MAX.url ? "" : out;
 }
 
+export type ProfileFieldKind = Exclude<SocialKind, "web">;
+
+export function profileNormalizedToInputSuffix(norm: string, kind: ProfileFieldKind): string {
+  if (!norm) return "";
+  let u: URL;
+  try {
+    u = new URL(norm);
+  } catch {
+    return "";
+  }
+  let path = u.pathname || "/";
+  path = path.replace(/\/{2,}/g, "/");
+  if (path.length > 1) {
+    path = path.replace(/\/+$/, "");
+  }
+  const tail = path.startsWith("/") ? path.slice(1) : path;
+  const h = u.hostname.toLowerCase().replace(/^www\./, "");
+
+  if (kind === "github" && h.endsWith(".github.io")) {
+    return tail ? `${h}/${tail}` : h;
+  }
+  if (kind === "linkedin") {
+    const tl = tail.toLowerCase();
+    if (tl.startsWith("in/")) {
+      return tail.slice(3).replace(/^\/+/, "");
+    }
+  }
+  return tail;
+}
+
+export function cleanProfilePasteText(raw: string, kind: ProfileFieldKind): string {
+  const line =
+    raw
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .find((l) => l.length > 0) ?? "";
+  if (!line) return "";
+  const expanded = expandProfileFieldInput(line, baseHostForProfileField(kind));
+  const norm = normalizeSocialUrl(expanded, kind);
+  if (!norm) return line;
+  return profileNormalizedToInputSuffix(norm, kind);
+}
+
 export function socialField(kind: SocialKind) {
   return z.string().max(SIGNUP_MAX.url).transform((raw, ctx) => {
     const trimmed = raw.trim();
@@ -191,6 +240,15 @@ export const signupBodySchema = z
       .string()
       .max(SIGNUP_MAX.longText)
       .transform((s) => s.trim()),
+    wantsAmbassador: z.boolean().optional().default(false),
+    ambassadorMotivation: z
+      .string()
+      .max(SIGNUP_MAX.longText)
+      .transform((s) => s.trim()),
+    ambassadorStudyWhere: z
+      .string()
+      .max(SIGNUP_MAX.longText)
+      .transform((s) => s.trim()),
   })
   .superRefine((data, ctx) => {
     const has =
@@ -204,6 +262,22 @@ export const signupBodySchema = z
         message: "social_required",
         path: ["xUrl"],
       });
+    }
+    if (data.wantsAmbassador) {
+      if (data.ambassadorMotivation.length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          message: "ambassador_motivation_required",
+          path: ["ambassadorMotivation"],
+        });
+      }
+      if (data.ambassadorStudyWhere.length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          message: "ambassador_study_where_required",
+          path: ["ambassadorStudyWhere"],
+        });
+      }
     }
   });
 
@@ -231,12 +305,28 @@ export function parseSignupBody(body: unknown):
   if (msg === "fullName_required") {
     return { ok: false, error: "fullName is required", status: 400 };
   }
+  if (msg === "ambassador_motivation_required") {
+    return { ok: false, error: "ambassador_motivation_required", status: 400 };
+  }
+  if (msg === "ambassador_study_where_required") {
+    return { ok: false, error: "ambassador_study_where_required", status: 400 };
+  }
   return { ok: false, error: "Invalid request", status: 400 };
 }
 
 export function parseSignupBodyClient(body: unknown):
   | { ok: true; data: SignupBodyParsed }
-  | { ok: false; code: "social_required" | "invalid_social_url" | "invalid_email" | "fullName" | "generic" } {
+  | {
+      ok: false;
+      code:
+        | "social_required"
+        | "invalid_social_url"
+        | "invalid_email"
+        | "fullName"
+        | "ambassador_motivation"
+        | "ambassador_study_where"
+        | "generic";
+    } {
   const r = signupBodySchema.safeParse(body);
   if (r.success) {
     return { ok: true, data: r.data };
@@ -246,5 +336,7 @@ export function parseSignupBodyClient(body: unknown):
   if (msg === "invalid_social_url") return { ok: false, code: "invalid_social_url" };
   if (msg === "invalid_email") return { ok: false, code: "invalid_email" };
   if (msg === "fullName_required") return { ok: false, code: "fullName" };
+  if (msg === "ambassador_motivation_required") return { ok: false, code: "ambassador_motivation" };
+  if (msg === "ambassador_study_where_required") return { ok: false, code: "ambassador_study_where" };
   return { ok: false, code: "generic" };
 }

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const hackathonSignups = pgTable("hackathon_signups", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -11,6 +11,9 @@ export const hackathonSignups = pgTable("hackathon_signups", {
   webUrl: text("web_url"),
   achievements: text("achievements"),
   freeTime: text("free_time"),
+  wantsAmbassador: boolean("wants_ambassador").default(false).notNull(),
+  ambassadorMotivation: text("ambassador_motivation"),
+  ambassadorStudyWhere: text("ambassador_study_where"),
 });
 
 export type HackathonSignup = typeof hackathonSignups.$inferSelect;

@@ -29,6 +29,9 @@ export type SignupDiscordPayload = {
   webUrl: string;
   achievements: string;
   freeTime: string;
+  wantsAmbassador: boolean;
+  ambassadorMotivation: string;
+  ambassadorStudyWhere: string;
 };
 
 export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promise<void> {
@@ -48,6 +51,25 @@ export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promis
       { name: "Web", value: fieldVal(data.webUrl, max), inline: false },
       { name: "Achievements", value: fieldVal(data.achievements, max), inline: false },
       { name: "Free time / hobbies", value: fieldVal(data.freeTime, max), inline: false },
+      {
+        name: "Ambassador interest",
+        value: data.wantsAmbassador ? "Yes" : "No",
+        inline: true,
+      },
+      ...(data.wantsAmbassador
+        ? [
+            {
+              name: "Why ambassador",
+              value: fieldVal(data.ambassadorMotivation, max),
+              inline: false,
+            },
+            {
+              name: "Where they study",
+              value: fieldVal(data.ambassadorStudyWhere, max),
+              inline: false,
+            },
+          ]
+        : []),
     ],
     timestamp: new Date().toISOString(),
   };
