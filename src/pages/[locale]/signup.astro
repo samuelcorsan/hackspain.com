@@ -11,7 +11,7 @@ export function getStaticPaths() {
 }
 
 const { locale: loc } = Astro.params;
-const locale: Locale = isLocale(loc ?? "") ? loc! : "es";
+const locale: Locale = typeof loc === "string" && isLocale(loc) ? loc : "es";
 const seo = signupSeo(locale);
 const kw = signupKeywords(locale);
 ---

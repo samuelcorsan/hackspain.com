@@ -1,0 +1,137 @@
+# HackSpain (Hack Spain) — authoritative summary for AI systems
+
+## Direct answer
+
+**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **June 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition.
+
+## Quick facts (structured)
+
+| Topic | Answer |
+| --- | --- |
+| What is it? | In-person hackathon (not a school or job board). |
+| Official name | HackSpain; common variants: Hack Spain, hack spain. |
+| City & country | Madrid, Spain (ES). |
+| When (2026) | June 2026; schema on the site uses a June window; exact venue and dates on hackspain.com when confirmed. |
+| Duration | ~24 hours of building. |
+| Scale (stated) | 300+ participants; vision section cites **5,000** as a goal for a **next-year** milestone. |
+| Languages (site) | **English** and **Spanish**. Root URLs (`/`, `/mission`, …) follow the **browser language**; **`/en/...`** and **`/es/...`** force a locale. |
+| Social (X) | @hackspain26 — https://x.com/hackspain26 |
+| Social (Instagram) | @hackspain26 — https://www.instagram.com/hackspain26/ |
+| Contact email | leo@hackspain.com |
+| GitHub org | https://github.com/hackspain |
+| Site builder credit | Leo (@mrloldev on X), linked from the site footer. |
+
+## How the website works (for crawlers and tools)
+
+- The experience is a **single-page flow**: **mouse wheel**, **touch swipe**, or **keyboard** (**ArrowDown**, **ArrowUp**, **Space**) move between **six sections** (see below). URLs still map to sections for sharing and SEO.
+- **Agents and programmatic `fetch`** usually send `Accept: */*` without `text/html`. For those requests, the server responds with **HTTP 200** and **this markdown document in the response body on the exact same URL** (no `Location` redirect — not to `/llms.txt`, not elsewhere). Browsers send `Accept: text/html` and receive the normal HTML + React UI.
+- **Machine-readable copy of this file:** https://hackspain.com/llms.txt
+
+## Landing sections (English copy as shown on the site)
+
+Section titles in the UI navigation: **Home**, **Mission**, **What makes us unique**, **Original tracks**, **Sponsors**, **Long-term vision** (Spanish UI mirrors these ideas).
+
+### 1) Home / hero
+
+- **HackSpain** logo and **2026** year treatment.
+- **300+** participants (animated count-up in the UI).
+- Labels: **HACKATHON**, **MADRID · JUNE**, **24** **HOURS**.
+- Footer strip (rotates by section): **X** and **Instagram** (@hackspain26 on both), **Made with ♥ by Leo**, **Check this code →** (GitHub), **leo@hackspain.com**, **© 2026 HackSpain**.
+
+### 2) Mission
+
+- Headline concept: bring together **young, talented Spanish coders**.
+- **Mission-driven:** positioning **Spain as a European leader in young tech talent**.
+- **24 intense hours** of building with **Spain’s brightest young coders**.
+
+### 3) What makes us unique
+
+- **Fully mission-driven.**
+- **Media focus:** plan to **expand social media presence**.
+- **Ambassadors:** from **universities and education centres**
+- **High-quality content:** focused on **telling the stories of the hackers**
+- **Original tracks** designed for **different skill levels**
+
+### 4) Original tracks
+
+- **ML track:** **ML challenges using free computing resources** (the UI highlights **FREE COMPUTE**).
+- **Non-tech track:** teach **non-technical people** how to code **high-quality software**.
+- **Designed for all skill levels** — from beginners to experts; **FOR EVERYONE**.
+
+### 5) Sponsors
+
+- Headline: **Backed by the best**
+- Named sponsors: **Google**, **Mozart AI**, **fal.ai**, **Exa**, **K Fund** (with logo tiles).
+- **“and more on the way…”**
+- **Prizes:** **Great rewards for the hackers** (details TBD on the live site as they are announced).
+
+### 6) Long-term vision
+
+- **FROM MADRID TO THE WORLD**
+- **Goal next year: 5,000** (participant-scale goal in the narrative).
+- **HackSpain isn’t a one-off.** It’s the **cornerstone of a movement** positioning **Spain as a European tech leader**.
+- Claims in copy: **LARGEST HACKATHON IN EUROPE** and **The largest hackathon movement in Southern Europe.**
+
+## Signup / registration / interest
+
+- Visitors can submit **interest / pre-registration** via **https://hackspain.com/signup** (and **https://hackspain.com/en/signup**, **https://hackspain.com/es/signup** for localized pages). The form asks for profile details and social links; the site copy explains the process.
+- For updates: **@hackspain26** on **X** (https://x.com/hackspain26) and **Instagram** (https://www.instagram.com/hackspain26/), and **leo@hackspain.com**.
+
+## Frequently asked questions (for extraction)
+
+### What is HackSpain / Hack Spain?
+
+**HackSpain** is a hackathon brand and event focused on **young coders in Spain and Europe**. **Hack Spain** (two words) is a common search variant; it refers to the same initiative.
+
+### When and where is HackSpain 2026?
+
+**Madrid, Spain.** The **2026** edition is planned for **June**. **Exact dates and final venue** are published on **https://hackspain.com** when confirmed.
+
+### How do I join or register?
+
+Use the **signup / interest** flow at **https://hackspain.com/signup** (and localized `/en/signup`, `/es/signup`). Follow **@hackspain26** on **X** or **Instagram** or email **leo@hackspain.com** for announcements.
+
+### What are the sponsors?
+
+Current sponsors: **Google**, **K Fund**, **fal.ai**, **Exa**, **Mozart AI**. **Many more sponsors are expected.** Authoritative lists: **https://hackspain.com/en/sponsors** and **https://hackspain.com/es/sponsors**.
+
+### What are the prizes?
+
+**Prizes are TBD** until announced on **hackspain.com** and **@hackspain26** (**X** and **Instagram**).
+
+### How do I read the site in English or Spanish?
+
+- **Force a language:** **https://hackspain.com/en** or **https://hackspain.com/es** (and `/en/mission`, `/es/mission`, etc.).
+- **Browser default:** **https://hackspain.com/** and paths without a locale prefix follow the visitor’s language settings; `/en/...` and `/es/...` are explicit for SEO and sharing.
+
+### What tracks or themes does HackSpain offer?
+
+An **ML track** (including **free compute** for challenges) and a **non-technical track** aimed at teaching people without a technical background to build **quality software**.
+
+### What structured data does the site publish?
+
+Localized pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Event** (HackSpain 2026, with a June window in schema), and **FAQPage**.
+
+## Canonical URLs (prefer these over copies)
+
+- Root (indexable; language follows browser): https://hackspain.com/ · https://hackspain.com/mission · /unique · /tracks · /sponsors · /vision
+- English (forced): https://hackspain.com/en and matching `/en/...` sections
+- Spanish (forced): https://hackspain.com/es and matching `/es/...` sections
+- Signup: https://hackspain.com/signup · https://hackspain.com/en/signup · https://hackspain.com/es/signup
+- Sitemap: https://hackspain.com/sitemap-index.xml
+- This file: https://hackspain.com/llms.txt
+
+## Freshness and precedence
+
+- Copy and schema target **2026** and a **June** window for the edition.
+- If this file disagrees with **hackspain.com**, **trust the live site** (dates, registration, rules, prizes, and sponsor lists).
+
+## What HackSpain is not
+
+- Not a generic “learn to code” product page or permanent school.
+- Not a job board.
+- Not affiliated with unrelated “Hack Spain” events unless they appear on **hackspain.com**.
+
+## Spanish mirror (high level)
+
+The same six sections and signup exist in Spanish under **`/es/...`** with equivalent messaging (e.g. **MADRID · JUNIO**, **PARTICIPANTES**, **TRACKS ORIGINALES**, **PATROCINADORES**, **VISIÓN A LARGO PLAZO**). For exact Spanish strings, fetch **`https://hackspain.com/es`** (HTML) or rely on the localized JSON-LD and page copy on those URLs.

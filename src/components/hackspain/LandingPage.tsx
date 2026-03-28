@@ -597,7 +597,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
       <p className="sr-only" aria-live="polite" aria-atomic="true">
         {liveLabel}
       </p>
-      <div className="absolute inset-0">{stageContent}</div>
+      <div className="absolute inset-0 overflow-hidden">{stageContent}</div>
 
       <ScrollSectionHint
         label={copy.scrollHint}

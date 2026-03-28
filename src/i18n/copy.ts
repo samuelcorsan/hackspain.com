@@ -8,6 +8,8 @@ export type Copy = {
   sectionNav: string[];
   copyright: string;
   bottomFollow: string;
+  bottomSocialXAria: string;
+  bottomSocialInstagramAria: string;
   bottomMade: string;
   bottomMadeLeo: string;
   bottomCode: string;
@@ -112,6 +114,8 @@ const en: Copy = {
   ],
   copyright: "© 2026 HackSpain",
   bottomFollow: "@hackspain26",
+  bottomSocialXAria: "HackSpain on X (@hackspain26)",
+  bottomSocialInstagramAria: "HackSpain on Instagram (@hackspain26)",
   bottomMade: "Made with ♥ by",
   bottomMadeLeo: "Leo",
   bottomCode: "Check this code →",
@@ -222,6 +226,8 @@ const es: Copy = {
   ],
   copyright: "© 2026 HackSpain",
   bottomFollow: "@hackspain26",
+  bottomSocialXAria: "HackSpain en X (@hackspain26)",
+  bottomSocialInstagramAria: "HackSpain en Instagram (@hackspain26)",
   bottomMade: "Hecho con ♥ por",
   bottomMadeLeo: "Leo",
   bottomCode: "Ver el código →",

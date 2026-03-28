@@ -1,12 +1,8 @@
 ---
-export const prerender = true;
+export const prerender = false;
 import { LandingPage } from '../../components/hackspain';
 import Layout from '../../layouts/Layout.astro';
-import { LOCALES, isLocale, type Locale } from '../../i18n/locales';
-
-export function getStaticPaths() {
-	return LOCALES.map((locale) => ({ params: { locale } }));
-}
+import { isLocale, type Locale } from '../../i18n/locales';
 
 const { locale: loc } = Astro.params;
 const locale: Locale = isLocale(loc) ? loc : 'en';

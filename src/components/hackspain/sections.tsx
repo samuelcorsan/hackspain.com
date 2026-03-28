@@ -3,7 +3,7 @@ import { getCopy } from "../../i18n/copy";
 import { InlineSvg } from "./InlineSvg";
 import { ParticipantsCountUp } from "./ParticipantsCountUp";
 import { P } from "./Panel";
-import { X_SVG } from "./constants";
+import { INSTAGRAM_SVG, X_SVG } from "./constants";
 import { logoSvg, googleLogo, exaLogo, falLogo, kfundLogo, mozartLogo } from "./assets";
 
 const B = "font-bungee";
@@ -32,10 +32,27 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
 
   const actions: React.ReactNode[] = [
     <P bg="bg-hs-paper">
-      <a href="https://x.com/hackspain26" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-hs-ink">
-        <span className="h-5 w-5 shrink-0" dangerouslySetInnerHTML={{ __html: X_SVG }} />
+      <div className="flex flex-wrap items-center justify-center gap-2.5 text-hs-ink sm:gap-3">
+        <a
+          href="https://x.com/hackspain26"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-5 w-5 shrink-0 items-center justify-center"
+          aria-label={c.bottomSocialXAria}
+        >
+          <span className="h-5 w-5" dangerouslySetInnerHTML={{ __html: X_SVG }} />
+        </a>
+        <a
+          href="https://www.instagram.com/hackspain26/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-5 w-5 shrink-0 items-center justify-center"
+          aria-label={c.bottomSocialInstagramAria}
+        >
+          <span className="h-5 w-5" dangerouslySetInnerHTML={{ __html: INSTAGRAM_SVG }} />
+        </a>
         <span className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold`}>{c.bottomFollow}</span>
-      </a>
+      </div>
     </P>,
     <P bg="bg-hs-paper">
       <p className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink text-center`}>
@@ -196,7 +213,7 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       r1e: (
         <div className="flex h-full w-full flex-col items-center justify-center bg-hs-gold px-1 py-0">
           <span
-            className={`${B} text-center leading-[1.12] text-hs-ink text-[clamp(0.5rem,1.65vw,0.95rem)]`}
+            className={`${B} text-center leading-[1.12] text-hs-ink text-[clamp(0.7rem,1.65vw,0.95rem)]`}
           >
             {brLines(c.s3.freeCompute.replace(/ /, "\n"))}
           </span>

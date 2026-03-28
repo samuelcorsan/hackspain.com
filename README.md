@@ -1,46 +1,64 @@
-# Astro Starter Kit: Basics
+# HackSpain landing
+
+Marketing site for [HackSpain](https://hackspain.com) (Hack Spain 2026 hackathon, Madrid). Built with **Astro** (server output on Vercel), **React** islands for interactive sections, **Tailwind CSS v4**, and **Motion** for animation.
+
+- **Locales:** English and Spanish (`/`, `/es`, and locale-prefixed routes)
+- **Signup:** server API at `/api/signup` backed by **PostgreSQL** (Neon) via **Drizzle ORM**
+
+## Requirements
+
+- [Node.js](https://nodejs.org/) **≥ 22.12**
+- [Bun](https://bun.sh/) (used for install and most scripts)
+
+## Setup
 
 ```sh
-bun create astro@latest -- --template basics
+bun install
+cp .env.example .env
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Set `DATABASE_URL` in `.env` to a PostgreSQL connection string when you need signup persistence or local API testing. Without it, static pages still run; the signup endpoint expects a configured database.
 
-## 🚀 Project Structure
+Apply schema to your database when using Drizzle (see [Database](#database)).
 
-Inside of your Astro project, you'll see the following folders and files:
+## Commands
+
+| Command | Description |
+| :------ | :---------- |
+| `bun dev` | Dev server (default [localhost:4321](http://localhost:4321)) |
+| `bun build` | Production build to `./dist/` |
+| `bun preview` | Preview the production build locally |
+| `bun astro check` | Astro + TypeScript checks |
+| `bun og:generate` | Regenerate Open Graph images (`scripts/generate-og.mjs`) |
+| `bun assets:quiver` | Quiver asset pipeline (`scripts/quiver-generate-assets.mjs`) |
+| `bun assets:quiver:tiles` | Tile illustrations only |
+| `bun assets:quiver:tiles+heroes` | Tiles + hero illustrations |
+
+## Database
+
+Drizzle is configured for PostgreSQL (`drizzle.config.ts`, schema in `src/db/schema.ts`).
+
+| Command | Description |
+| :------ | :---------- |
+| `bun db:generate` | Generate migrations from schema changes |
+| `bun db:migrate` | Run migrations |
+| `bun db:push` | Push schema (handy in development) |
+
+## Project layout
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+src/
+├── components/hackspain/   # React + shared UI for the landing
+├── data/                   # SEO copy, routes metadata
+├── db/                     # Drizzle client and schema
+├── i18n/                   # Locales and translated strings
+├── layouts/                # Astro layouts
+└── pages/                  # Routes, API, and `[locale]` dynamic segments
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Deployment targets **Vercel** (`@astrojs/vercel`); analytics use `@vercel/analytics` when enabled in production.
 
-## 🧞 Commands
+## Docs
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [Astro](https://docs.astro.build/)
+- [Drizzle Kit](https://orm.drizzle.team/docs/kit-overview)

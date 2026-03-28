@@ -164,7 +164,11 @@ export function jsonLdOrganization(locale: Locale) {
     url: SITE,
     logo: `${SITE}/favicon.svg`,
     description,
-    sameAs: ["https://x.com/hackspain26", "https://github.com/hackspain"],
+    sameAs: [
+      "https://x.com/hackspain26",
+      "https://www.instagram.com/hackspain26/",
+      "https://github.com/hackspain",
+    ],
     knowsAbout: [
       locale === "es" ? "hackathon España" : "hackathon Spain",
       "Madrid tech events",
@@ -280,8 +284,8 @@ export function jsonLdFaq(locale: Locale) {
       : "How do I follow HackSpain on social media?";
   const a3 =
     locale === "es"
-      ? "En X (Twitter): @hackspain26. Contacto: leo@hackspain.com."
-      : "On X: @hackspain26. Contact: leo@hackspain.com.";
+      ? "En X (Twitter): @hackspain26. Instagram: @hackspain26 (instagram.com/hackspain26). Contacto: leo@hackspain.com."
+      : "On X: @hackspain26. Instagram: @hackspain26 (instagram.com/hackspain26). Contact: leo@hackspain.com.";
   const q4 =
     locale === "es"
       ? "¿Qué tracks tiene HackSpain?"
@@ -304,16 +308,16 @@ export function jsonLdFaq(locale: Locale) {
       : "How do I join or register for HackSpain?";
   const aJoin =
     locale === "es"
-      ? "Deja tus datos en hackspain.com/es/signup (interés / pre-registro). También puedes seguir @hackspain26 en X o escribir a leo@hackspain.com."
-      : "Share your details at hackspain.com/signup (interest / pre-registration). You can also follow @hackspain26 on X or email leo@hackspain.com.";
+      ? "Deja tus datos en hackspain.com/es/signup (interés / pre-registro). También puedes seguir @hackspain26 en X e Instagram o escribir a leo@hackspain.com."
+      : "Share your details at hackspain.com/signup (interest / pre-registration). You can also follow @hackspain26 on X and Instagram or email leo@hackspain.com.";
   const qPrizes =
     locale === "es"
       ? "¿Qué premios hay en HackSpain?"
       : "What prizes does HackSpain offer?";
   const aPrizes =
     locale === "es"
-      ? "Los premios aún no están definidos (por determinar). Se anunciarán en hackspain.com y en @hackspain26 en X conforme se acerque el evento."
-      : "Prizes are not yet announced (TBD). They will be published on hackspain.com and via @hackspain26 on X as the event approaches.";
+      ? "Los premios aún no están definidos (por determinar). Se anunciarán en hackspain.com y en @hackspain26 (X e Instagram) conforme se acerque el evento."
+      : "Prizes are not yet announced (TBD). They will be published on hackspain.com and via @hackspain26 on X and Instagram as the event approaches.";
   const q6 =
     locale === "es"
       ? "¿Cuántas personas participan?"
