@@ -70,6 +70,31 @@ export type Copy = {
     largest: string;
     goldBody: string;
   };
+  signup: {
+    title: string;
+    subtitle: string;
+    backHome: string;
+    fullName: string;
+    email: string;
+    socialsTitle: string;
+    socialsRequiredHint: string;
+    x: string;
+    linkedin: string;
+    github: string;
+    web: string;
+    achievements: string;
+    achievementsHint: string;
+    freeTime: string;
+    freeTimeHint: string;
+    submit: string;
+    submitting: string;
+    applicationReceived: string;
+    alreadyApplied: string;
+    applyAgain: string;
+    errorGeneric: string;
+    errorDuplicate: string;
+    errorSocialRequired: string;
+  };
 };
 
 const en: Copy = {
@@ -151,6 +176,35 @@ const en: Copy = {
     largest: "LARGEST HACKATHON IN EUROPE",
     goldBody: "The largest hackathon movement in Southern Europe.",
   },
+  signup: {
+    title: "Hackathon signup",
+    subtitle: "Tell us who you are — we’ll keep you posted for HackSpain 2026.",
+    backHome: "← Home",
+    fullName: "Full name",
+    email: "Email",
+    socialsTitle: "Socials & links",
+    socialsRequiredHint: "Add at least one link (X, LinkedIn, GitHub, or your website).",
+    x: "X (Twitter)",
+    linkedin: "LinkedIn",
+    github: "GitHub",
+    web: "Website",
+    achievements: "Achievements & highlights",
+    achievementsHint:
+      "Anything you’re proud of — hackathons, studies, sports, volunteering, art, work… tech or not.",
+    freeTime: "Outside of school / work",
+    freeTimeHint:
+      "Hobbies, clubs, associations, side projects, what you do to unwind — whatever fits.",
+    submit: "Send",
+    submitting: "Sending…",
+    applicationReceived:
+      "Thanks — we’ve got your application. Sit tight and keep an eye on your inbox; we’ll get back to you as soon as we can.",
+    alreadyApplied:
+      "You already sent an application from this browser. We’ll still reply by email — use “Apply again” only if you need to submit another one.",
+    applyAgain: "Apply again",
+    errorGeneric: "Something went wrong. Try again in a moment.",
+    errorDuplicate: "This email is already registered.",
+    errorSocialRequired: "Please add at least one profile or website link.",
+  },
 };
 
 const es: Copy = {
@@ -231,6 +285,36 @@ const es: Copy = {
       "HackSpain no es un evento puntual. Es la base de un movimiento que posiciona a España como líder tech en Europa.",
     largest: "EL MAYOR HACKATHON DE EUROPA",
     goldBody: "El mayor movimiento de hackathones del sur de Europa.",
+  },
+  signup: {
+    title: "Apúntate al hackathon",
+    subtitle: "Cuéntanos quién eres — te avisamos sobre HackSpain 2026.",
+    backHome: "← Inicio",
+    fullName: "Nombre completo",
+    email: "Email",
+    socialsTitle: "Redes y enlaces",
+    socialsRequiredHint:
+      "Añade al menos un enlace (X, LinkedIn, GitHub o tu web).",
+    x: "X (Twitter)",
+    linkedin: "LinkedIn",
+    github: "GitHub",
+    web: "Web",
+    achievements: "Logros y hitos",
+    achievementsHint:
+      "Lo que te enorgullece — hackathones, estudios, deporte, voluntariado, arte, trabajo… técnico o no.",
+    freeTime: "Fuera del cole / curro",
+    freeTimeHint:
+      "Hobbies, clubes, asociaciones, side projects, cómo desconectas — lo que te represente.",
+    submit: "Enviar",
+    submitting: "Enviando…",
+    applicationReceived:
+      "¡Gracias! Hemos recibido tu solicitud. Espera nuestra respuesta por correo; te escribiremos en cuanto podamos.",
+    alreadyApplied:
+      "Ya enviaste una solicitud desde este navegador. Te contestaremos por correo; usa «Volver a solicitar» solo si necesitas mandar otra.",
+    applyAgain: "Volver a solicitar",
+    errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
+    errorDuplicate: "Este email ya está registrado.",
+    errorSocialRequired: "Añade al menos un enlace a perfil o web.",
   },
 };
 

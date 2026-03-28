@@ -13,23 +13,30 @@
     "build": "astro build",
     "preview": "astro preview",
     "og:generate": "node scripts/generate-og.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.1",
     "@astrojs/sitemap": "^3.7.1",
     "@astrojs/vercel": "^10.0.2",
+    "@neondatabase/serverless": "^1.0.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vercel/analytics": "^2.0.1",
     "astro": "^6.0.8",
+    "drizzle-orm": "^0.45.2",
     "motion": "^12.38.0",
+    "phosphor-astro": "^2.1.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
+    "drizzle-kit": "^0.31.10",
     "postcss": "^8.5.8",
     "sharp": "^0.34.5"
   }

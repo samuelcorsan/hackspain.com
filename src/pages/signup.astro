@@ -1,0 +1,32 @@
+---
+export const prerender = true;
+import { SignupPage } from "../components/hackspain";
+import SignupNavbar from "../components/hackspain/SignupNavbar.astro";
+import Layout from "../layouts/Layout.astro";
+import { signupKeywords, signupSeo } from "../data/landingMeta";
+
+const seo = signupSeo("en");
+const kw = signupKeywords("en");
+---
+
+<Layout
+  locale="en"
+  sectionIndex={0}
+  pathMode="root"
+  allowScroll
+  title={seo.title}
+  description={seo.description}
+  ogImageAlt={seo.ogImageAlt}
+  canonicalPathOverride="/signup"
+  hrefLangEnPathOverride="/signup"
+  hrefLangEsPathOverride="/es/signup"
+  hrefLangXDefaultPathOverride="/signup"
+  keywordsOverride={kw}
+>
+  <main id="main" class="relative min-h-dvh w-full">
+    <div class="relative z-10 mx-auto max-w-5xl px-3 pt-6 sm:px-4 sm:pt-10">
+      <SignupNavbar locale="en" />
+    </div>
+    <SignupPage client:load locale="en" />
+  </main>
+</Layout>

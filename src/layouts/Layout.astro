@@ -21,10 +21,17 @@ interface Props {
   ogImageAlt?: string;
   sectionIndex?: number;
   pathMode?: "locale-prefix" | "root";
+  allowScroll?: boolean;
+  canonicalPathOverride?: string;
+  hrefLangEnPathOverride?: string;
+  hrefLangEsPathOverride?: string;
+  hrefLangXDefaultPathOverride?: string;
+  keywordsOverride?: string;
 }
 
 const locale = Astro.props.locale;
 const pathMode = Astro.props.pathMode ?? "locale-prefix";
+const allowScroll = Astro.props.allowScroll ?? false;
 const t = getCopy(locale);
 const sectionIndex = Astro.props.sectionIndex ?? 0;
 const seo = seoForSectionIndex(locale, sectionIndex);
@@ -35,23 +42,30 @@ const {
 } = Astro.props;
 
 const canonicalPath =
-  pathMode === "root"
+  Astro.props.canonicalPathOverride ??
+  (pathMode === "root"
     ? pathRootFromSectionIndex(sectionIndex)
-    : pathFromSectionIndex(locale, sectionIndex);
+    : pathFromSectionIndex(locale, sectionIndex));
 const canonical = new URL(canonicalPath, Astro.site);
 const ogImage = new URL("/og.png", Astro.site);
 const ogImageUrl = ogImage.href;
-const keywords = keywordsForSectionIndex(locale, sectionIndex);
+const keywords =
+  Astro.props.keywordsOverride ?? keywordsForSectionIndex(locale, sectionIndex);
 
-const hrefLangEn = new URL(pathFromSectionIndex("en", sectionIndex), Astro.site)
-  .href;
-const hrefLangEs = new URL(pathFromSectionIndex("es", sectionIndex), Astro.site)
-  .href;
+const hrefLangEn = new URL(
+  Astro.props.hrefLangEnPathOverride ?? pathFromSectionIndex("en", sectionIndex),
+  Astro.site,
+).href;
+const hrefLangEs = new URL(
+  Astro.props.hrefLangEsPathOverride ?? pathFromSectionIndex("es", sectionIndex),
+  Astro.site,
+).href;
 
 const hrefLangXDefault = new URL(
-  pathMode === "root"
-    ? pathRootFromSectionIndex(sectionIndex)
-    : pathFromSectionIndex("en", sectionIndex),
+  Astro.props.hrefLangXDefaultPathOverride ??
+    (pathMode === "root"
+      ? pathRootFromSectionIndex(sectionIndex)
+      : pathFromSectionIndex("en", sectionIndex)),
   Astro.site,
 ).href;
 
@@ -151,7 +165,12 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
     <script type="application/ld+json" set:html={faqJson} />
     <Analytics />
   </head>
-  <body class="h-dvh antialiased font-sans text-hs-ink overflow-hidden">
+  <body
+    class:list={[
+      "antialiased font-sans text-hs-ink",
+      allowScroll ? "min-h-dvh overflow-y-auto" : "h-dvh overflow-hidden",
+    ]}
+  >
     <a href="#main" class="skip-link font-sans">{t.skipLink}</a>
     <slot />
   </body>

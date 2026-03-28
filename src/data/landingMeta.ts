@@ -93,6 +93,32 @@ export function seoForSectionIndex(locale: Locale, i: number): PageSeo {
   return pages[Math.max(0, Math.min(pages.length - 1, i))] ?? pages[0];
 }
 
+const SIGNUP_KEYWORDS_EN =
+  "HackSpain signup, hackathon registration Spain, hackathon Madrid 2026, Hack Spain register, young coders hackathon interest";
+const SIGNUP_KEYWORDS_ES =
+  "apuntarse HackSpain, registro hackathon España, hackathon Madrid 2026, Hack Spain registro, interés hackathon jóvenes";
+
+export function signupKeywords(locale: Locale): string {
+  return locale === "es" ? SIGNUP_KEYWORDS_ES : SIGNUP_KEYWORDS_EN;
+}
+
+export function signupSeo(locale: Locale): PageSeo {
+  if (locale === "es") {
+    return {
+      title: "Apúntate — HACKSPAIN 2026 | hackathon Madrid",
+      description:
+        "Registro de interés para HackSpain 2026: hackathon Madrid, hackathon España. Cuéntanos tu perfil y te contactamos.",
+      ogImageAlt: "HackSpain 2026 — apúntate al hackathon",
+    };
+  }
+  return {
+    title: "Sign up — HACKSPAIN 2026 | hackathon Madrid Spain",
+    description:
+      "Express interest in HackSpain 2026 — Madrid hackathon for young coders. Share your profile and we’ll stay in touch.",
+    ogImageAlt: "HackSpain 2026 — hackathon signup",
+  };
+}
+
 const KEYWORDS_BASE_EN =
   "hack spain, Hack Spain, hack spain hackathon, hack spain Madrid, hack spain 2026, hackathon Madrid, hackathon Spain, hackathon España, HackSpain, young coders Spain, hack day Madrid, programming Madrid, hackspain.com";
 
@@ -278,8 +304,8 @@ export function jsonLdFaq(locale: Locale) {
       : "How do I join or register for HackSpain?";
   const aJoin =
     locale === "es"
-      ? "El registro no está abierto todavía. Por ahora, sigue @hackspain26 en X (Twitter) o escribe a leo@hackspain.com para enterarte cuando arranque."
-      : "Registration is not open yet. For now, follow @hackspain26 on X (Twitter) or email leo@hackspain.com to be notified when it does.";
+      ? "Deja tus datos en hackspain.com/es/signup (interés / pre-registro). También puedes seguir @hackspain26 en X o escribir a leo@hackspain.com."
+      : "Share your details at hackspain.com/signup (interest / pre-registration). You can also follow @hackspain26 on X or email leo@hackspain.com.";
   const qPrizes =
     locale === "es"
       ? "¿Qué premios hay en HackSpain?"

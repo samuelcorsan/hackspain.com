@@ -7,7 +7,7 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://hackspain.com',
-  output: 'static',
+  output: 'server',
   adapter: vercel(),
   trailingSlash: 'never',
   integrations: [
