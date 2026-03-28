@@ -4,11 +4,11 @@ const DISCORD_WEBHOOK_PREFIXES = [
 ] as const;
 
 function getWebhookUrl(): string | null {
-  const raw = import.meta.env.DISCORD_AMBASSADOR_WEBHOOK_URL;
+  const raw = import.meta.env.DISCORD_WEBHOOK_URL;
   if (typeof raw !== "string" || !raw.trim()) return null;
   const u = raw.trim();
   if (!DISCORD_WEBHOOK_PREFIXES.some((p) => u.startsWith(p))) {
-    console.warn("DISCORD_AMBASSADOR_WEBHOOK_URL ignored: must be a discord.com webhook URL");
+    console.warn("DISCORD_WEBHOOK_URL ignored: must be a discord.com webhook URL");
     return null;
   }
   return u;
