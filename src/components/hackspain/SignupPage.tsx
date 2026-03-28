@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MosaicBackground } from "./MosaicBackground";
 import { getCopy } from "../../i18n/copy";
 import type { Locale } from "../../i18n/locales";
+import { parseSignupBodyClient } from "../../lib/signupValidation";
 import { useLayoutProfile } from "./useLayoutProfile";
 
 const STORAGE_KEY = "hackspain-signup-draft-v1";
@@ -91,15 +92,55 @@ function clearStoredFields() {
   }
 }
 
-function hasAnySocialUrl(x: string, li: string, gh: string, w: string): boolean {
-  return [x, li, gh, w].some((s) => s.trim().length > 0);
-}
-
 const inputClass =
   "w-full rounded-sm border-[3px] border-hs-ink bg-hs-paper px-2 py-2 text-base text-hs-ink outline-none [color-scheme:light] placeholder:text-hs-ink/42 selection:bg-hs-gold/50 selection:text-hs-ink focus-visible:ring-2 focus-visible:ring-hs-navy focus-visible:ring-offset-2 focus-visible:ring-offset-hs-paper [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-hs-ink)] [&:-webkit-autofill]:shadow-[inset_0_0_0_1000px_var(--color-hs-paper)]";
 
 const sansLabelClass = "font-sans text-sm font-extrabold text-hs-ink sm:text-base";
 const hintClass = "font-sans text-sm leading-snug text-hs-brown sm:text-[0.95rem]";
+
+const X_PREFIX = "x.com/";
+const LINKEDIN_PREFIX = "linkedin.com/";
+const GITHUB_PREFIX = "github.com/";
+
+const socialComboWrapClass =
+  "flex w-full min-w-0 rounded-sm border-[3px] border-hs-ink bg-hs-paper focus-within:ring-2 focus-within:ring-hs-navy focus-within:ring-offset-2 focus-within:ring-offset-hs-paper [&:-webkit-autofill]:shadow-[inset_0_0_0_1000px_var(--color-hs-paper)]";
+
+const socialPrefixClass =
+  "inline-flex shrink-0 items-center self-stretch whitespace-nowrap border-r-[3px] border-hs-ink bg-hs-sand/45 px-2 font-mono text-[clamp(0.62rem,2.2vw,0.8125rem)] font-bold leading-tight tracking-tight text-hs-ink select-none sm:px-2.5 sm:text-sm";
+
+const socialInnerInputClass =
+  "font-sans min-w-0 flex-1 border-0 bg-transparent px-2 py-2 text-base text-hs-ink outline-none [color-scheme:light] placeholder:text-hs-ink/42 selection:bg-hs-gold/50 selection:text-hs-ink focus:ring-0 focus-visible:ring-0 [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-hs-ink)]";
+
+type SocialPrefixInputProps = {
+  id: string;
+  name: string;
+  prefix: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+};
+
+function SocialPrefixInput({ id, name, prefix, value, onChange, placeholder }: SocialPrefixInputProps) {
+  return (
+    <div className={socialComboWrapClass}>
+      <span className={socialPrefixClass} aria-hidden="true">
+        {prefix}
+      </span>
+      <input
+        id={id}
+        className={socialInnerInputClass}
+        name={name}
+        type="text"
+        inputMode="text"
+        autoComplete="off"
+        spellCheck={false}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </div>
+  );
+}
 
 type Props = { locale: Locale };
 
@@ -163,8 +204,27 @@ export function SignupPage({ locale }: Props) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrorMessage("");
-    if (!hasAnySocialUrl(xUrl, linkedinUrl, githubUrl, webUrl)) {
-      setErrorMessage(t.errorSocialRequired);
+    const payload = {
+      fullName,
+      email,
+      xUrl,
+      linkedinUrl,
+      githubUrl,
+      webUrl,
+      achievements,
+      freeTime,
+    };
+    const parsed = parseSignupBodyClient(payload);
+    if (!parsed.ok) {
+      if (parsed.code === "social_required") {
+        setErrorMessage(t.errorSocialRequired);
+      } else if (parsed.code === "invalid_social_url") {
+        setErrorMessage(t.errorInvalidSocialUrl);
+      } else if (parsed.code === "invalid_email") {
+        setErrorMessage(t.errorInvalidEmail);
+      } else {
+        setErrorMessage(t.errorGeneric);
+      }
       setStatus("error");
       return;
     }
@@ -173,16 +233,7 @@ export function SignupPage({ locale }: Props) {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName,
-          email,
-          xUrl,
-          linkedinUrl,
-          githubUrl,
-          webUrl,
-          achievements,
-          freeTime,
-        }),
+        body: JSON.stringify(parsed.data),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (res.ok) {
@@ -195,6 +246,8 @@ export function SignupPage({ locale }: Props) {
         setErrorMessage(t.errorDuplicate);
       } else if (data.error === "social_required") {
         setErrorMessage(t.errorSocialRequired);
+      } else if (data.error === "invalid_social_url") {
+        setErrorMessage(t.errorInvalidSocialUrl);
       } else {
         setErrorMessage(typeof data.error === "string" ? data.error : t.errorGeneric);
       }
@@ -300,41 +353,35 @@ export function SignupPage({ locale }: Props) {
                 <div className="grid gap-0 sm:grid-cols-2">
                   <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4 sm:border-r-[3px]">
                     <span className={sansLabelClass}>{t.x}</span>
-                    <input
-                      className={inputClass}
+                    <SocialPrefixInput
+                      id="signup-x-url"
                       name="xUrl"
-                      type="text"
-                      inputMode="url"
-                      autoComplete="url"
-                      placeholder="x.com/... or https://..."
+                      prefix={X_PREFIX}
                       value={xUrl}
-                      onChange={(e) => setXUrl(e.target.value)}
+                      onChange={setXUrl}
+                      placeholder={t.socialXPlaceholder}
                     />
                   </label>
                   <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4">
                     <span className={sansLabelClass}>{t.linkedin}</span>
-                    <input
-                      className={inputClass}
+                    <SocialPrefixInput
+                      id="signup-linkedin-url"
                       name="linkedinUrl"
-                      type="text"
-                      inputMode="url"
-                      autoComplete="url"
-                      placeholder="linkedin.com/in/... or https://..."
+                      prefix={LINKEDIN_PREFIX}
                       value={linkedinUrl}
-                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      onChange={setLinkedinUrl}
+                      placeholder={t.socialLinkedinPlaceholder}
                     />
                   </label>
                   <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4 sm:border-r-[3px]">
                     <span className={sansLabelClass}>{t.github}</span>
-                    <input
-                      className={inputClass}
+                    <SocialPrefixInput
+                      id="signup-github-url"
                       name="githubUrl"
-                      type="text"
-                      inputMode="url"
-                      autoComplete="url"
-                      placeholder="github.com/user or https://..."
+                      prefix={GITHUB_PREFIX}
                       value={githubUrl}
-                      onChange={(e) => setGithubUrl(e.target.value)}
+                      onChange={setGithubUrl}
+                      placeholder={t.socialGithubPlaceholder}
                     />
                   </label>
                   <label className="flex flex-col gap-1 border-b-[3px] border-hs-ink bg-hs-paper p-4">

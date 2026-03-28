@@ -86,6 +86,9 @@ export type Copy = {
     linkedin: string;
     github: string;
     web: string;
+    socialXPlaceholder: string;
+    socialLinkedinPlaceholder: string;
+    socialGithubPlaceholder: string;
     achievements: string;
     achievementsHint: string;
     freeTime: string;
@@ -98,6 +101,8 @@ export type Copy = {
     errorGeneric: string;
     errorDuplicate: string;
     errorSocialRequired: string;
+    errorInvalidSocialUrl: string;
+    errorInvalidEmail: string;
   };
 };
 
@@ -196,6 +201,9 @@ const en: Copy = {
     linkedin: "LinkedIn",
     github: "GitHub",
     web: "Website",
+    socialXPlaceholder: "you, @you, or paste a link",
+    socialLinkedinPlaceholder: "in/you, company/page, or paste a link",
+    socialGithubPlaceholder: "you or you/repo — or paste a link",
     achievements: "Achievements & highlights",
     achievementsHint:
       "Anything you’re proud of — hackathons, studies, sports, volunteering, art, work… tech or not.",
@@ -212,6 +220,9 @@ const en: Copy = {
     errorGeneric: "Something went wrong. Try again in a moment.",
     errorDuplicate: "This email is already registered.",
     errorSocialRequired: "Please add at least one profile or website link.",
+    errorInvalidSocialUrl:
+      "One or more links are not valid for that field (check X, LinkedIn, GitHub, or your website).",
+    errorInvalidEmail: "Please enter a valid email address.",
   },
 };
 
@@ -311,6 +322,9 @@ const es: Copy = {
     linkedin: "LinkedIn",
     github: "GitHub",
     web: "Web",
+    socialXPlaceholder: "usuario, @usuario o pega un enlace",
+    socialLinkedinPlaceholder: "in/usuario, company/página o pega un enlace",
+    socialGithubPlaceholder: "usuario o usuario/repo — o pega un enlace",
     achievements: "Logros y hitos",
     achievementsHint:
       "Lo que te enorgullece — hackathones, estudios, deporte, voluntariado, arte, trabajo… técnico o no.",
@@ -327,6 +341,9 @@ const es: Copy = {
     errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
     errorDuplicate: "Este email ya está registrado.",
     errorSocialRequired: "Añade al menos un enlace a perfil o web.",
+    errorInvalidSocialUrl:
+      "Uno o más enlaces no son válidos para ese campo (revisa X, LinkedIn, GitHub o tu web).",
+    errorInvalidEmail: "Introduce un correo electrónico válido.",
   },
 };
 

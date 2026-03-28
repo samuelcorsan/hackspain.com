@@ -2,33 +2,13 @@ import type { APIRoute } from "astro";
 import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { hackathonSignups } from "../../db/schema";
+import { parseSignupBody } from "../../lib/signupValidation";
 
 export const prerender = false;
-
-const MAX = {
-  name: 200,
-  email: 320,
-  url: 2048,
-  longText: 8000,
-} as const;
-
-function trim(s: unknown): string {
-  return typeof s === "string" ? s.trim() : "";
-}
 
 function emptyToNull(s: string): string | null {
   return s.length === 0 ? null : s;
 }
-
-function normalizeLooseUrl(input: string): string {
-  const t = input.trim();
-  if (!t) return "";
-  if (t.startsWith("//")) return `https:${t}`;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(t)) return t;
-  return `https://${t.replace(/^\/+/, "")}`;
-}
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const POST: APIRoute = async ({ request }) => {
   if (request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json") {
@@ -46,28 +26,12 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const o = body as Record<string, unknown>;
-  const fullName = trim(o.fullName).slice(0, MAX.name);
-  const email = trim(o.email).slice(0, MAX.email).toLowerCase();
-  const xUrl = normalizeLooseUrl(trim(o.xUrl)).slice(0, MAX.url);
-  const linkedinUrl = normalizeLooseUrl(trim(o.linkedinUrl)).slice(0, MAX.url);
-  const githubUrl = normalizeLooseUrl(trim(o.githubUrl)).slice(0, MAX.url);
-  const webUrl = normalizeLooseUrl(trim(o.webUrl)).slice(0, MAX.url);
-  const achievements = trim(o.achievements).slice(0, MAX.longText);
-  const freeTime = trim(o.freeTime).slice(0, MAX.longText);
-
-  if (!fullName) {
-    return Response.json({ error: "fullName is required" }, { status: 400 });
-  }
-  if (!email || !EMAIL_RE.test(email)) {
-    return Response.json({ error: "Valid email is required" }, { status: 400 });
+  const parsed = parseSignupBody(body);
+  if (!parsed.ok) {
+    return Response.json({ error: parsed.error }, { status: parsed.status });
   }
 
-  const hasSocial =
-    xUrl.length > 0 || linkedinUrl.length > 0 || githubUrl.length > 0 || webUrl.length > 0;
-  if (!hasSocial) {
-    return Response.json({ error: "social_required" }, { status: 400 });
-  }
+  const { fullName, email, xUrl, linkedinUrl, githubUrl, webUrl, achievements, freeTime } = parsed.data;
 
   try {
     const db = getDb();
