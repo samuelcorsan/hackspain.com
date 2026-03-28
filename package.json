@@ -27,6 +27,7 @@
     "@types/react-dom": "^19.2.3",
     "@vercel/analytics": "^2.0.1",
     "astro": "^6.0.8",
+    "botid": "^1.5.11",
     "drizzle-orm": "^0.45.2",
     "motion": "^12.38.0",
     "phosphor-astro": "^2.1.0",

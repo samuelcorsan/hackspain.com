@@ -105,6 +105,7 @@ export type Copy = {
     errorSocialRequired: string;
     errorInvalidSocialUrl: string;
     errorInvalidEmail: string;
+    errorAccessDenied: string;
   };
 };
 
@@ -227,6 +228,8 @@ const en: Copy = {
     errorInvalidSocialUrl:
       "One or more links are not valid for that field (check X, LinkedIn, GitHub, or your website).",
     errorInvalidEmail: "Please enter a valid email address.",
+    errorAccessDenied:
+      "We couldn’t verify this request. Refresh the page and try again, or use a normal browser with JavaScript enabled.",
   },
 };
 
@@ -350,6 +353,8 @@ const es: Copy = {
     errorInvalidSocialUrl:
       "Uno o más enlaces no son válidos para ese campo (revisa X, LinkedIn, GitHub o tu web).",
     errorInvalidEmail: "Introduce un correo electrónico válido.",
+    errorAccessDenied:
+      "No hemos podido verificar la solicitud. Recarga la página e inténtalo de nuevo, o usa un navegador normal con JavaScript activado.",
   },
 };
 

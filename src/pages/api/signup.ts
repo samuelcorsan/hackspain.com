@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { checkBotId } from "botid/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { hackathonSignups } from "../../db/schema";
@@ -12,6 +13,15 @@ function emptyToNull(s: string): string | null {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  try {
+    const verification = await checkBotId();
+    if (verification.isBot) {
+      return Response.json({ error: "Access denied" }, { status: 403 });
+    }
+  } catch (e) {
+    console.error("BotID check failed:", e);
+  }
+
   if (request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json") {
     return Response.json({ error: "Expected application/json" }, { status: 415 });
   }

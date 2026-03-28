@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { initBotId } from "botid/client/core";
 import { MosaicBackground } from "./MosaicBackground";
 import { getCopy } from "../../i18n/copy";
 import type { Locale } from "../../i18n/locales";
@@ -178,6 +179,12 @@ export function SignupPage({ locale }: Props) {
   }
 
   useEffect(() => {
+    initBotId({
+      protect: [{ path: "/api/signup", method: "POST" }],
+    });
+  }, []);
+
+  useEffect(() => {
     if (status === "success" || status === "alreadyApplied") return;
     writeStoredFields({
       fullName,
@@ -242,7 +249,9 @@ export function SignupPage({ locale }: Props) {
         setStatus("success");
         return;
       }
-      if (res.status === 409) {
+      if (res.status === 403) {
+        setErrorMessage(t.errorAccessDenied);
+      } else if (res.status === 409) {
         setErrorMessage(t.errorDuplicate);
       } else if (data.error === "social_required") {
         setErrorMessage(t.errorSocialRequired);
