@@ -130,7 +130,7 @@ Localized pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage
 - Signup: https://hackspain.com/signup · https://hackspain.com/en/signup · https://hackspain.com/es/signup
 - Ambassador: https://hackspain.com/ambassador · https://hackspain.com/es/ambassador
 - Privacy: https://hackspain.com/privacy · https://hackspain.com/en/privacy · https://hackspain.com/es/privacy
-- Sitemap: https://hackspain.com/sitemap-index.xml
+- Sitemap: https://hackspain.com/sitemap.xml
 - This file: https://hackspain.com/llms.txt
 
 ## Freshness and precedence

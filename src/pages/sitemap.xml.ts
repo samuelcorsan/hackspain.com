@@ -1,9 +1,19 @@
 import type { APIRoute } from "astro";
+import { getAllSitemapPageUrls, SITEMAP_SITE_ORIGIN } from "../data/sitemapPages";
+import { buildSitemapUrlsetXml } from "../lib/sitemapUrlsetXml";
 
-/** Avoid `[locale]/index` treating `sitemap.xml` as a locale and serving HTML; sitemap integration only writes `sitemap-index.xml`. */
-export const prerender = false;
+export const prerender = true;
 
 export const GET: APIRoute = ({ site }) => {
-  const origin = site ?? new URL("https://hackspain.com");
-  return Response.redirect(new URL("/sitemap-index.xml", origin), 301);
+  const origin = site?.origin ?? SITEMAP_SITE_ORIGIN;
+  const xml = buildSitemapUrlsetXml(getAllSitemapPageUrls(), origin, {
+    defaultLocale: "en",
+    locales: { en: "en", es: "es" },
+  });
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=86400",
+    },
+  });
 };
