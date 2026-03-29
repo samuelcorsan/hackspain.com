@@ -2,6 +2,13 @@ import type { Locale } from "../i18n/locales";
 
 const SITE = "https://hackspain.com";
 
+/** Open Graph / Twitter / JSON-LD primary share image (`public/banner.png`). */
+export const SOCIAL_SHARE_IMAGE = {
+  path: "/banner.png",
+  width: 1873,
+  height: 953,
+} as const;
+
 const CONTENT_DATE_MODIFIED = "2026-03-21";
 
 export type PageSeo = {
@@ -214,7 +221,7 @@ export function jsonLdOrganization(locale: Locale) {
     name: "HackSpain",
     alternateName: ["Hack Spain", "hack spain", "Hack Spain hackathon"],
     url: SITE,
-    logo: `${SITE}/favicon.svg`,
+    logo: `${SITE}/hs-icon.png`,
     description,
     sameAs: [
       "https://x.com/hackspain26",
@@ -264,9 +271,9 @@ export function jsonLdWebPage(locale: Locale, sectionIndex: number, pageUrl: str
     dateModified: CONTENT_DATE_MODIFIED,
     primaryImageOfPage: {
       "@type": "ImageObject",
-      url: `${SITE}/og.png`,
-      width: 1200,
-      height: 630,
+      url: `${SITE}${SOCIAL_SHARE_IMAGE.path}`,
+      width: SOCIAL_SHARE_IMAGE.width,
+      height: SOCIAL_SHARE_IMAGE.height,
     },
   };
 }
@@ -362,6 +369,14 @@ export function jsonLdFaq(locale: Locale) {
     locale === "es"
       ? "Deja tus datos en hackspain.com/es/signup (interés / pre-registro). También puedes seguir @hackspain26 en X e Instagram o escribir a leo@hackspain.com."
       : "Share your details at hackspain.com/signup (interest / pre-registration). You can also follow @hackspain26 on X and Instagram or email leo@hackspain.com.";
+  const qAmb =
+    locale === "es"
+      ? "¿Cómo puedo ser embajador o embajadora de HackSpain?"
+      : "How do I become a HackSpain ambassador?";
+  const aAmb =
+    locale === "es"
+      ? "Lee el programa en hackspain.com/es/ambassador. Te apuntas con el mismo formulario de interés: marca la opción de embajador/a o entra en hackspain.com/es/signup?ambassador=1. Pediremos por qué te interesa el rol y dónde estudias."
+      : "Read the program at hackspain.com/ambassador. Apply through the same interest form: tick the ambassador option, or start at hackspain.com/signup?ambassador=1. We ask why you want the role and where you study.";
   const qPrizes =
     locale === "es"
       ? "¿Qué premios hay en HackSpain?"
@@ -401,6 +416,7 @@ export function jsonLdFaq(locale: Locale) {
       { "@type": "Question", name: q1, acceptedAnswer: { "@type": "Answer", text: a1 } },
       { "@type": "Question", name: q2, acceptedAnswer: { "@type": "Answer", text: a2 } },
       { "@type": "Question", name: qJoin, acceptedAnswer: { "@type": "Answer", text: aJoin } },
+      { "@type": "Question", name: qAmb, acceptedAnswer: { "@type": "Answer", text: aAmb } },
       { "@type": "Question", name: q5, acceptedAnswer: { "@type": "Answer", text: a5 } },
       { "@type": "Question", name: qPrizes, acceptedAnswer: { "@type": "Answer", text: aPrizes } },
       { "@type": "Question", name: q4, acceptedAnswer: { "@type": "Answer", text: a4 } },

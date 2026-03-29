@@ -9,6 +9,7 @@ import {
   jsonLdWebSite,
   keywordsForSectionIndex,
   seoForSectionIndex,
+  SOCIAL_SHARE_IMAGE,
 } from "../data/landingMeta";
 import { pathFromSectionIndex, pathRootFromSectionIndex } from "../data/sectionRoutes";
 import { getCopy } from "../i18n/copy";
@@ -47,7 +48,7 @@ const canonicalPath =
     ? pathRootFromSectionIndex(sectionIndex)
     : pathFromSectionIndex(locale, sectionIndex));
 const canonical = new URL(canonicalPath, Astro.site);
-const ogImage = new URL("/og.png", Astro.site);
+const ogImage = new URL(SOCIAL_SHARE_IMAGE.path, Astro.site);
 const ogImageUrl = ogImage.href;
 const keywords =
   Astro.props.keywordsOverride ?? keywordsForSectionIndex(locale, sectionIndex);
@@ -90,7 +91,7 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/hs-icon.png" sizes="1024x1024" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="manifest" href="/site.webmanifest" />
     <link
@@ -130,17 +131,20 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
     <meta property="og:locale:alternate" content={ogLocaleAlt} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:secure_url" content={ogImageUrl} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content={String(SOCIAL_SHARE_IMAGE.width)} />
+    <meta property="og:image:height" content={String(SOCIAL_SHARE_IMAGE.height)} />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:alt" content={ogImageAlt} />
 
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@hackspain26" />
+    <meta name="twitter:creator" content="@hackspain26" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:width" content={String(SOCIAL_SHARE_IMAGE.width)} />
+    <meta name="twitter:image:height" content={String(SOCIAL_SHARE_IMAGE.height)} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
-    <meta name="twitter:site" content="@hackspain26" />
 
     {
       googleVerify && (

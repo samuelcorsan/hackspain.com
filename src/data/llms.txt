@@ -77,6 +77,12 @@ Section titles in the UI navigation: **Home**, **Mission**, **What makes us uniq
 - Visitors can submit **interest / pre-registration** via **https://hackspain.com/signup** (and **https://hackspain.com/en/signup**, **https://hackspain.com/es/signup** for localized pages). The form asks for profile details and social links; the site copy explains the process.
 - For updates: **@hackspain26** on **X** (https://x.com/hackspain26) and **Instagram** (https://www.instagram.com/hackspain26/), and **leo@hackspain.com**.
 
+## Ambassador program
+
+- **Dedicated pages:** **https://hackspain.com/ambassador** (English) and **https://hackspain.com/es/ambassador** (Spanish). These explain what ambassadors do, selection expectations, and perks (including travel support — exact caps and claims are described on the live page and at onboarding).
+- **How to apply:** Use the same **signup / interest** form with the **ambassador** option, or open **https://hackspain.com/signup?ambassador=1** / **https://hackspain.com/es/signup?ambassador=1** to start with ambassador fields emphasized. The form collects why you want the role and where you study (university, bootcamp, school, or organisation).
+- **Fit with the main site:** The landing narrative describes **ambassadors from universities and education centres** as part of what makes HackSpain unique (media reach, campus representation).
+
 ## Frequently asked questions (for extraction)
 
 ### What is HackSpain / Hack Spain?
@@ -90,6 +96,10 @@ Section titles in the UI navigation: **Home**, **Mission**, **What makes us uniq
 ### How do I join or register?
 
 Use the **signup / interest** flow at **https://hackspain.com/signup** (and localized `/en/signup`, `/es/signup`). Follow **@hackspain26** on **X** or **Instagram** or email **leo@hackspain.com** for announcements.
+
+### How do I become a HackSpain ambassador?
+
+Read **https://hackspain.com/ambassador** (or **https://hackspain.com/es/ambassador** in Spanish). Apply through the signup form: enable the **ambassador** option, or start from **https://hackspain.com/signup?ambassador=1** (or **`/es/signup?ambassador=1`**). You will be asked why you want the role and where you study.
 
 ### What are the sponsors?
 
@@ -110,7 +120,7 @@ An **ML track** (including **free compute** for challenges) and a **non-technica
 
 ### What structured data does the site publish?
 
-Localized pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Event** (HackSpain 2026, with a June window in schema), and **FAQPage**.
+Localized pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Event** (HackSpain 2026, with a June window in schema), and **FAQPage** (including signup and ambassador questions).
 
 ## Canonical URLs (prefer these over copies)
 
@@ -118,6 +128,8 @@ Localized pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage
 - English (forced): https://hackspain.com/en and matching `/en/...` sections
 - Spanish (forced): https://hackspain.com/es and matching `/es/...` sections
 - Signup: https://hackspain.com/signup · https://hackspain.com/en/signup · https://hackspain.com/es/signup
+- Ambassador: https://hackspain.com/ambassador · https://hackspain.com/es/ambassador
+- Privacy: https://hackspain.com/privacy · https://hackspain.com/en/privacy · https://hackspain.com/es/privacy
 - Sitemap: https://hackspain.com/sitemap-index.xml
 - This file: https://hackspain.com/llms.txt
 
