@@ -12,7 +12,9 @@ export const GET: APIRoute = ({ site }) => {
   });
   return new Response(xml, {
     headers: {
-      "Content-Type": "application/xml; charset=utf-8",
+      // text/xml + charset helps browsers use the XML tree viewer; application/xml alone is often shown as plain text.
+      "Content-Type": "text/xml; charset=utf-8",
+      "X-Content-Type-Options": "nosniff",
       "Cache-Control": "public, max-age=86400",
     },
   });

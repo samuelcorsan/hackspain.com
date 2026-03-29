@@ -62,16 +62,17 @@ export function buildSitemapUrlsetXml(pageUrls: string[], siteOrigin: string, i1
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i]!;
     const links = getI18nLinks?.(i);
-    lines.push("<url>", `<loc>${esc(url)}</loc>`);
+    lines.push("  <url>");
+    lines.push(`    <loc>${esc(url)}</loc>`);
     if (links) {
       for (const { url: alt, lang } of links) {
         lines.push(
-          `<xhtml:link rel="alternate" hreflang="${esc(lang)}" href="${esc(alt)}"/>`,
+          `    <xhtml:link rel="alternate" hreflang="${esc(lang)}" href="${esc(alt)}"/>`,
         );
       }
     }
-    lines.push("</url>");
+    lines.push("  </url>");
   }
   lines.push("</urlset>");
-  return lines.join("");
+  return `${lines.join("\n")}\n`;
 }
