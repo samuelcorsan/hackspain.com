@@ -9,7 +9,13 @@ import {
   Textarea,
 } from "./form";
 import { Button, ButtonLink } from "./ui/Button";
-import { normalizeSocialUrl, parseSignupBodyClient } from "../../lib/signupValidation";
+import {
+  HEARD_FROM_OPTIONS,
+  HEARD_FROM_SOURCE_IDS,
+  type HeardFromSourceId,
+  normalizeSocialUrl,
+  parseSignupBodyClient,
+} from "../../lib/signupValidation";
 import { useLayoutProfile } from "./useLayoutProfile";
 
 const STORAGE_KEY = "hackspain-signup-draft-v1";
@@ -50,6 +56,8 @@ type StoredFields = {
   wantsAmbassador: boolean;
   ambassadorMotivation: string;
   ambassadorStudyWhere: string;
+  heardFromSource: HeardFromSourceId | "";
+  heardFromOther: string;
 };
 
 const EMPTY_FIELDS: StoredFields = {
@@ -64,6 +72,8 @@ const EMPTY_FIELDS: StoredFields = {
   wantsAmbassador: false,
   ambassadorMotivation: "",
   ambassadorStudyWhere: "",
+  heardFromSource: "",
+  heardFromOther: "",
 };
 
 function readStoredFields(): StoredFields {
@@ -76,6 +86,23 @@ function readStoredFields(): StoredFields {
       typeof o[k] === "string" ? (o[k] as string) : "";
     const wantsAmbassador =
       o.wantsAmbassador === true || o.wantsAmbassador === "true";
+    const ids = HEARD_FROM_SOURCE_IDS as readonly string[];
+    const sourceRaw = typeof o.heardFromSource === "string" ? o.heardFromSource.trim() : "";
+    let heardFromSource: HeardFromSourceId | "" =
+      sourceRaw !== "" && ids.includes(sourceRaw) ? (sourceRaw as HeardFromSourceId) : "";
+    let heardFromOther = typeof o.heardFromOther === "string" ? o.heardFromOther : "";
+    const legacy = typeof o.heardFrom === "string" ? o.heardFrom.trim() : "";
+    if (!heardFromSource && legacy) {
+      if (legacy.startsWith("other:")) {
+        heardFromSource = "other";
+        heardFromOther = legacy.slice(6).trim();
+      } else if (ids.includes(legacy)) {
+        heardFromSource = legacy as HeardFromSourceId;
+      } else {
+        heardFromSource = "other";
+        heardFromOther = legacy;
+      }
+    }
     return {
       fullName: s("fullName"),
       email: s("email"),
@@ -88,6 +115,8 @@ function readStoredFields(): StoredFields {
       wantsAmbassador,
       ambassadorMotivation: s("ambassadorMotivation"),
       ambassadorStudyWhere: s("ambassadorStudyWhere"),
+      heardFromSource,
+      heardFromOther,
     };
   } catch {
     return { ...EMPTY_FIELDS };
@@ -138,6 +167,10 @@ const t = {
   freeTime: "Fuera del cole / curro",
   freeTimeHint:
     "Hobbies, clubes, asociaciones, side projects, cómo desconectas — lo que te represente.",
+  heardFrom: "¿Cómo nos has conocido?",
+  heardFromHint: "Elige la opción que mejor encaje (opcional).",
+  heardFromOtherPlaceholder: "Cuéntanos cómo nos encontraste…",
+  errorHeardFromOther: 'Si eliges «Otro», escribe cómo nos conociste.',
   submit: "Enviar",
   submitting: "Enviando…",
   applicationReceived:
@@ -199,6 +232,8 @@ export function SignupPage() {
   const [ambassadorStudyWhere, setAmbassadorStudyWhere] = useState(
     initialFields.ambassadorStudyWhere,
   );
+  const [heardFromSource, setHeardFromSource] = useState(initialFields.heardFromSource);
+  const [heardFromOther, setHeardFromOther] = useState(initialFields.heardFromOther);
   const [status, setStatus] = useState<FlowStatus>(() => (appliedOnLoad ? "alreadyApplied" : "idle"));
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -220,6 +255,8 @@ export function SignupPage() {
     setWantsAmbassador(false);
     setAmbassadorMotivation("");
     setAmbassadorStudyWhere("");
+    setHeardFromSource("");
+    setHeardFromOther("");
     setErrorMessage("");
     setStatus("idle");
   }
@@ -244,6 +281,8 @@ export function SignupPage() {
       wantsAmbassador,
       ambassadorMotivation,
       ambassadorStudyWhere,
+      heardFromSource,
+      heardFromOther,
     });
   }, [
     fullName,
@@ -257,6 +296,8 @@ export function SignupPage() {
     wantsAmbassador,
     ambassadorMotivation,
     ambassadorStudyWhere,
+    heardFromSource,
+    heardFromOther,
     status,
   ]);
 
@@ -275,6 +316,8 @@ export function SignupPage() {
       wantsAmbassador,
       ambassadorMotivation,
       ambassadorStudyWhere,
+      heardFromSource,
+      heardFromOther,
     };
     const parsed = parseSignupBodyClient(payload);
     if (!parsed.ok) {
@@ -290,6 +333,8 @@ export function SignupPage() {
         setErrorMessage(t.errorAmbassadorStudyWhere);
       } else if (parsed.code === "fullName") {
         setErrorMessage(t.errorFullName);
+      } else if (parsed.code === "heard_from_other") {
+        setErrorMessage(t.errorHeardFromOther);
       } else {
         setErrorMessage(t.errorGeneric);
       }
@@ -324,6 +369,8 @@ export function SignupPage() {
         setErrorMessage(t.errorAmbassadorStudyWhere);
       } else if (data.error === "fullName_required") {
         setErrorMessage(t.errorFullName);
+      } else if (data.error === "heard_from_other_required") {
+        setErrorMessage(t.errorHeardFromOther);
       } else if (data.error === "invalid_email") {
         setErrorMessage(t.errorInvalidEmail);
       } else {
@@ -517,6 +564,64 @@ export function SignupPage() {
                     value={freeTime}
                     onChange={(e) => setFreeTime(e.target.value)}
                   />
+                </FormField>
+
+                <FormField
+                  id="signup-heard-from"
+                  label={t.heardFrom}
+                  hint={t.heardFromHint}
+                  className={cellBase}
+                >
+                  <fieldset className="min-w-0 border-0 p-0">
+                    <legend className="sr-only">{t.heardFrom}</legend>
+                    <div className="grid grid-cols-2 gap-1.5 min-[520px]:grid-cols-3 md:grid-cols-4">
+                      {HEARD_FROM_OPTIONS.map((opt) => (
+                        <label
+                          key={opt.id}
+                          htmlFor={`signup-heard-from-${opt.id}`}
+                          className="flex cursor-pointer items-start gap-1.5 rounded-sm border-[3px] border-hs-ink bg-hs-paper px-2 py-1.5 shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow] has-[:focus-visible]:border-hs-navy hover:bg-hs-sand/40 has-[:checked]:bg-hs-gold/35"
+                        >
+                          <div className="relative mt-px h-4 w-4 shrink-0">
+                            <input
+                              id={`signup-heard-from-${opt.id}`}
+                              name="heardFromSource"
+                              type="radio"
+                              value={opt.id}
+                              checked={heardFromSource === opt.id}
+                              onChange={() => {
+                                setHeardFromSource(opt.id);
+                                if (opt.id !== "other") setHeardFromOther("");
+                              }}
+                              className="peer absolute inset-0 z-10 h-4 w-4 cursor-pointer appearance-none opacity-0"
+                            />
+                            <div
+                              className="pointer-events-none flex h-4 w-4 items-center justify-center rounded-full border-2 border-hs-ink bg-hs-paper peer-checked:bg-hs-gold [&_span]:opacity-0 peer-checked:[&_span]:opacity-100 [&_span]:transition-opacity"
+                              aria-hidden
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-hs-ink" />
+                            </div>
+                          </div>
+                          <span className="min-w-0 font-sans text-xs font-semibold leading-tight text-hs-ink sm:text-sm">
+                            {opt.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    {heardFromSource === "other" ? (
+                      <div className="mt-3">
+                        <Input
+                          id="signup-heard-from-other"
+                          name="heardFromOther"
+                          type="text"
+                          autoComplete="off"
+                          placeholder={t.heardFromOtherPlaceholder}
+                          value={heardFromOther}
+                          onChange={(e) => setHeardFromOther(e.target.value)}
+                          aria-required
+                        />
+                      </div>
+                    ) : null}
+                  </fieldset>
                 </FormField>
 
                 <div className="border-b-[3px] border-hs-ink bg-hs-teal/15 px-4 py-4">

@@ -54,6 +54,7 @@ export const POST: APIRoute = async ({ request }) => {
     wantsAmbassador,
     ambassadorMotivation,
     ambassadorStudyWhere,
+    heardFrom,
   } = parsed.data;
 
   const motivationDb = wantsAmbassador ? emptyToNull(ambassadorMotivation) : null;
@@ -82,6 +83,7 @@ export const POST: APIRoute = async ({ request }) => {
       wantsAmbassador,
       ambassadorMotivation: motivationDb,
       ambassadorStudyWhere: studyDb,
+      heardFrom: emptyToNull(heardFrom),
     });
 
     await notifyDiscordNewSignup({
@@ -96,6 +98,7 @@ export const POST: APIRoute = async ({ request }) => {
       wantsAmbassador,
       ambassadorMotivation: wantsAmbassador ? ambassadorMotivation : "",
       ambassadorStudyWhere: wantsAmbassador ? ambassadorStudyWhere : "",
+      heardFrom,
     });
 
     return Response.json({ ok: true });

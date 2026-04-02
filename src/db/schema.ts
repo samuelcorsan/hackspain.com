@@ -14,6 +14,7 @@ export const hackathonSignups = pgTable("hackathon_signups", {
   wantsAmbassador: boolean("wants_ambassador").default(false).notNull(),
   ambassadorMotivation: text("ambassador_motivation"),
   ambassadorStudyWhere: text("ambassador_study_where"),
+  heardFrom: text("heard_from"),
 });
 
 export type HackathonSignup = typeof hackathonSignups.$inferSelect;

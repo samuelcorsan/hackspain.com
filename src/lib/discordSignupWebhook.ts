@@ -1,3 +1,5 @@
+import { formatHeardFromStored } from "./signupValidation";
+
 const DISCORD_WEBHOOK_PREFIXES = [
   "https://discord.com/api/webhooks/",
   "https://discordapp.com/api/webhooks/",
@@ -32,6 +34,7 @@ export type SignupDiscordPayload = {
   wantsAmbassador: boolean;
   ambassadorMotivation: string;
   ambassadorStudyWhere: string;
+  heardFrom: string;
 };
 
 export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promise<void> {
@@ -45,6 +48,11 @@ export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promis
     fields: [
       { name: "Name", value: fieldVal(data.fullName, max), inline: true },
       { name: "Email", value: fieldVal(data.email, max), inline: true },
+      {
+        name: "How they found us",
+        value: fieldVal(formatHeardFromStored(data.heardFrom), max),
+        inline: false,
+      },
       { name: "X", value: fieldVal(data.xUrl, max), inline: false },
       { name: "LinkedIn", value: fieldVal(data.linkedinUrl, max), inline: false },
       { name: "GitHub", value: fieldVal(data.githubUrl, max), inline: false },

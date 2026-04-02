@@ -5,7 +5,45 @@ export const SIGNUP_MAX = {
   email: 320,
   url: 2048,
   longText: 8000,
+  heardFrom: 500,
+  heardFromOther: 494,
 } as const;
+
+export const HEARD_FROM_SOURCE_IDS = [
+  "x",
+  "instagram",
+  "linkedin",
+  "friend",
+  "school",
+  "event",
+  "search",
+  "other",
+] as const;
+
+export type HeardFromSourceId = (typeof HEARD_FROM_SOURCE_IDS)[number];
+
+export const HEARD_FROM_OPTIONS: readonly { id: HeardFromSourceId; label: string }[] = [
+  { id: "x", label: "X (Twitter)" },
+  { id: "instagram", label: "Instagram" },
+  { id: "linkedin", label: "LinkedIn" },
+  { id: "friend", label: "Un amigo o compañero" },
+  { id: "school", label: "Universidad, FP o bootcamp" },
+  { id: "event", label: "Evento, charla o meetup" },
+  { id: "search", label: "Google u otra búsqueda" },
+  { id: "other", label: "Otro" },
+] as const;
+
+const heardFromSourceEnum = z.enum(HEARD_FROM_SOURCE_IDS);
+
+export function formatHeardFromStored(stored: string): string {
+  if (!stored) return "";
+  if (stored.startsWith("other:")) {
+    const detail = stored.slice(6).trim();
+    return detail.length > 0 ? `Otro: ${detail}` : "Otro";
+  }
+  const row = HEARD_FROM_OPTIONS.find((o) => o.id === stored);
+  return row?.label ?? stored;
+}
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -249,6 +287,14 @@ export const signupBodySchema = z
       .string()
       .max(SIGNUP_MAX.longText)
       .transform((s) => s.trim()),
+    heardFromSource: z.preprocess(
+      (v) => (typeof v === "string" ? v.trim() : ""),
+      z.union([z.literal(""), heardFromSourceEnum]),
+    ),
+    heardFromOther: z.preprocess(
+      (v) => (typeof v === "string" ? v : ""),
+      z.string().max(SIGNUP_MAX.heardFromOther).transform((s) => s.trim()),
+    ),
   })
   .superRefine((data, ctx) => {
     const has =
@@ -279,6 +325,22 @@ export const signupBodySchema = z
         });
       }
     }
+    if (data.heardFromSource === "other" && data.heardFromOther.length === 0) {
+      ctx.addIssue({
+        code: "custom",
+        message: "heard_from_other_required",
+        path: ["heardFromOther"],
+      });
+    }
+  })
+  .transform(({ heardFromSource, heardFromOther, ...rest }) => {
+    const heardFrom =
+      heardFromSource === ""
+        ? ""
+        : heardFromSource === "other"
+          ? `other:${heardFromOther.trim()}`
+          : heardFromSource;
+    return { ...rest, heardFrom };
   });
 
 export type SignupBodyParsed = z.infer<typeof signupBodySchema>;
@@ -311,6 +373,9 @@ export function parseSignupBody(body: unknown):
   if (msg === "ambassador_study_where_required") {
     return { ok: false, error: "ambassador_study_where_required", status: 400 };
   }
+  if (msg === "heard_from_other_required") {
+    return { ok: false, error: "heard_from_other_required", status: 400 };
+  }
   return { ok: false, error: "invalid_request", status: 400 };
 }
 
@@ -325,6 +390,7 @@ export function parseSignupBodyClient(body: unknown):
         | "fullName"
         | "ambassador_motivation"
         | "ambassador_study_where"
+        | "heard_from_other"
         | "generic";
     } {
   const r = signupBodySchema.safeParse(body);
@@ -338,5 +404,6 @@ export function parseSignupBodyClient(body: unknown):
   if (msg === "fullName_required") return { ok: false, code: "fullName" };
   if (msg === "ambassador_motivation_required") return { ok: false, code: "ambassador_motivation" };
   if (msg === "ambassador_study_where_required") return { ok: false, code: "ambassador_study_where" };
+  if (msg === "heard_from_other_required") return { ok: false, code: "heard_from_other" };
   return { ok: false, code: "generic" };
 }
