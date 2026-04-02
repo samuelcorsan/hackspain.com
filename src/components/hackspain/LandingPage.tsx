@@ -31,14 +31,19 @@ import { illustrationsForSection } from "./illustrationThemes";
 import { useLayoutProfile } from "./useLayoutProfile";
 import { buildSections } from "./sections";
 import { keywordsForSectionIndex, seoForSectionIndex } from "../../data/landingMeta";
-import {
-  parsePath,
-  pathFromSectionIndex,
-  pathRootFromSectionIndex,
-} from "../../data/sectionRoutes";
-import { getCopy } from "../../i18n/copy";
-import type { Locale } from "../../i18n/locales";
-import { localeFromNavigator } from "../../i18n/locales";
+import { parsePath, pathRootFromSectionIndex } from "../../data/sectionRoutes";
+
+const SECTION_NAV = [
+  "Inicio",
+  "Misión",
+  "Qué nos hace únicos",
+  "Tracks originales",
+  "Patrocinadores",
+  "Visión",
+] as const;
+
+const REGION_ARIA =
+  "HackSpain 2026 — cambia de sección con la rueda del ratón, deslizamiento o flechas";
 
 function horseRevealLatePullArtboard(x: number, compact: boolean): number {
   const x0 = compact ? HORSE_CELL_LATE_PULL_X0_COMPACT : HORSE_CELL_LATE_PULL_X0;
@@ -66,16 +71,12 @@ function horseCellRevealDelayMs(cell: CellDef, compact: boolean): number {
     : HORSE_CELL_REVEAL_DELAY_MS;
 }
 
-function applySeoToDocument(
-  loc: Locale,
-  sectionIdx: number,
-  pathStrategy: "prefixed" | "root",
-) {
+function applySeoToDocument(sectionIdx: number) {
   if (typeof document === "undefined") return;
-  const { title, description, ogImageAlt } = seoForSectionIndex(loc, sectionIdx);
-  const keywords = keywordsForSectionIndex(loc, sectionIdx);
+  const { title, description, ogImageAlt } = seoForSectionIndex(sectionIdx);
+  const keywords = keywordsForSectionIndex(sectionIdx);
   document.title = title;
-  document.documentElement.lang = loc;
+  document.documentElement.lang = "es";
   const setMeta = (sel: string, attr: string, val: string) => {
     const el = document.querySelector(sel);
     if (el) el.setAttribute(attr, val);
@@ -84,44 +85,22 @@ function applySeoToDocument(
   setMeta('meta[name="keywords"]', "content", keywords);
   setMeta('meta[property="og:title"]', "content", title);
   setMeta('meta[property="og:description"]', "content", description);
-  const path =
-    pathStrategy === "root"
-      ? pathRootFromSectionIndex(sectionIdx)
-      : pathFromSectionIndex(loc, sectionIdx);
+  const path = pathRootFromSectionIndex(sectionIdx);
   const pageUrl = `${window.location.origin}${path}`;
   setMeta('meta[property="og:url"]', "content", pageUrl);
   setMeta('meta[property="og:image:alt"]', "content", ogImageAlt);
-  setMeta('meta[property="og:locale"]', "content", loc === "es" ? "es_ES" : "en_US");
-  setMeta('meta[property="og:locale:alternate"]', "content", loc === "es" ? "en_US" : "es_ES");
+  setMeta('meta[property="og:locale"]', "content", "es_ES");
   setMeta('meta[name="twitter:title"]', "content", title);
   setMeta('meta[name="twitter:description"]', "content", description);
   setMeta('meta[name="twitter:image:alt"]', "content", ogImageAlt);
   const link = document.querySelector('link[rel="canonical"]');
   if (link) link.setAttribute("href", pageUrl);
-  const origin = window.location.origin;
-  const enPath = pathFromSectionIndex("en", sectionIdx);
-  const esPath = pathFromSectionIndex("es", sectionIdx);
-  document.querySelectorAll('link[rel="alternate"][hreflang="en"]').forEach((el) => {
-    el.setAttribute("href", `${origin}${enPath}`);
-  });
-  document.querySelectorAll('link[rel="alternate"][hreflang="es"]').forEach((el) => {
-    el.setAttribute("href", `${origin}${esPath}`);
-  });
-  const xDefault = document.querySelector('link[rel="alternate"][hreflang="x-default"]');
-  if (xDefault) {
-    const defPath =
-      pathStrategy === "root" ? pathRootFromSectionIndex(sectionIdx) : enPath;
-    xDefault.setAttribute("href", `${origin}${defPath}`);
-  }
 }
 
-type UrlMode = "prefixed" | "root";
+type Props = { initialSection?: number };
 
-type Props = { locale: Locale; initialSection?: number; urlMode?: UrlMode };
-
-export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }: Props) {
+export function LandingPage({ initialSection = 0 }: Props) {
   const [section, setSection] = useState(initialSection);
-  const [activeLocale, setActiveLocale] = useState(locale);
   const [dir, setDir] = useState(1);
   const [reducedMotion, setReducedMotion] = useState(false);
   type HorseToUnique = false | "horse_video";
@@ -145,33 +124,21 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
     horseRevealTimeoutsRef.current.forEach((id) => window.clearTimeout(id));
     horseRevealTimeoutsRef.current.clear();
   }, []);
-  const activeLocaleRef = useRef(activeLocale);
-  activeLocaleRef.current = activeLocale;
-
   const layoutProfile = useLayoutProfile();
 
   const artboard = useMemo(() => artboardFor(layoutProfile), [layoutProfile]);
   const cells = useMemo(() => cellsForProfile(layoutProfile), [layoutProfile]);
   const horseBox = useMemo(() => horseArtboardFor(layoutProfile), [layoutProfile]);
 
-  const sections = useMemo(() => buildSections(activeLocale), [activeLocale]);
-  const copy = useMemo(() => getCopy(activeLocale), [activeLocale]);
+  const sections = useMemo(() => buildSections(), []);
   const ills = useMemo(
     () => illustrationsForSection(section, layoutProfile),
     [section, layoutProfile],
   );
 
   useEffect(() => {
-    if (urlMode === "root") return;
-    setActiveLocale(locale);
-  }, [locale, urlMode]);
-
-  useEffect(() => {
-    if (urlMode !== "root") return;
-    const d = localeFromNavigator();
-    setActiveLocale(d);
-    applySeoToDocument(d, initialSection, "root");
-  }, [urlMode, initialSection]);
+    applySeoToDocument(initialSection);
+  }, [initialSection]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -199,20 +166,17 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
       locked.current = true;
       setDir(d);
       setSection(next);
-      const path =
-        urlMode === "root"
-          ? pathRootFromSectionIndex(next)
-          : pathFromSectionIndex(activeLocale, next);
+      const path = pathRootFromSectionIndex(next);
       if (typeof window !== "undefined" && window.location.pathname !== path) {
-        window.history.pushState({ section: next, locale: activeLocale }, "", path);
+        window.history.pushState({ section: next }, "", path);
       }
-      applySeoToDocument(activeLocale, next, urlMode);
+      applySeoToDocument(next);
       const unlockMs = opts?.unlockMs ?? 700;
       setTimeout(() => {
         locked.current = false;
       }, unlockMs);
     },
-    [activeLocale, urlMode],
+    [],
   );
 
   const advance = useCallback(
@@ -391,14 +355,8 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
       locked.current = false;
       const parsed = parsePath(window.location.pathname);
       setDir(1);
-      if (parsed.mode === "prefixed") {
-        setActiveLocale(parsed.locale);
-        setSection(parsed.sectionIndex);
-        applySeoToDocument(parsed.locale, parsed.sectionIndex, "prefixed");
-      } else {
-        setSection(parsed.sectionIndex);
-        applySeoToDocument(activeLocaleRef.current, parsed.sectionIndex, "root");
-      }
+      setSection(parsed.sectionIndex);
+      applySeoToDocument(parsed.sectionIndex);
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -407,7 +365,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
   const current = sections[section] ?? {};
   const missionCells = sections[SECTION_MISSION_INDEX] ?? {};
   const uniqueCells = sections[SECTION_UNIQUE_INDEX] ?? {};
-  const liveLabel = copy.sectionNav[section] ?? copy.sectionNav[0];
+  const liveLabel = SECTION_NAV[section] ?? SECTION_NAV[0];
 
   const isCompact = layoutProfile === "compact";
   const tileMotionClass = "absolute inset-0";
@@ -444,7 +402,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
           >
             <AnimatePresence mode="popLayout" custom={dir} initial={false}>
               <motion.div
-                key={`${ill.id}-${section}-${activeLocale}`}
+                key={`${ill.id}-${section}`}
                 className={`absolute inset-0 flex min-h-0 ${ill.box}`}
                 custom={dir}
                 variants={variants}
@@ -512,7 +470,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
             <AnimatePresence mode="popLayout" custom={dir} initial={false}>
               {missionPhase ? (
                 <motion.div
-                  key={`${cell.id}-${SECTION_MISSION_INDEX}-${activeLocale}`}
+                  key={`${cell.id}-${SECTION_MISSION_INDEX}`}
                   className={tileMotionClass}
                   custom={dir}
                   variants={variants}
@@ -530,7 +488,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
               ) : null}
               {uniqueHorsePhase ? (
                 <motion.div
-                  key={`${cell.id}-${SECTION_UNIQUE_INDEX}-${activeLocale}`}
+                  key={`${cell.id}-${SECTION_UNIQUE_INDEX}`}
                   className={tileMotionClass}
                   custom={dir}
                   variants={variants}
@@ -548,7 +506,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
               ) : null}
               {defaultTile ? (
                 <motion.div
-                  key={`${cell.id}-${section}-${activeLocale}`}
+                  key={`${cell.id}-${section}`}
                   className={tileMotionClass}
                   custom={dir}
                   variants={variants}
@@ -597,7 +555,7 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
       className="fixed inset-0 font-sans"
       style={{ background: INK }}
       role="region"
-      aria-label={copy.regionAria}
+      aria-label={REGION_ARIA}
     >
       <p className="sr-only" aria-live="polite" aria-atomic="true">
         {liveLabel}
@@ -605,8 +563,8 @@ export function LandingPage({ locale, initialSection = 0, urlMode = "prefixed" }
       <div className="absolute inset-0 overflow-hidden">{stageContent}</div>
 
       <ScrollSectionHint
-        label={copy.scrollHint}
-        nextSectionAria={copy.scrollHintNextAria}
+        label="Scroll"
+        nextSectionAria="Ir a la siguiente sección"
         visible={section < NUM_SECTIONS - 1 && !horseToUnique}
         reducedMotion={reducedMotion}
         onNext={() => advance(1)}

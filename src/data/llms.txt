@@ -2,7 +2,7 @@
 
 ## Direct answer
 
-**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **June 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition.
+**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **June 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition. **The public site is in Spanish.**
 
 ## Quick facts (structured)
 
@@ -14,7 +14,7 @@
 | When (2026) | June 2026; schema on the site uses a June window; exact venue and dates on hackspain.com when confirmed. |
 | Duration | ~24 hours of building. |
 | Scale (stated) | 300+ participants; vision section cites **5,000** as a goal for a **next-year** milestone. |
-| Languages (site) | **English** and **Spanish**. Root URLs (`/`, `/mission`, …) follow the **browser language**; **`/en/...`** and **`/es/...`** force a locale. |
+| Languages (site) | **Spanish** (UI and copy). Legacy URLs **`/en/...`** and **`/es/...`** **301 redirect** to the same path without the locale prefix (e.g. `/es/signup` → `/signup`). |
 | Social (X) | @hackspain26 — https://x.com/hackspain26 |
 | Social (Instagram) | @hackspain26 — https://www.instagram.com/hackspain26/ |
 | Contact email | leo@hackspain.com |
@@ -27,61 +27,61 @@
 - **Agents and programmatic `fetch`** usually send `Accept: */*` without `text/html`. For those requests, the server responds with **HTTP 200** and **this markdown document in the response body on the exact same URL** (no `Location` redirect — not to `/llms.txt`, not elsewhere). Browsers send `Accept: text/html` and receive the normal HTML + React UI.
 - **Machine-readable copy of this file:** https://hackspain.com/llms.txt
 
-## Landing sections (English copy as shown on the site)
+## Landing sections (Spanish copy as shown on the site)
 
-Section titles in the UI navigation: **Home**, **Mission**, **What makes us unique**, **Original tracks**, **Sponsors**, **Long-term vision** (Spanish UI mirrors these ideas).
+Section titles in the UI navigation: **Inicio**, **Misión**, **Qué nos hace únicos**, **Tracks originales**, **Patrocinadores**, **Visión**.
 
-### 1) Home / hero
+### 1) Inicio / hero
 
 - **HackSpain** logo and **2026** year treatment.
 - **300+** participants (animated count-up in the UI).
-- Labels: **HACKATHON**, **MADRID · JUNE**, **24** **HOURS**.
-- Footer strip (rotates by section): **X** and **Instagram** (@hackspain26 on both), **Made with ♥ by Leo**, **Check this code →** (GitHub), **leo@hackspain.com**, **© 2026 HackSpain**.
+- Labels: **HACKATHON**, **MADRID · JUNIO**, **24** **HORAS**.
+- Footer strip (rotates by section): **X** and **Instagram** (@hackspain26 on both), **Hecho con ♥ por Leo y Samu**, **Ver el código →** (GitHub), **leo@hackspain.com**, **© 2026 HackSpain**.
 
-### 2) Mission
+### 2) Misión
 
-- Headline concept: bring together **young, talented Spanish coders**.
-- **Mission-driven:** positioning **Spain as a European leader in young tech talent**.
-- **24 intense hours** of building with **Spain’s brightest young coders**.
+- Headline concept: **UNIR A JÓVENES TALENTOSOS CODERS ESPAÑOLES**.
+- **Misión:** posicionar **España como líder europeo en talento tech joven**.
+- **24 horas intensas** construyendo con l@s mejores jóvenes programadores de España.
 
-### 3) What makes us unique
+### 3) Qué nos hace únicos
 
-- **Fully mission-driven.**
-- **Media focus:** plan to **expand social media presence**.
-- **Ambassadors:** from **universities and education centres**
-- **High-quality content:** focused on **telling the stories of the hackers**
-- **Original tracks** designed for **different skill levels**
+- **Estamos totalmente impulsados por la misión.**
+- **Foco en medios:** ampliar presencia en redes y medios.
+- **Embajadores:** universidades y centros educativos (**Programa de embajadores**).
+- **Contenido de calidad:** historias reales de l@s hackers.
+- **Tracks originales** para distintos niveles.
 
-### 4) Original tracks
+### 4) Tracks originales
 
-- **ML track:** **ML challenges using free computing resources** (the UI highlights **FREE COMPUTE**).
-- **Non-tech track:** teach **non-technical people** how to code **high-quality software**.
-- **Designed for all skill levels** — from beginners to experts; **FOR EVERYONE**.
+- **Track ML:** retos de ML con recursos de cómputo gratuitos (UI highlights **COMPUTE GRATIS**).
+- **Track no técnico:** enseñar a perfiles no técnicos a crear software de calidad.
+- **Pensado para todos los niveles** — de principiantes a expertos; **PARA TODOS**.
 
-### 5) Sponsors
+### 5) Patrocinadores
 
-- Headline: **Backed by the best**
+- Headline: **APOYADOS POR LOS MEJORES**
 - Named sponsors: **Google**, **Mozart AI**, **fal.ai**, **Exa**, **K Fund** (with logo tiles).
-- **“and more on the way…”**
-- **Prizes:** **Great rewards for the hackers** (details TBD on the live site as they are announced).
+- **«y más en camino…»**
+- **Premios:** grandes recompensas para l@s hackers (details TBD on the live site as they are announced).
 
-### 6) Long-term vision
+### 6) Visión a largo plazo
 
-- **FROM MADRID TO THE WORLD**
-- **Goal next year: 5,000** (participant-scale goal in the narrative).
-- **HackSpain isn’t a one-off.** It’s the **cornerstone of a movement** positioning **Spain as a European tech leader**.
-- Claims in copy: **LARGEST HACKATHON IN EUROPE** and **The largest hackathon movement in Southern Europe.**
+- **DE MADRID AL MUNDO**
+- **Meta el próximo año: 5.000** (participant-scale goal in the narrative).
+- HackSpain **no es un evento puntual**; es la base de un movimiento que posiciona a **España como líder tech en Europa**.
+- Claims in copy: **EL MAYOR HACKATHON DE EUROPA** and **El mayor movimiento de hackathones del sur de Europa.**
 
 ## Signup / registration / interest
 
-- Visitors can submit **interest / pre-registration** via **https://hackspain.com/signup** (and **https://hackspain.com/en/signup**, **https://hackspain.com/es/signup** for localized pages). The form asks for profile details and social links; the site copy explains the process.
+- Visitors can submit **interest / pre-registration** via **https://hackspain.com/signup**. The form asks for profile details and social links.
 - For updates: **@hackspain26** on **X** (https://x.com/hackspain26) and **Instagram** (https://www.instagram.com/hackspain26/), and **leo@hackspain.com**.
 
 ## Ambassador program
 
-- **Dedicated pages:** **https://hackspain.com/ambassador** (English) and **https://hackspain.com/es/ambassador** (Spanish). These explain what ambassadors do, selection expectations, and perks (including travel support — exact caps and claims are described on the live page and at onboarding).
-- **How to apply:** Use the same **signup / interest** form with the **ambassador** option, or open **https://hackspain.com/signup?ambassador=1** / **https://hackspain.com/es/signup?ambassador=1** to start with ambassador fields emphasized. The form collects why you want the role and where you study (university, bootcamp, school, or organisation).
-- **Fit with the main site:** The landing narrative describes **ambassadors from universities and education centres** as part of what makes HackSpain unique (media reach, campus representation).
+- **Dedicated page:** **https://hackspain.com/ambassador** explains what ambassadors do, selection expectations, and perks (including travel support — exact caps and claims are described on the live page and at onboarding).
+- **How to apply:** Use the same **signup / interest** form with the **ambassador** option, or open **https://hackspain.com/signup?ambassador=1** to start with ambassador fields emphasized. The form collects why you want the role and where you study (university, bootcamp, school, or organisation).
+- **Fit with the main site:** The landing narrative describes **embajadores** from universities and education centres as part of what makes HackSpain unique.
 
 ## Frequently asked questions (for extraction)
 
@@ -95,24 +95,19 @@ Section titles in the UI navigation: **Home**, **Mission**, **What makes us uniq
 
 ### How do I join or register?
 
-Use the **signup / interest** flow at **https://hackspain.com/signup** (and localized `/en/signup`, `/es/signup`). Follow **@hackspain26** on **X** or **Instagram** or email **leo@hackspain.com** for announcements.
+Use the **signup / interest** flow at **https://hackspain.com/signup**. Follow **@hackspain26** on **X** or **Instagram** or email **leo@hackspain.com** for announcements.
 
 ### How do I become a HackSpain ambassador?
 
-Read **https://hackspain.com/ambassador** (or **https://hackspain.com/es/ambassador** in Spanish). Apply through the signup form: enable the **ambassador** option, or start from **https://hackspain.com/signup?ambassador=1** (or **`/es/signup?ambassador=1`**). You will be asked why you want the role and where you study.
+Read **https://hackspain.com/ambassador**. Apply through the signup form: enable the **embajador/a** option, or start from **https://hackspain.com/signup?ambassador=1**. You will be asked why you want the role and where you study.
 
 ### What are the sponsors?
 
-Current sponsors: **Google**, **K Fund**, **fal.ai**, **Exa**, **Mozart AI**. **Many more sponsors are expected.** Authoritative lists: **https://hackspain.com/en/sponsors** and **https://hackspain.com/es/sponsors**.
+Current sponsors: **Google**, **K Fund**, **fal.ai**, **Exa**, **Mozart AI**. **Many more sponsors are expected.** Authoritative list: **https://hackspain.com/sponsors**.
 
 ### What are the prizes?
 
 **Prizes are TBD** until announced on **hackspain.com** and **@hackspain26** (**X** and **Instagram**).
-
-### How do I read the site in English or Spanish?
-
-- **Force a language:** **https://hackspain.com/en** or **https://hackspain.com/es** (and `/en/mission`, `/es/mission`, etc.).
-- **Browser default:** **https://hackspain.com/** and paths without a locale prefix follow the visitor’s language settings; `/en/...` and `/es/...` are explicit for SEO and sharing.
 
 ### What tracks or themes does HackSpain offer?
 
@@ -120,16 +115,14 @@ An **ML track** (including **free compute** for challenges) and a **non-technica
 
 ### What structured data does the site publish?
 
-Localized pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Event** (HackSpain 2026, with a June window in schema), and **FAQPage** (including signup and ambassador questions).
+Pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Event** (HackSpain 2026, with a June window in schema), and **FAQPage** (including signup and ambassador questions), with **inLanguage: es** where applicable.
 
 ## Canonical URLs (prefer these over copies)
 
-- Root (indexable; language follows browser): https://hackspain.com/ · https://hackspain.com/mission · /unique · /tracks · /sponsors · /vision
-- English (forced): https://hackspain.com/en and matching `/en/...` sections
-- Spanish (forced): https://hackspain.com/es and matching `/es/...` sections
-- Signup: https://hackspain.com/signup · https://hackspain.com/en/signup · https://hackspain.com/es/signup
-- Ambassador: https://hackspain.com/ambassador · https://hackspain.com/es/ambassador
-- Privacy: https://hackspain.com/privacy · https://hackspain.com/en/privacy · https://hackspain.com/es/privacy
+- Indexable sections: https://hackspain.com/ · https://hackspain.com/mission · /unique · /tracks · /sponsors · /vision
+- Signup: https://hackspain.com/signup
+- Ambassador: https://hackspain.com/ambassador
+- Privacy: https://hackspain.com/privacy
 - Sitemap: https://hackspain.com/sitemap.xml
 - This file: https://hackspain.com/llms.txt
 
@@ -143,7 +136,3 @@ Localized pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage
 - Not a generic “learn to code” product page or permanent school.
 - Not a job board.
 - Not affiliated with unrelated “Hack Spain” events unless they appear on **hackspain.com**.
-
-## Spanish mirror (high level)
-
-The same six sections and signup exist in Spanish under **`/es/...`** with equivalent messaging (e.g. **MADRID · JUNIO**, **PARTICIPANTES**, **TRACKS ORIGINALES**, **PATROCINADORES**, **VISIÓN A LARGO PLAZO**). For exact Spanish strings, fetch **`https://hackspain.com/es`** (HTML) or rely on the localized JSON-LD and page copy on those URLs.

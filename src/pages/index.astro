@@ -4,8 +4,8 @@ import { LandingPage } from "../components/hackspain";
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout locale="en" sectionIndex={0} pathMode="root">
+<Layout sectionIndex={0}>
 	<main id="main" class="contents">
-		<LandingPage client:load locale="en" initialSection={0} urlMode="root" />
+		<LandingPage client:load initialSection={0} />
 	</main>
 </Layout>

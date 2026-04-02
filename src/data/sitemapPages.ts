@@ -13,15 +13,10 @@ export function getAllSitemapPageUrls(): string[] {
   const o = SITEMAP_SITE_ORIGIN;
   const raw = [
     o,
-    `${o}/en`,
-    `${o}/es`,
-    ...SECTIONS.flatMap((s) => [`${o}/${s}`, `${o}/en/${s}`, `${o}/es/${s}`]),
+    ...SECTIONS.map((s) => `${o}/${s}`),
     `${o}/signup`,
-    `${o}/es/signup`,
     `${o}/ambassador`,
-    `${o}/es/ambassador`,
     `${o}/privacy`,
-    `${o}/es/privacy`,
   ];
   return [...new Set(raw.map(normalizeSitemapPageUrl))];
 }

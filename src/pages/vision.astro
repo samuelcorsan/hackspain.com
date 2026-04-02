@@ -7,8 +7,8 @@ import { SECTION_SLUGS } from "../data/sectionRoutes";
 const sectionIndex = SECTION_SLUGS.indexOf("vision") + 1;
 ---
 
-<Layout locale="en" sectionIndex={sectionIndex} pathMode="root">
+<Layout sectionIndex={sectionIndex}>
 	<main id="main" class="contents">
-		<LandingPage client:load locale="en" initialSection={sectionIndex} urlMode="root" />
+		<LandingPage client:load initialSection={sectionIndex} />
 	</main>
 </Layout>

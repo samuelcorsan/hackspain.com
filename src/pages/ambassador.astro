@@ -3,30 +3,24 @@ export const prerender = true;
 import { AmbassadorPage } from "../components/hackspain";
 import AmbassadorNavbar from "../components/hackspain/AmbassadorNavbar.astro";
 import Layout from "../layouts/Layout.astro";
-import { ambassadorKeywords, ambassadorSeo } from "../data/landingMeta";
+import { AMBASSADOR_KEYWORDS, ambassadorSeo } from "../data/landingMeta";
 
-const seo = ambassadorSeo("en");
-const kw = ambassadorKeywords("en");
+const seo = ambassadorSeo();
 ---
 
 <Layout
-  locale="en"
   sectionIndex={0}
-  pathMode="root"
   allowScroll
   title={seo.title}
   description={seo.description}
   ogImageAlt={seo.ogImageAlt}
   canonicalPathOverride="/ambassador"
-  hrefLangEnPathOverride="/ambassador"
-  hrefLangEsPathOverride="/es/ambassador"
-  hrefLangXDefaultPathOverride="/ambassador"
-  keywordsOverride={kw}
+  keywordsOverride={AMBASSADOR_KEYWORDS}
 >
   <main id="main" class="relative min-h-dvh w-full">
     <div class="relative z-10 mx-auto max-w-5xl px-3 pt-6 sm:px-4 sm:pt-10">
-      <AmbassadorNavbar locale="en" />
+      <AmbassadorNavbar />
     </div>
-    <AmbassadorPage client:load locale="en" />
+    <AmbassadorPage client:load />
   </main>
 </Layout>

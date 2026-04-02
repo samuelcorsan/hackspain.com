@@ -9,8 +9,6 @@ import {
   Textarea,
 } from "./form";
 import { Button, ButtonLink } from "./ui/Button";
-import { getCopy } from "../../i18n/copy";
-import type { Locale } from "../../i18n/locales";
 import { normalizeSocialUrl, parseSignupBodyClient } from "../../lib/signupValidation";
 import { useLayoutProfile } from "./useLayoutProfile";
 
@@ -119,7 +117,58 @@ const GITHUB_PREFIX = "github.com/";
 const cellBase = "border-b-[3px] border-hs-ink bg-hs-paper p-4";
 const cellLeftSm = `${cellBase} sm:border-r-[3px]`;
 
-type Props = { locale: Locale };
+const t = {
+  title: "Apúntate al hackathon",
+  subtitle: "Cuéntanos quién eres — te avisamos sobre HackSpain 2026.",
+  backHome: "← Inicio",
+  fullName: "Nombre completo",
+  email: "Email",
+  socialsTitle: "Redes y enlaces",
+  socialsRequiredHint: "Añade al menos un enlace (X, LinkedIn, GitHub o tu web).",
+  x: "X (Twitter)",
+  linkedin: "LinkedIn",
+  github: "GitHub",
+  web: "Web",
+  socialXPlaceholder: "usuario, @usuario o pega un enlace",
+  socialLinkedinPlaceholder: "usuario, company/acme o pega un enlace",
+  socialGithubPlaceholder: "usuario o usuario/repo — o pega un enlace",
+  achievements: "Logros y hitos",
+  achievementsHint:
+    "Lo que te enorgullece — hackathones, estudios, deporte, voluntariado, arte, trabajo… técnico o no.",
+  freeTime: "Fuera del cole / curro",
+  freeTimeHint:
+    "Hobbies, clubes, asociaciones, side projects, cómo desconectas — lo que te represente.",
+  submit: "Enviar",
+  submitting: "Enviando…",
+  applicationReceived:
+    "¡Gracias! Hemos recibido tu solicitud. Espera nuestra respuesta por correo; te escribiremos en cuanto podamos.",
+  alreadyApplied:
+    "Ya enviaste una solicitud desde este navegador. Te contestaremos por correo; usa «Volver a solicitar» solo si necesitas mandar otra.",
+  applyAgain: "Volver a solicitar",
+  errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
+  errorDuplicate: "Este email ya está registrado.",
+  errorSocialRequired: "Añade al menos un enlace a perfil o web.",
+  errorInvalidSocialUrl:
+    "Uno o más enlaces no son válidos para ese campo (revisa X, LinkedIn, GitHub o tu web).",
+  errorInvalidEmail: "Introduce un correo electrónico válido.",
+  errorAccessDenied:
+    "No hemos podido verificar la solicitud. Recarga la página e inténtalo de nuevo, o usa un navegador normal con JavaScript activado.",
+  ambassadorCheckboxBefore: "Quiero participar como ",
+  ambassadorCheckboxLink: "embajador/a",
+  ambassadorCheckboxAfter: "",
+  ambassadorWhyLabel: "¿Por qué quieres ser embajador/a?",
+  ambassadorWhyHint:
+    "Unas frases sobre qué te mueve — comunidad, tech, tu campus, llegar a gente nueva…",
+  ambassadorStudyLabel: "¿Dónde estudias?",
+  ambassadorStudyHint: "Universidad, bootcamp, centro u organización — lo que encaje.",
+  errorAmbassadorMotivation: "Cuéntanos por qué quieres ser embajador/a.",
+  errorAmbassadorStudyWhere: "Indica dónde estudias.",
+  errorFullName: "Indica tu nombre completo.",
+  legalSubmitNoticeBefore: "Al enviar este formulario aceptas nuestra ",
+  legalPrivacyLinkLabel: "política de privacidad",
+  legalSubmitNoticeAfter:
+    ", incluida la comunicación de tus datos a patrocinadores oficiales de HackSpain según se indica allí.",
+} as const;
 
 function ambassadorQueryEnabled(): boolean {
   if (typeof window === "undefined") return false;
@@ -127,12 +176,11 @@ function ambassadorQueryEnabled(): boolean {
   return v === "1" || v === "true" || v === "yes";
 }
 
-export function SignupPage({ locale }: Props) {
-  const t = getCopy(locale).signup;
+export function SignupPage() {
   const profile = useLayoutProfile();
-  const homeHref = locale === "es" ? "/es" : "/";
-  const ambassadorPageHref = locale === "es" ? "/es/ambassador" : "/ambassador";
-  const privacyHref = locale === "es" ? "/es/privacy" : "/privacy";
+  const homeHref = "/";
+  const ambassadorPageHref = "/ambassador";
+  const privacyHref = "/privacy";
 
   const appliedOnLoad = readAppliedFlag();
   const initialFields = appliedOnLoad ? EMPTY_FIELDS : readStoredFields();
@@ -240,6 +288,8 @@ export function SignupPage({ locale }: Props) {
         setErrorMessage(t.errorAmbassadorMotivation);
       } else if (parsed.code === "ambassador_study_where") {
         setErrorMessage(t.errorAmbassadorStudyWhere);
+      } else if (parsed.code === "fullName") {
+        setErrorMessage(t.errorFullName);
       } else {
         setErrorMessage(t.errorGeneric);
       }
@@ -272,8 +322,12 @@ export function SignupPage({ locale }: Props) {
         setErrorMessage(t.errorAmbassadorMotivation);
       } else if (data.error === "ambassador_study_where_required") {
         setErrorMessage(t.errorAmbassadorStudyWhere);
+      } else if (data.error === "fullName_required") {
+        setErrorMessage(t.errorFullName);
+      } else if (data.error === "invalid_email") {
+        setErrorMessage(t.errorInvalidEmail);
       } else {
-        setErrorMessage(typeof data.error === "string" ? data.error : t.errorGeneric);
+        setErrorMessage(t.errorGeneric);
       }
       setStatus("error");
     } catch {

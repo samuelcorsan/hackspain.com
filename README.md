@@ -2,7 +2,7 @@
 
 Marketing site for [HackSpain](https://hackspain.com) (Hack Spain 2026 hackathon, Madrid). Built with **Astro** (server output on Vercel), **React** islands for interactive sections, **Tailwind CSS v4**, and **Motion** for animation.
 
-- **Locales:** English and Spanish (`/`, `/es`, and locale-prefixed routes)
+- **Language:** Spanish (public copy); legacy `/en/...` and `/es/...` paths redirect to unprefixed URLs
 - **Signup:** server API at `/api/signup` backed by **PostgreSQL** (Neon) via **Drizzle ORM**
 
 ## Requirements
@@ -49,11 +49,10 @@ Drizzle is configured for PostgreSQL (`drizzle.config.ts`, schema in `src/db/sch
 ```text
 src/
 ├── components/hackspain/   # React + shared UI for the landing
-├── data/                   # SEO copy, routes metadata
+├── data/                   # SEO copy, routes metadata, llms.txt
 ├── db/                     # Drizzle client and schema
-├── i18n/                   # Locales and translated strings
 ├── layouts/                # Astro layouts
-└── pages/                  # Routes, API, and `[locale]` dynamic segments
+└── pages/                  # Routes and API
 ```
 
 Deployment targets **Vercel** (`@astrojs/vercel`); analytics use `@vercel/analytics` when enabled in production.

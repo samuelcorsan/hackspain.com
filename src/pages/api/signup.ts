@@ -16,14 +16,14 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const verification = await checkBotId();
     if (verification.isBot) {
-      return Response.json({ error: "Access denied" }, { status: 403 });
+      return Response.json({ error: "access_denied" }, { status: 403 });
     }
   } catch (e) {
     console.error("BotID check failed:", e);
   }
 
   if (request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json") {
-    return Response.json({ error: "Expected application/json" }, { status: 415 });
+    return Response.json({ error: "expected_json" }, { status: 415 });
   }
 
   let body: unknown;
@@ -34,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   if (!body || typeof body !== "object") {
-    return Response.json({ error: "Invalid body" }, { status: 400 });
+    return Response.json({ error: "invalid_body" }, { status: 400 });
   }
 
   const parsed = parseSignupBody(body);
@@ -67,7 +67,7 @@ export const POST: APIRoute = async ({ request }) => {
       .where(eq(hackathonSignups.email, email))
       .limit(1);
     if (existing) {
-      return Response.json({ error: "This email is already registered" }, { status: 409 });
+      return Response.json({ error: "duplicate_email" }, { status: 409 });
     }
 
     await db.insert(hackathonSignups).values({
@@ -101,6 +101,6 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ ok: true });
   } catch (e) {
     console.error(e);
-    return Response.json({ error: "Could not save signup" }, { status: 500 });
+    return Response.json({ error: "save_failed" }, { status: 500 });
   }
 };

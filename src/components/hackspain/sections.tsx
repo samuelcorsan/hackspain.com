@@ -1,5 +1,3 @@
-import type { Locale } from "../../i18n/locales";
-import { getCopy } from "../../i18n/copy";
 import { InlineSvg } from "./InlineSvg";
 import { ParticipantsCountUp } from "./ParticipantsCountUp";
 import { P } from "./Panel";
@@ -14,6 +12,10 @@ const BD = `${D} text-[clamp(0.68rem,2.35vw,1.4rem)] font-bold leading-relaxed`;
 
 const BOTTOM_CELLS = ["r5a", "r5b", "r5c", "r5d"] as const;
 
+function sponsorAlt(brand: string, extra?: string) {
+  return `${brand} — patrocinador HackSpain, hackathon Madrid y hackathon España 2026${extra ? `. ${extra}` : ""}`;
+}
+
 function brLines(s: string) {
   const lines = s.split("\n");
   return lines.map((line, i) => (
@@ -24,10 +26,10 @@ function brLines(s: string) {
   ));
 }
 
-function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<string, React.ReactNode> {
+function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
   const copyEl = (
     <P bg="bg-hs-paper">
-      <p className={`${D} text-sm font-bold tracking-widest text-hs-ink/40 text-center uppercase`}>{c.copyright}</p>
+      <p className={`${D} text-sm font-bold tracking-widest text-hs-ink/40 text-center uppercase`}>© 2026 HackSpain</p>
     </P>
   );
 
@@ -39,7 +41,7 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-5 w-5 shrink-0 items-center justify-center"
-          aria-label={c.bottomSocialXAria}
+          aria-label="HackSpain en X (@hackspain26)"
         >
           <span className="h-5 w-5" dangerouslySetInnerHTML={{ __html: X_SVG }} />
         </a>
@@ -48,7 +50,7 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-5 w-5 shrink-0 items-center justify-center"
-          aria-label={c.bottomSocialInstagramAria}
+          aria-label="HackSpain en Instagram (@hackspain26)"
         >
           <span className="h-5 w-5" dangerouslySetInnerHTML={{ __html: INSTAGRAM_SVG }} />
         </a>
@@ -58,30 +60,30 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
           rel="noopener noreferrer"
           className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold underline underline-offset-2`}
         >
-          {c.bottomFollow}
+          @hackspain26
         </a>
       </div>
     </P>,
     <P bg="bg-hs-paper">
       <p className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink text-center`}>
-        {c.bottomMade}{" "}
+        Hecho con ♥ por{" "}
         <a href="https://x.com/mrloldev" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-          {c.bottomMadeLeo}
+          Leo
         </a>
-        {c.bottomMadeAnd}
+        {" y "}
         <a href="https://x.com/disamdev" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-          {c.bottomMadeSamu}
+          Samu
         </a>
       </p>
     </P>,
     <P bg="bg-hs-paper">
       <a href="https://github.com/hackspain" target="_blank" rel="noopener noreferrer" className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink underline underline-offset-2`}>
-        {c.bottomCode}
+        Ver el código →
       </a>
     </P>,
     <P bg="bg-hs-paper">
       <a href="mailto:leo@hackspain.com" className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink underline underline-offset-2`}>
-        {c.bottomEmail}
+        leo@hackspain.com
       </a>
     </P>,
   ];
@@ -93,38 +95,34 @@ function bottomRow(sectionIdx: number, c: ReturnType<typeof getCopy>): Record<st
   return { [actionCell]: actions[i], [copyCell]: copyEl };
 }
 
-function signupFormHref(loc: Locale): string {
-  return loc === "es" ? "/es/signup" : "/signup";
-}
+const gEx = "hackathon España Google, hackathon Spain";
+const kEx = "inversión hackathon España";
+const fEx = "IA hackathon Madrid";
+const eEx = "búsqueda hackathon España";
+const mEx = "IA agentes hackathon España";
 
-function ambassadorPageHref(loc: Locale): string {
-  return loc === "es" ? "/es/ambassador" : "/ambassador";
-}
-
-export function buildSections(locale: Locale): Record<string, React.ReactNode>[] {
-  const c = getCopy(locale);
-  const signupHref = signupFormHref(locale);
-  const ambassadorHref = ambassadorPageHref(locale);
-  const gEx = locale === "es" ? "hackathon España Google, hackathon Spain" : "Google sponsor hackathon Madrid and Spain";
-  const kEx = locale === "es" ? "inversión hackathon España" : "venture capital sponsor hackathon Spain";
-  const fEx = locale === "es" ? "IA hackathon Madrid" : "AI infrastructure hackathon Spain";
-  const eEx = locale === "es" ? "búsqueda hackathon España" : "search hackathon Spain";
-  const mEx = locale === "es" ? "IA agentes hackathon España" : "AI agents hackathon Spain";
+export function buildSections(): Record<string, React.ReactNode>[] {
+  const signupHref = "/signup";
+  const ambassadorHref = "/ambassador";
 
   return [
     {
       hero: (
         <P bg="bg-hs-paper">
           <div className="flex w-full max-w-[380px] flex-col items-center gap-2 @[220px]:gap-3">
-            <InlineSvg svg={logoSvg} className="w-full h-auto" label={c.logoAria} />
+            <InlineSvg
+              svg={logoSvg}
+              className="w-full h-auto"
+              label="HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026"
+            />
             <ButtonLink
               href={signupHref}
               variant="gold"
               size="compact"
               className="shrink-0"
-              aria-label={c.s0.signupCtaAria}
+              aria-label="Solicitar plaza en HackSpain — abrir formulario"
             >
-              {c.s0.signupCta}
+              Apúntate
             </ButtonLink>
           </div>
         </P>
@@ -138,116 +136,119 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
       r4d: (
         <P bg="bg-hs-gold">
           <ParticipantsCountUp
-            ariaLabel={`+300 ${c.s0.participants}`}
+            ariaLabel="+300 PARTICIPANTES"
             className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-ink leading-none`}
           />
-          <p className={`mt-1 ${LBL} text-hs-ink`}>{c.s0.participants}</p>
+          <p className={`mt-1 ${LBL} text-hs-ink`}>PARTICIPANTES</p>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-orange">
-          <p className={`${LBL} text-hs-paper/60`}>{c.s0.hackathon}</p>
-          <span className={`${B} text-[clamp(0.85rem,2.8vw,2.2rem)] text-hs-paper leading-tight text-center`}>{c.s0.madrid}</span>
+          <p className={`${LBL} text-hs-paper/60`}>HACKATHON</p>
+          <span className={`${B} text-[clamp(0.85rem,2.8vw,2.2rem)] text-hs-paper leading-tight text-center`}>MADRID · JUNIO</span>
         </P>
       ),
       r2g: (
         <P bg="bg-hs-red">
           <span className={`${B} text-[clamp(1.3rem,5.5vw,4.5rem)] text-hs-paper leading-none`}>24</span>
-          <p className={`mt-1 ${LBL} text-hs-paper`}>{c.s0.hours}</p>
+          <p className={`mt-1 ${LBL} text-hs-paper`}>HORAS</p>
         </P>
       ),
-      ...bottomRow(0, c),
+      ...bottomRow(0),
     },
     {
       hero: (
         <P bg="bg-hs-navy">
-          <p className={`${LBL} text-hs-gold`}>{c.s1.label}</p>
+          <p className={`${LBL} text-hs-gold`}>MISIÓN</p>
           <h2 className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-paper leading-tight`}>
-            {c.s1.l1}
+            UNIR A
             <br />
-            {c.s1.l2}
-            <span className="text-hs-red">{c.s1.l3}</span>
+            JÓVENES <span className="text-hs-red">TALENTOSOS</span>
             <br />
-            {c.s1.l4}
+            CODERS ESPAÑOLES
           </h2>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-paper" align="start">
-          <p className={`${LBL} text-hs-ink/40`}>{c.s1.drivenLbl}</p>
-          <p className={`${BD} text-hs-ink`}>{c.s1.drivenBody}</p>
+          <p className={`${LBL} text-hs-ink/40`}>MISIÓN</p>
+          <p className={`${BD} text-hs-ink`}>Posicionar a España como líder europeo en talento tech joven.</p>
         </P>
       ),
       r4b: (
         <P bg="bg-hs-teal">
-          <p className={`${BD} text-center text-white`}>{c.s1.tealBody}</p>
+          <p className={`${BD} text-center text-white`}>
+            24 horas intensas construyendo con l@s mejores jóvenes programadores de España.
+          </p>
         </P>
       ),
-      ...bottomRow(1, c),
+      ...bottomRow(1),
     },
     {
       hero: (
         <P bg="bg-hs-sand">
-          <p className={`${LBL} text-hs-ink/40`}>{c.s2.label}</p>
-          <h2 className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-ink leading-tight`}>{brLines(c.s2.title)}</h2>
+          <p className={`${LBL} text-hs-ink/40`}>HACKSPAIN 2026</p>
+          <h2 className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-ink leading-tight`}>
+            {brLines("¿QUÉ NOS HACE\nÚNICOS?")}
+          </h2>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${BD} text-hs-paper`}>{c.s2.unique1}</p>
+          <p className={`${BD} text-hs-paper`}>Estamos totalmente impulsados por la misión.</p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-navy" align="start">
-          <p className={`${LBL} text-hs-gold`}>{c.s2.mediaLbl}</p>
-          <p className={`${BD} text-hs-paper`}>{c.s2.mediaBody}</p>
+          <p className={`${LBL} text-hs-gold`}>FOCO EN MEDIOS</p>
+          <p className={`${BD} text-hs-paper`}>Ampliar nuestra presencia en redes y medios.</p>
         </P>
       ),
       r2c: (
         <P bg="bg-hs-gold" align="start">
-          <p className={`${LBL} text-hs-ink/60`}>{c.s2.ambLbl}</p>
-          <p className={`${BD} text-hs-ink`}>{c.s2.ambBody}</p>
+          <p className={`${LBL} text-hs-ink/60`}>EMBAJADORES</p>
+          <p className={`${BD} text-hs-ink`}>Universidades y centros educativos</p>
           <ButtonLink
             href={ambassadorHref}
             variant="teal"
             size="micro"
             className="mt-1.5 shrink-0 self-start @[220px]:mt-2"
-            aria-label={c.s2.ambCtaAria}
+            aria-label="Programa de embajadores HackSpain — abrir página"
           >
-            {c.s2.ambCta}
+            Programa de embajadores
           </ButtonLink>
         </P>
       ),
       r2g: (
         <P bg="bg-hs-teal" align="start">
-          <p className={`${LBL} text-white/60`}>{c.s2.contentLbl}</p>
-          <p className={`${BD} text-white`}>{c.s2.contentBody}</p>
+          <p className={`${LBL} text-white/60`}>CONTENIDO DE CALIDAD</p>
+          <p className={`${BD} text-white`}>Historias reales de l@s hackers</p>
         </P>
       ),
       r4c: (
         <P bg="bg-hs-orange">
-          <p className={`${BD} text-center text-hs-paper`}>{c.s2.orangeBody}</p>
+          <p className={`${BD} text-center text-hs-paper`}>Tracks originales para distintos niveles.</p>
         </P>
       ),
-      ...bottomRow(2, c),
+      ...bottomRow(2),
     },
     {
       hero: (
         <P bg="bg-hs-teal">
-          <p className={`${LBL} text-white/60`}>{c.s3.label}</p>
-          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-white leading-tight`}>{brLines(c.s3.title)}</h2>
+          <p className={`${LBL} text-white/60`}>HACKSPAIN 2026</p>
+          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-white leading-tight`}>{brLines("TRACKS\nORIGINALES")}</h2>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${LBL} text-hs-gold`}>{c.s3.mlLbl}</p>
-          <p className={`${BD} text-hs-paper`}>{c.s3.mlBody}</p>
+          <p className={`${LBL} text-hs-gold`}>TRACK ML</p>
+          <p className={`${BD} text-hs-paper`}>Retos de ML con recursos de cómputo gratuitos</p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-navy" align="start">
-          <p className={`${LBL} text-hs-gold`}>{c.s3.ntLbl}</p>
-          <p className={`${BD} text-hs-paper`}>{c.s3.ntBody}</p>
+          <p className={`${LBL} text-hs-gold`}>TRACK NO TÉCNICO</p>
+          <p className={`${BD} text-hs-paper`}>Enseñamos a perfiles no técnicos a crear software de calidad.</p>
         </P>
       ),
       r1e: (
@@ -255,34 +256,34 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
           <span
             className={`${B} text-center leading-[1.12] text-hs-ink text-[clamp(0.7rem,1.65vw,0.95rem)]`}
           >
-            {brLines(c.s3.freeCompute.replace(/ /, "\n"))}
+            {brLines("COMPUTE\nGRATIS")}
           </span>
         </div>
       ),
       r4b: (
         <P bg="bg-hs-orange">
-          <p className={`${BD} text-center text-hs-paper`}>{c.s3.orangeBody}</p>
+          <p className={`${BD} text-center text-hs-paper`}>Pensado para todos los niveles — de principiantes a expertos.</p>
         </P>
       ),
       r2f: (
         <P bg="bg-hs-red">
-          <span className={`${B} text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-paper text-center leading-tight`}>{brLines(c.s3.forEveryone)}</span>
+          <span className={`${B} text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-paper text-center leading-tight`}>{brLines("PARA\nTODOS")}</span>
         </P>
       ),
-      ...bottomRow(3, c),
+      ...bottomRow(3),
     },
     {
       hero: (
         <P bg="bg-hs-gold">
-          <p className={`${LBL} text-hs-ink/50`}>{c.s4.label}</p>
-          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-ink leading-tight`}>{brLines(c.s4.title)}</h2>
+          <p className={`${LBL} text-hs-ink/50`}>HACKSPAIN 2026</p>
+          <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-ink leading-tight`}>{brLines("APOYADOS POR\nLOS MEJORES")}</h2>
         </P>
       ),
       r2c: (
         <P bg="bg-hs-red">
           <img
             src={googleLogo.src}
-            alt={c.sponsorAlt("Google", gEx)}
+            alt={sponsorAlt("Google", gEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain"
           />
         </P>
@@ -291,76 +292,78 @@ export function buildSections(locale: Locale): Record<string, React.ReactNode>[]
         <P bg="bg-hs-navy">
           <img
             src={mozartLogo.src}
-            alt={c.sponsorAlt("Mozart AI", mEx)}
+            alt={sponsorAlt("Mozart AI", mEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
           />
         </P>
       ),
       r3a: (
         <P bg="bg-hs-teal">
-          <img src={falLogo.src} alt={c.sponsorAlt("fal.ai", fEx)} className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img src={falLogo.src} alt={sponsorAlt("fal.ai", fEx)} className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
         </P>
       ),
       r3b: (
         <P bg="bg-hs-orange">
-          <img src={exaLogo.src} alt={c.sponsorAlt("Exa", eEx)} className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
+          <img src={exaLogo.src} alt={sponsorAlt("Exa", eEx)} className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert" />
         </P>
       ),
       r4c: (
         <P bg="bg-hs-ink">
           <img
             src={kfundLogo.src}
-            alt={c.sponsorAlt("K Fund", kEx)}
+            alt={sponsorAlt("K Fund", kEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
           />
         </P>
       ),
       r2d: (
         <P bg="bg-hs-paper">
-          <p className={`${B} text-[clamp(0.6rem,2vw,1.5rem)] text-hs-ink/40 italic text-center leading-snug`}>{brLines(c.s4.moreWay)}</p>
+          <p className={`${B} text-[clamp(0.6rem,2vw,1.5rem)] text-hs-ink/40 italic text-center leading-snug`}>{brLines("y más\nen camino...")}</p>
         </P>
       ),
       r4d: (
         <P bg="bg-hs-cream" align="start">
-          <p className={`${LBL} text-hs-ink/40`}>{c.s4.prizesLbl}</p>
-          <p className={`${B} text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-ink leading-tight`}>{c.s4.prizesBody}</p>
+          <p className={`${LBL} text-hs-ink/40`}>PREMIOS</p>
+          <p className={`${B} text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-ink leading-tight`}>Grandes recompensas para l@s hackers</p>
         </P>
       ),
-      ...bottomRow(4, c),
+      ...bottomRow(4),
     },
     {
       hero: (
         <P bg="bg-hs-red">
-          <p className={`${LBL} text-hs-gold`}>{c.s5.label}</p>
+          <p className={`${LBL} text-hs-gold`}>VISIÓN A LARGO PLAZO</p>
           <h2 className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-paper leading-tight`}>
-            {c.s5.title1}
+            DE MADRID
             <br />
-            <span className="text-hs-gold">{c.s5.title2}</span>
+            <span className="text-hs-gold">AL MUNDO</span>
           </h2>
         </P>
       ),
       r2c: (
         <P bg="bg-hs-orange">
-          <span className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-paper leading-none`}>{c.s5.goalNum}</span>
-          <p className={`mt-1 ${LBL} text-hs-paper`}>{c.s5.goalLbl}</p>
+          <span className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-paper leading-none`}>5.000</span>
+          <p className={`mt-1 ${LBL} text-hs-paper`}>META EL PRÓXIMO AÑO</p>
         </P>
       ),
       r3a: (
         <P bg="bg-hs-ink" align="start">
-          <p className={`${BD} text-hs-paper`}>{c.s5.inkBody}</p>
+          <p className={`${BD} text-hs-paper`}>
+            HackSpain no es un evento puntual. Es la base de un movimiento que posiciona a España como líder tech en Europa.
+          </p>
         </P>
       ),
       r3b: (
         <P bg="bg-hs-red">
-          <span className={`${B} text-[clamp(0.65rem,2.2vw,1.8rem)] text-hs-gold text-center leading-tight`}>{c.s5.largest}</span>
+          <span className={`${B} text-[clamp(0.65rem,2.2vw,1.8rem)] text-hs-gold text-center leading-tight`}>EL MAYOR HACKATHON DE EUROPA</span>
         </P>
       ),
       r4b: (
         <P bg="bg-hs-gold">
-          <p className={`${BD} text-center text-hs-ink`}>{c.s5.goldBody}</p>
+          <p className={`${BD} text-center text-hs-ink`}>El mayor movimiento de hackathones del sur de Europa.</p>
         </P>
       ),
-      ...bottomRow(5, c),
+      ...bottomRow(5),
     },
   ];
 }

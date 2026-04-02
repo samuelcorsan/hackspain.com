@@ -11,31 +11,21 @@ import {
   seoForSectionIndex,
   SOCIAL_SHARE_IMAGE,
 } from "../data/landingMeta";
-import { pathFromSectionIndex, pathRootFromSectionIndex } from "../data/sectionRoutes";
-import { getCopy } from "../i18n/copy";
-import type { Locale } from "../i18n/locales";
+import { pathRootFromSectionIndex } from "../data/sectionRoutes";
 
 interface Props {
-  locale: Locale;
   title?: string;
   description?: string;
   ogImageAlt?: string;
   sectionIndex?: number;
-  pathMode?: "locale-prefix" | "root";
   allowScroll?: boolean;
   canonicalPathOverride?: string;
-  hrefLangEnPathOverride?: string;
-  hrefLangEsPathOverride?: string;
-  hrefLangXDefaultPathOverride?: string;
   keywordsOverride?: string;
 }
 
-const locale = Astro.props.locale;
-const pathMode = Astro.props.pathMode ?? "locale-prefix";
 const allowScroll = Astro.props.allowScroll ?? false;
-const t = getCopy(locale);
 const sectionIndex = Astro.props.sectionIndex ?? 0;
-const seo = seoForSectionIndex(locale, sectionIndex);
+const seo = seoForSectionIndex(sectionIndex);
 const {
   title = seo.title,
   description = seo.description,
@@ -43,51 +33,26 @@ const {
 } = Astro.props;
 
 const canonicalPath =
-  Astro.props.canonicalPathOverride ??
-  (pathMode === "root"
-    ? pathRootFromSectionIndex(sectionIndex)
-    : pathFromSectionIndex(locale, sectionIndex));
+  Astro.props.canonicalPathOverride ?? pathRootFromSectionIndex(sectionIndex);
 const canonical = new URL(canonicalPath, Astro.site);
 const ogImage = new URL(SOCIAL_SHARE_IMAGE.path, Astro.site);
 const ogImageUrl = ogImage.href;
 const keywords =
-  Astro.props.keywordsOverride ?? keywordsForSectionIndex(locale, sectionIndex);
-
-const hrefLangEn = new URL(
-  Astro.props.hrefLangEnPathOverride ?? pathFromSectionIndex("en", sectionIndex),
-  Astro.site,
-).href;
-const hrefLangEs = new URL(
-  Astro.props.hrefLangEsPathOverride ?? pathFromSectionIndex("es", sectionIndex),
-  Astro.site,
-).href;
-
-const hrefLangXDefault = new URL(
-  Astro.props.hrefLangXDefaultPathOverride ??
-    (pathMode === "root"
-      ? pathRootFromSectionIndex(sectionIndex)
-      : pathFromSectionIndex("en", sectionIndex)),
-  Astro.site,
-).href;
-
-const ogLocale = locale === "es" ? "es_ES" : "en_US";
-const ogLocaleAlt = locale === "es" ? "en_US" : "es_ES";
+  Astro.props.keywordsOverride ?? keywordsForSectionIndex(sectionIndex);
 
 const googleVerify = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerify = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
 const yandexVerify = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
 
-const orgJson = JSON.stringify(jsonLdOrganization(locale));
-const webSiteJson = JSON.stringify(jsonLdWebSite(locale));
-const eventJson = JSON.stringify(jsonLdEvent(locale));
-const webPageJson = JSON.stringify(
-  jsonLdWebPage(locale, sectionIndex, canonical.href),
-);
-const faqJson = JSON.stringify(jsonLdFaq(locale));
+const orgJson = JSON.stringify(jsonLdOrganization());
+const webSiteJson = JSON.stringify(jsonLdWebSite());
+const eventJson = JSON.stringify(jsonLdEvent());
+const webPageJson = JSON.stringify(jsonLdWebPage(sectionIndex, canonical.href));
+const faqJson = JSON.stringify(jsonLdFaq());
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -101,9 +66,6 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
       title="LLM and AI discovery (llms.txt)"
     />
     <link rel="canonical" href={canonical.href} />
-    <link rel="alternate" hreflang="en" href={hrefLangEn} />
-    <link rel="alternate" hreflang="es" href={hrefLangEs} />
-    <link rel="alternate" hreflang="x-default" href={hrefLangXDefault} />
     <meta name="description" content={description} />
     <meta
       name="robots"
@@ -127,8 +89,7 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
     <meta property="og:url" content={canonical.href} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="HackSpain" />
-    <meta property="og:locale" content={ogLocale} />
-    <meta property="og:locale:alternate" content={ogLocaleAlt} />
+    <meta property="og:locale" content="es_ES" />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:secure_url" content={ogImageUrl} />
     <meta property="og:image:width" content={String(SOCIAL_SHARE_IMAGE.width)} />
@@ -175,7 +136,7 @@ const faqJson = JSON.stringify(jsonLdFaq(locale));
       allowScroll ? "min-h-dvh overflow-y-auto" : "h-dvh overflow-hidden",
     ]}
   >
-    <a href="#main" class="skip-link font-sans">{t.skipLink}</a>
+    <a href="#main" class="skip-link font-sans">Ir al contenido principal</a>
     <slot />
   </body>
 </html>

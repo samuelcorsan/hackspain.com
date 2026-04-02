@@ -3,30 +3,24 @@ export const prerender = true;
 import { PrivacyPage } from "../components/hackspain";
 import SignupNavbar from "../components/hackspain/SignupNavbar.astro";
 import Layout from "../layouts/Layout.astro";
-import { privacyKeywords, privacySeo } from "../data/landingMeta";
+import { PRIVACY_KEYWORDS, privacySeo } from "../data/landingMeta";
 
-const seo = privacySeo("en");
-const kw = privacyKeywords("en");
+const seo = privacySeo();
 ---
 
 <Layout
-  locale="en"
   sectionIndex={0}
-  pathMode="root"
   allowScroll
   title={seo.title}
   description={seo.description}
   ogImageAlt={seo.ogImageAlt}
   canonicalPathOverride="/privacy"
-  hrefLangEnPathOverride="/privacy"
-  hrefLangEsPathOverride="/es/privacy"
-  hrefLangXDefaultPathOverride="/privacy"
-  keywordsOverride={kw}
+  keywordsOverride={PRIVACY_KEYWORDS}
 >
   <main id="main" class="relative min-h-dvh w-full">
-    <div class="relative z-10 mx-auto max-w-3xl px-3 pt-6 sm:px-4 sm:pt-10">
-      <SignupNavbar locale="en" />
+    <div class="relative z-10 mx-auto max-w-5xl px-3 pt-6 sm:px-4 sm:pt-10">
+      <SignupNavbar />
     </div>
-    <PrivacyPage client:load locale="en" />
+    <PrivacyPage client:load />
   </main>
 </Layout>

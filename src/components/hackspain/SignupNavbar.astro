@@ -1,24 +1,15 @@
 ---
 import ArrowLeftBold from "phosphor-astro/ArrowLeftBold.astro";
-import { getCopy } from "../../i18n/copy";
-import type { Locale } from "../../i18n/locales";
 
-interface Props {
-  locale: Locale;
-}
-
-const { locale } = Astro.props;
-const t = getCopy(locale).signup;
-const homeHref = locale === "es" ? "/es" : "/";
-const backLabel = t.backHome.replace(/^\u2190\s*/, "").replace(/^←\s*/, "").trim();
+const backLabel = "Inicio";
 ---
 
 <nav
   class="mb-4 flex min-h-[3.25rem] items-stretch border-[3px] border-hs-ink bg-hs-paper"
-  aria-label="Signup"
+  aria-label="Registro"
 >
   <a
-    href={homeHref}
+    href="/"
     class="flex min-w-0 w-full items-center gap-2 px-4 py-3 font-sans text-sm font-extrabold text-hs-ink transition-colors hover:bg-hs-sand/60 sm:py-3.5"
   >
     <span class="inline-flex shrink-0 text-hs-orange" aria-hidden="true">

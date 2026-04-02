@@ -300,10 +300,10 @@ export function parseSignupBody(body: unknown):
     return { ok: false, error: "invalid_social_url", status: 400 };
   }
   if (msg === "invalid_email") {
-    return { ok: false, error: "Valid email is required", status: 400 };
+    return { ok: false, error: "invalid_email", status: 400 };
   }
   if (msg === "fullName_required") {
-    return { ok: false, error: "fullName is required", status: 400 };
+    return { ok: false, error: "fullName_required", status: 400 };
   }
   if (msg === "ambassador_motivation_required") {
     return { ok: false, error: "ambassador_motivation_required", status: 400 };
@@ -311,7 +311,7 @@ export function parseSignupBody(body: unknown):
   if (msg === "ambassador_study_where_required") {
     return { ok: false, error: "ambassador_study_where_required", status: 400 };
   }
-  return { ok: false, error: "Invalid request", status: 400 };
+  return { ok: false, error: "invalid_request", status: 400 };
 }
 
 export function parseSignupBodyClient(body: unknown):
