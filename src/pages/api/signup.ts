@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
-import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { hackathonSignups } from "../../db/schema";
 import { notifyDiscordNewSignup } from "../../lib/discordSignupWebhook";
@@ -62,31 +61,35 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const db = getDb();
-    const [existing] = await db
-      .select({ id: hackathonSignups.id })
-      .from(hackathonSignups)
-      .where(eq(hackathonSignups.email, email))
-      .limit(1);
-    if (existing) {
-      return Response.json({ error: "duplicate_email" }, { status: 409 });
+
+    try {
+      await db.insert(hackathonSignups).values({
+        fullName,
+        email,
+        xUrl: emptyToNull(xUrl),
+        linkedinUrl: emptyToNull(linkedinUrl),
+        githubUrl: emptyToNull(githubUrl),
+        webUrl: emptyToNull(webUrl),
+        achievements: emptyToNull(achievements),
+        freeTime: emptyToNull(freeTime),
+        wantsAmbassador,
+        ambassadorMotivation: motivationDb,
+        ambassadorStudyWhere: studyDb,
+        heardFrom: emptyToNull(heardFrom),
+      });
+    } catch (e: unknown) {
+      if (
+        e != null &&
+        typeof e === "object" &&
+        "code" in e &&
+        (e as { code: unknown }).code === "23505"
+      ) {
+        return Response.json({ error: "duplicate_email" }, { status: 409 });
+      }
+      throw e;
     }
 
-    await db.insert(hackathonSignups).values({
-      fullName,
-      email,
-      xUrl: emptyToNull(xUrl),
-      linkedinUrl: emptyToNull(linkedinUrl),
-      githubUrl: emptyToNull(githubUrl),
-      webUrl: emptyToNull(webUrl),
-      achievements: emptyToNull(achievements),
-      freeTime: emptyToNull(freeTime),
-      wantsAmbassador,
-      ambassadorMotivation: motivationDb,
-      ambassadorStudyWhere: studyDb,
-      heardFrom: emptyToNull(heardFrom),
-    });
-
-    await notifyDiscordNewSignup({
+    notifyDiscordNewSignup({
       fullName,
       email,
       xUrl,
@@ -99,7 +102,7 @@ export const POST: APIRoute = async ({ request }) => {
       ambassadorMotivation: wantsAmbassador ? ambassadorMotivation : "",
       ambassadorStudyWhere: wantsAmbassador ? ambassadorStudyWhere : "",
       heardFrom,
-    });
+    }).catch((e) => console.error("Discord notify failed:", e));
 
     return Response.json({ ok: true });
   } catch (e) {

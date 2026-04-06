@@ -241,6 +241,14 @@ export function SignupPage() {
     if (ambassadorQueryEnabled()) setWantsAmbassador(true);
   }, []);
 
+  useEffect(() => {
+    if (import.meta.env.PROD) {
+      initBotId({
+        protect: [{ path: "/api/signup", method: "POST" }],
+      });
+    }
+  }, []);
+
   function applyAgain() {
     clearAppliedFlag();
     clearStoredFields();
@@ -260,12 +268,6 @@ export function SignupPage() {
     setErrorMessage("");
     setStatus("idle");
   }
-
-  useEffect(() => {
-    initBotId({
-      protect: [{ path: "/api/signup", method: "POST" }],
-    });
-  }, []);
 
   useEffect(() => {
     if (status === "success" || status === "alreadyApplied") return;
@@ -520,6 +522,10 @@ export function SignupPage() {
                       placeholder="yoursite.com or https://..."
                       value={webUrl}
                       onChange={(e) => setWebUrl(e.target.value)}
+                      onBlur={(e) => {
+                        const norm = normalizeSocialUrl(e.target.value.trim(), "web");
+                        if (norm) setWebUrl(norm);
+                      }}
                       onPaste={(e) => {
                         e.preventDefault();
                         const raw = e.clipboardData.getData("text/plain");

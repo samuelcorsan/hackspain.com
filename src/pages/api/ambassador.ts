@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
-import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { ambassadorApplications } from "../../db/schema";
 import { notifyDiscordAmbassadorApplication } from "../../lib/discordAmbassadorWebhook";
@@ -57,29 +56,33 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const db = getDb();
-    const [existing] = await db
-      .select({ id: ambassadorApplications.id })
-      .from(ambassadorApplications)
-      .where(eq(ambassadorApplications.email, email))
-      .limit(1);
-    if (existing) {
-      return Response.json({ error: "This email is already registered" }, { status: 409 });
+
+    try {
+      await db.insert(ambassadorApplications).values({
+        fullName,
+        email,
+        institution,
+        cityRegion,
+        xUrl: emptyToNull(xUrl),
+        linkedinUrl: emptyToNull(linkedinUrl),
+        githubUrl: emptyToNull(githubUrl),
+        webUrl: emptyToNull(webUrl),
+        motivation,
+        outreachPlan,
+      });
+    } catch (e: unknown) {
+      if (
+        e != null &&
+        typeof e === "object" &&
+        "code" in e &&
+        (e as { code: unknown }).code === "23505"
+      ) {
+        return Response.json({ error: "This email is already registered" }, { status: 409 });
+      }
+      throw e;
     }
 
-    await db.insert(ambassadorApplications).values({
-      fullName,
-      email,
-      institution,
-      cityRegion,
-      xUrl: emptyToNull(xUrl),
-      linkedinUrl: emptyToNull(linkedinUrl),
-      githubUrl: emptyToNull(githubUrl),
-      webUrl: emptyToNull(webUrl),
-      motivation,
-      outreachPlan,
-    });
-
-    await notifyDiscordAmbassadorApplication({
+    notifyDiscordAmbassadorApplication({
       fullName,
       email,
       institution,
@@ -90,7 +93,7 @@ export const POST: APIRoute = async ({ request }) => {
       webUrl,
       motivation,
       outreachPlan,
-    });
+    }).catch((e) => console.error("Discord notify failed:", e));
 
     return Response.json({ ok: true });
   } catch (e) {
