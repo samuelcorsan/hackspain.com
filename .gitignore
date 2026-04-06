@@ -2,6 +2,8 @@
 dist/
 .agents/
 
+.vscode/
+
 # generated types
 .astro/
 
@@ -25,3 +27,7 @@ pnpm-debug.log*
 .idea/
 
 .vercel/
+
+#ai
+.claude
+.cursor

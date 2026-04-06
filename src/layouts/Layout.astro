@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import Analytics from "@vercel/analytics/astro";
+import CookieConsent from "../components/CookieConsent.astro";
+import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookieConsent";
 import {
   jsonLdEvent,
   jsonLdFaq,
@@ -128,6 +130,19 @@ const faqJson = JSON.stringify(jsonLdFaq());
     <script type="application/ld+json" set:html={eventJson} />
     <script type="application/ld+json" set:html={webPageJson} />
     <script type="application/ld+json" set:html={faqJson} />
+    <script is:inline define:vars={{ ANALYTICS_CONSENT_STORAGE_KEY }}>
+      (function () {
+        window.__hsAnalyticsConsent = null;
+        try {
+          var v = localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY);
+          if (v === "granted" || v === "denied") window.__hsAnalyticsConsent = v;
+        } catch (e) {}
+        window.webAnalyticsBeforeSend = function (event) {
+          if (window.__hsAnalyticsConsent !== "granted") return null;
+          return event;
+        };
+      })();
+    </script>
     <Analytics />
   </head>
   <body
@@ -138,6 +153,7 @@ const faqJson = JSON.stringify(jsonLdFaq());
   >
     <a href="#main" class="skip-link font-sans">Ir al contenido principal</a>
     <slot />
+    <CookieConsent />
   </body>
 </html>
 

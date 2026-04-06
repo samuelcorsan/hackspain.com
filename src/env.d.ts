@@ -1,5 +1,9 @@
 /// <reference types="astro/client" />
 
+interface Window {
+  __hsAnalyticsConsent?: "granted" | "denied" | null;
+}
+
 interface ImportMetaEnv {
   readonly DATABASE_URL?: string;
   /** Discord channel webhook URL (server-only). New signups post here when set. */

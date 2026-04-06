@@ -1,0 +1,85 @@
+---
+import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookieConsent";
+---
+
+<div
+  id="hs-cookie-banner"
+  class="fixed inset-x-0 bottom-0 z-[90] hidden border-t-[3px] border-hs-ink bg-hs-paper shadow-[0_-4px_0_0_rgba(42,23,15,0.08)]"
+  role="region"
+  aria-label="Preferencias de cookies"
+>
+  <div
+    class="mx-auto flex max-w-5xl flex-col gap-4 px-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-5"
+  >
+    <p class="font-sans text-sm leading-relaxed text-hs-ink sm:max-w-xl">
+      Como en la mayoría de sitios, usamos cookies: unas son imprescindibles para que la web
+      funcione; otras sirven para estadísticas y solo las activamos si nos das el visto bueno.
+      Si quieres más detalle, está todo en la
+      <a href="/privacy" class="font-extrabold text-hs-orange underline underline-offset-2 hover:text-hs-red"
+        >política de privacidad</a
+      >.
+    </p>
+    <div class="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
+      <button
+        type="button"
+        id="hs-cookie-reject"
+        class="border-[3px] border-hs-ink bg-hs-paper px-4 py-2.5 font-sans text-sm font-extrabold text-hs-ink transition-colors hover:bg-hs-sand/70"
+      >
+        Solo necesarias
+      </button>
+      <button
+        type="button"
+        id="hs-cookie-accept"
+        class="border-[3px] border-hs-ink bg-hs-gold px-4 py-2.5 font-sans text-sm font-extrabold text-hs-ink transition-colors hover:brightness-95"
+      >
+        Aceptar opcionales
+      </button>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ ANALYTICS_CONSENT_STORAGE_KEY }}>
+  const banner = document.getElementById("hs-cookie-banner");
+  const acceptBtn = document.getElementById("hs-cookie-accept");
+  const rejectBtn = document.getElementById("hs-cookie-reject");
+
+  function readConsent() {
+    try {
+      return localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function hideBanner() {
+    banner?.classList.add("hidden");
+  }
+
+  const existing = readConsent();
+  if (existing !== "granted" && existing !== "denied") {
+    banner?.classList.remove("hidden");
+  }
+
+  function persist(value) {
+    try {
+      localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, value);
+    } catch {
+      /* ignore */
+    }
+    window.__hsAnalyticsConsent = value;
+    hideBanner();
+  }
+
+  acceptBtn?.addEventListener("click", async () => {
+    persist("granted");
+    const { pageview, computeRoute } = await import("@vercel/analytics");
+    pageview({
+      path: window.location.pathname,
+      route: computeRoute(window.location.pathname, null),
+    });
+  });
+
+  rejectBtn?.addEventListener("click", () => {
+    persist("denied");
+  });
+</script>
