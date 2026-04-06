@@ -84,7 +84,7 @@ export const POST: APIRoute = async ({ request }) => {
         "code" in e &&
         (e as { code: unknown }).code === "23505"
       ) {
-        return Response.json({ error: "duplicate_email" }, { status: 409 });
+        return Response.json({ error: "invalid_email" }, { status: 409 });
       }
       throw e;
     }

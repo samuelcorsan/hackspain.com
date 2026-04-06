@@ -18,7 +18,7 @@
 | Social (X) | @hackspain26 — https://x.com/hackspain26 |
 | Social (Instagram) | @hackspain26 — https://www.instagram.com/hackspain26/ |
 | Contact email | leo@hackspain.com |
-| GitHub org | https://github.com/hackspain |
+| GitHub repo | https://github.com/samuelcorsan/hackspain.com |
 | Site builder credit | Leo (@mrloldev on X), linked from the site footer. |
 
 ## How the website works (for crawlers and tools)

@@ -179,7 +179,6 @@ const t = {
     "Ya enviaste una solicitud desde este navegador. Te contestaremos por correo; usa «Volver a solicitar» solo si necesitas mandar otra.",
   applyAgain: "Volver a solicitar",
   errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
-  errorDuplicate: "Este email ya está registrado.",
   errorSocialRequired: "Añade al menos un enlace a perfil o web.",
   errorInvalidSocialUrl:
     "Uno o más enlaces no son válidos para ese campo (revisa X, LinkedIn, GitHub o tu web).",
@@ -360,7 +359,7 @@ export function SignupPage() {
       if (res.status === 403) {
         setErrorMessage(t.errorAccessDenied);
       } else if (res.status === 409) {
-        setErrorMessage(t.errorDuplicate);
+        setErrorMessage(t.errorInvalidEmail);
       } else if (data.error === "social_required") {
         setErrorMessage(t.errorSocialRequired);
       } else if (data.error === "invalid_social_url") {

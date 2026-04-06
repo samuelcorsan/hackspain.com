@@ -125,7 +125,7 @@ export function jsonLdOrganization() {
     sameAs: [
       "https://x.com/hackspain26",
       "https://www.instagram.com/hackspain26/",
-      "https://github.com/hackspain",
+      "https://github.com/samuelcorsan/hackspain.com",
     ],
     knowsAbout: ["hackathon España", "Madrid tech events", "young coders Europe", "machine learning hackathon"],
     inLanguage: "es",

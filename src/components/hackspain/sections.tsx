@@ -77,7 +77,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
       </p>
     </P>,
     <P bg="bg-hs-paper">
-      <a href="https://github.com/hackspain" target="_blank" rel="noopener noreferrer" className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink underline underline-offset-2`}>
+      <a href="https://github.com/samuelcorsan/hackspain.com" target="_blank" rel="noopener noreferrer" className={`${D} text-[clamp(0.7rem,1.1vw,1rem)] font-bold text-hs-ink underline underline-offset-2`}>
         Ver el código →
       </a>
     </P>,
