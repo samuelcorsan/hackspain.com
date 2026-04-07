@@ -31,18 +31,53 @@ function isLandingDocumentPath(pathname: string): boolean {
   return false;
 }
 
-function clientAcceptsHtml(accept: string | null): boolean {
-  if (accept == null || accept === "") return true;
-  const lower = accept.toLowerCase();
-  return lower.includes("text/html") || lower.includes("application/xhtml+xml");
+function shouldServeMarkdownVariant(accept: string | null): boolean {
+  if (accept == null || accept === "") return false;
+  return accept.toLowerCase().includes("text/markdown");
 }
 
-const LLMS_HEADERS = {
+function shouldAttachLlmsDiscovery(pathname: string): boolean {
+  const p = stripTrailingSlash(pathname);
+  if (p.startsWith("/api/")) return false;
+  if (p === "/llms.txt" || p === "/sitemap.xml") return false;
+  return true;
+}
+
+function mergeVary(existing: string | null, token: string): string {
+  if (!existing?.trim()) return token;
+  const parts = existing.split(",").map((s) => s.trim()).filter(Boolean);
+  if (parts.includes(token)) return existing;
+  return `${existing}, ${token}`;
+}
+
+const LLMS_TXT_DISCOVERY_LINK = '</llms.txt>; rel="llms-txt"';
+
+const MARKDOWN_NEGOTIATION_HEADERS: Record<string, string> = {
   "Content-Type": "text/markdown; charset=utf-8",
   "Cache-Control": "public, max-age=3600",
-} as const;
+  "X-Robots-Tag": "noindex, nofollow",
+  Vary: "Accept",
+};
 
-export const onRequest = defineMiddleware((context, next) => {
+function withLlmsDiscoveryHeaders(response: Response, pathname: string): Response {
+  const headers = new Headers(response.headers);
+  const existingLink = headers.get("Link");
+  headers.set(
+    "Link",
+    existingLink ? `${existingLink}, ${LLMS_TXT_DISCOVERY_LINK}` : LLMS_TXT_DISCOVERY_LINK,
+  );
+  headers.set("X-Llms-Txt", "/llms.txt");
+  if (isLandingDocumentPath(pathname)) {
+    headers.set("Vary", mergeVary(headers.get("Vary"), "Accept"));
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+export const onRequest = defineMiddleware(async (context, next) => {
   const { request } = context;
   const method = request.method;
   const path = new URL(request.url).pathname;
@@ -51,11 +86,16 @@ export const onRequest = defineMiddleware((context, next) => {
 
   if (method !== "GET" && method !== "HEAD") return next();
 
-  if (!isLandingDocumentPath(path)) return next();
-  if (clientAcceptsHtml(request.headers.get("accept"))) return next();
-
-  if (method === "HEAD") {
-    return new Response(null, { headers: LLMS_HEADERS });
+  if (isLandingDocumentPath(path) && shouldServeMarkdownVariant(request.headers.get("accept"))) {
+    if (method === "HEAD") {
+      return new Response(null, { headers: MARKDOWN_NEGOTIATION_HEADERS });
+    }
+    return new Response(llmsBody, { headers: MARKDOWN_NEGOTIATION_HEADERS });
   }
-  return new Response(llmsBody, { headers: LLMS_HEADERS });
+
+  const response = await next();
+  if ((method === "GET" || method === "HEAD") && shouldAttachLlmsDiscovery(path)) {
+    return withLlmsDiscoveryHeaders(response, path);
+  }
+  return response;
 });
