@@ -110,6 +110,9 @@ export function LandingPage({ initialSection = 0 }: Props) {
   );
   const [skipUniqueGridEnter, setSkipUniqueGridEnter] = useState(false);
   const [horseChromaSvgHidden, setHorseChromaSvgHidden] = useState(false);
+  const [compactHomeGridVisible, setCompactHomeGridVisible] = useState(
+    () => initialSection !== 0,
+  );
   const horseRevealedRef = useRef<ReadonlySet<string>>(horseRevealed);
   horseRevealedRef.current = horseRevealed;
   const horseRevealTimeoutsRef = useRef(
@@ -139,6 +142,10 @@ export function LandingPage({ initialSection = 0 }: Props) {
   useEffect(() => {
     applySeoToDocument(initialSection);
   }, [initialSection]);
+
+  useEffect(() => {
+    if (section !== 0) setCompactHomeGridVisible(true);
+  }, [section]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -201,6 +208,26 @@ export function LandingPage({ initialSection = 0 }: Props) {
     },
     [section, goToSection, reducedMotion, clearHorseRevealTimeouts],
   );
+
+  const isCompact = layoutProfile === "compact";
+  const compactHomeIntroActive =
+    isCompact && section === 0 && !compactHomeGridVisible;
+
+  const revealCompactHomeGrid = useCallback(() => {
+    setCompactHomeGridVisible(true);
+    locked.current = true;
+    window.setTimeout(() => {
+      locked.current = false;
+    }, 550);
+  }, []);
+
+  const onScrollHintNext = useCallback(() => {
+    if (compactHomeIntroActive) {
+      revealCompactHomeGrid();
+      return;
+    }
+    advance(1);
+  }, [compactHomeIntroActive, revealCompactHomeGrid, advance]);
 
   const onHorseRideX = useCallback(
     (tx: number, travelTotal: number) => {
@@ -306,9 +333,20 @@ export function LandingPage({ initialSection = 0 }: Props) {
   );
 
   useEffect(() => {
+    const compactIntro =
+      layoutProfile === "compact" &&
+      section === 0 &&
+      !compactHomeGridVisible;
+
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (Math.abs(e.deltaY) > 5) advance(e.deltaY > 0 ? 1 : -1);
+      if (Math.abs(e.deltaY) <= 5) return;
+      const down = e.deltaY > 0;
+      if (compactIntro) {
+        if (down) revealCompactHomeGrid();
+        return;
+      }
+      advance(down ? 1 : -1);
     };
     let touchY = 0;
     const onTouchStart = (e: TouchEvent) => {
@@ -317,15 +355,25 @@ export function LandingPage({ initialSection = 0 }: Props) {
     const onTouchEnd = (e: TouchEvent) => {
       const dy = touchY - e.changedTouches[0].clientY;
       if (Math.abs(dy) <= 40) return;
-      advance(dy > 0 ? 1 : -1);
+      const down = dy > 0;
+      if (compactIntro) {
+        if (down) revealCompactHomeGrid();
+        return;
+      }
+      advance(down ? 1 : -1);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" || e.key === " ") {
         e.preventDefault();
+        if (compactIntro) {
+          revealCompactHomeGrid();
+          return;
+        }
         advance(1);
       }
       if (e.key === "ArrowUp") {
         e.preventDefault();
+        if (compactIntro) return;
         advance(-1);
       }
     };
@@ -339,7 +387,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("keydown", onKey);
     };
-  }, [advance]);
+  }, [advance, layoutProfile, revealCompactHomeGrid, section, compactHomeGridVisible]);
 
   useEffect(() => {
     const onPop = () => {
@@ -367,7 +415,6 @@ export function LandingPage({ initialSection = 0 }: Props) {
   const uniqueCells = sections[SECTION_UNIQUE_INDEX] ?? {};
   const liveLabel = SECTION_NAV[section] ?? SECTION_NAV[0];
 
-  const isCompact = layoutProfile === "compact";
   const tileMotionClass = "absolute inset-0";
 
   const stageContent = (
@@ -389,7 +436,8 @@ export function LandingPage({ initialSection = 0 }: Props) {
         />
       ) : null}
 
-      {ills.map((ill, i) =>
+      {!compactHomeIntroActive &&
+        ills.map((ill, i) =>
         ill.svg ? (
           <div
             key={ill.id}
@@ -434,6 +482,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
       )}
 
       {cells.map((cell) => {
+        if (compactHomeIntroActive && cell.id !== "hero") return null;
         if (isCompact && cell.w === 0 && cell.h === 0) return null;
 
         const horse = horseToUnique === "horse_video";
@@ -458,6 +507,100 @@ export function LandingPage({ initialSection = 0 }: Props) {
             ? "absolute overflow-visible z-10 @container"
             : "absolute overflow-hidden @container";
 
+        const cellInner = (
+          <AnimatePresence mode="popLayout" custom={dir} initial={false}>
+            {missionPhase ? (
+              <motion.div
+                key={`${cell.id}-${SECTION_MISSION_INDEX}`}
+                className={tileMotionClass}
+                custom={dir}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={
+                  reducedMotion
+                    ? { type: "tween", duration: 0.2, delay: cell.delay * 0.2 }
+                    : { ...SPRING, delay: cell.delay * 0.35 }
+                }
+              >
+                {missionCells[cell.id]}
+              </motion.div>
+            ) : null}
+            {uniqueHorsePhase ? (
+              <motion.div
+                key={`${cell.id}-${SECTION_UNIQUE_INDEX}`}
+                className={tileMotionClass}
+                custom={dir}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={
+                  reducedMotion
+                    ? { type: "tween", duration: 0.2, delay: cell.delay * 0.2 }
+                    : { ...SPRING, delay: cell.delay * 0.35 }
+                }
+              >
+                {uniqueCells[cell.id]}
+              </motion.div>
+            ) : null}
+            {defaultTile ? (
+              <motion.div
+                key={`${cell.id}-${section}`}
+                className={tileMotionClass}
+                custom={dir}
+                variants={variants}
+                initial={
+                  section === SECTION_UNIQUE_INDEX && skipUniqueGridEnter
+                    ? false
+                    : "enter"
+                }
+                animate="center"
+                exit="exit"
+                transition={
+                  reducedMotion
+                    ? { type: "tween", duration: 0.2, delay: cell.delay * 0.3 }
+                    : { ...SPRING, delay: cell.delay }
+                }
+              >
+                {current[cell.id]}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        );
+
+        if (isCompact && cell.id === "hero") {
+          return (
+            <motion.div
+              key={cell.id}
+              className={`${cellFrameClass}${compactHomeIntroActive ? " z-20" : ""}`}
+              initial={false}
+              animate={{
+                left: compactHomeIntroActive ? "0%" : `${(cell.x / artboard.w) * 100}%`,
+                top: compactHomeIntroActive ? "0%" : `${(cell.y / artboard.h) * 100}%`,
+                width: compactHomeIntroActive
+                  ? "100%"
+                  : `${(cell.w / artboard.w) * 100}%`,
+                height: compactHomeIntroActive
+                  ? "100%"
+                  : `${(cell.h / artboard.h) * 100}%`,
+              }}
+              transition={
+                reducedMotion
+                  ? { type: "tween" as const, duration: 0.25 }
+                  : SPRING
+              }
+              style={{
+                position: "absolute",
+                ...(cell.clip ? { clipPath: cell.clip } : {}),
+              }}
+            >
+              {cellInner}
+            </motion.div>
+          );
+        }
+
         return (
           <div
             key={cell.id}
@@ -467,66 +610,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
               ...(cell.clip ? { clipPath: cell.clip } : {}),
             }}
           >
-            <AnimatePresence mode="popLayout" custom={dir} initial={false}>
-              {missionPhase ? (
-                <motion.div
-                  key={`${cell.id}-${SECTION_MISSION_INDEX}`}
-                  className={tileMotionClass}
-                  custom={dir}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={
-                    reducedMotion
-                      ? { type: "tween", duration: 0.2, delay: cell.delay * 0.2 }
-                      : { ...SPRING, delay: cell.delay * 0.35 }
-                  }
-                >
-                  {missionCells[cell.id]}
-                </motion.div>
-              ) : null}
-              {uniqueHorsePhase ? (
-                <motion.div
-                  key={`${cell.id}-${SECTION_UNIQUE_INDEX}`}
-                  className={tileMotionClass}
-                  custom={dir}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={
-                    reducedMotion
-                      ? { type: "tween", duration: 0.2, delay: cell.delay * 0.2 }
-                      : { ...SPRING, delay: cell.delay * 0.35 }
-                  }
-                >
-                  {uniqueCells[cell.id]}
-                </motion.div>
-              ) : null}
-              {defaultTile ? (
-                <motion.div
-                  key={`${cell.id}-${section}`}
-                  className={tileMotionClass}
-                  custom={dir}
-                  variants={variants}
-                  initial={
-                    section === SECTION_UNIQUE_INDEX && skipUniqueGridEnter
-                      ? false
-                      : "enter"
-                  }
-                  animate="center"
-                  exit="exit"
-                  transition={
-                    reducedMotion
-                      ? { type: "tween", duration: 0.2, delay: cell.delay * 0.3 }
-                      : { ...SPRING, delay: cell.delay }
-                  }
-                >
-                  {current[cell.id]}
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+            {cellInner}
           </div>
         );
       })}
@@ -564,10 +648,14 @@ export function LandingPage({ initialSection = 0 }: Props) {
 
       <ScrollSectionHint
         label="Scroll"
-        nextSectionAria="Ir a la siguiente sección"
+        nextSectionAria={
+          compactHomeIntroActive
+            ? "Ver mosaico completo de inicio"
+            : "Ir a la siguiente sección"
+        }
         visible={section < NUM_SECTIONS - 1 && !horseToUnique}
         reducedMotion={reducedMotion}
-        onNext={() => advance(1)}
+        onNext={onScrollHintNext}
       />
     </div>
   );
