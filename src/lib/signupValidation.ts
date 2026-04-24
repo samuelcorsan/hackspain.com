@@ -33,8 +33,6 @@ export const HEARD_FROM_OPTIONS: readonly { id: HeardFromSourceId; label: string
   { id: "other", label: "Otro" },
 ] as const;
 
-const heardFromSourceEnum = z.enum(HEARD_FROM_SOURCE_IDS);
-
 export function formatHeardFromStored(stored: string): string {
   if (!stored) return "";
   if (stored.startsWith("other:")) {
@@ -289,7 +287,14 @@ export const signupBodySchema = z
       .transform((s) => s.trim()),
     heardFromSource: z.preprocess(
       (v) => (typeof v === "string" ? v.trim() : ""),
-      z.union([z.literal(""), heardFromSourceEnum]),
+      z
+        .string()
+        .min(1, { message: "heard_from_required" })
+        .refine(
+          (s) => (HEARD_FROM_SOURCE_IDS as readonly string[]).includes(s),
+          { message: "heard_from_invalid" },
+        )
+        .transform((s) => s as HeardFromSourceId),
     ),
     heardFromOther: z.preprocess(
       (v) => (typeof v === "string" ? v : ""),
@@ -335,11 +340,7 @@ export const signupBodySchema = z
   })
   .transform(({ heardFromSource, heardFromOther, ...rest }) => {
     const heardFrom =
-      heardFromSource === ""
-        ? ""
-        : heardFromSource === "other"
-          ? `other:${heardFromOther.trim()}`
-          : heardFromSource;
+      heardFromSource === "other" ? `other:${heardFromOther.trim()}` : heardFromSource;
     return { ...rest, heardFrom };
   });
 
@@ -367,6 +368,9 @@ export function parseSignupBody(body: unknown):
   if (msg === "fullName_required") {
     return { ok: false, error: "fullName_required", status: 400 };
   }
+  if (msg === "heard_from_required" || msg === "heard_from_invalid") {
+    return { ok: false, error: "heard_from_required", status: 400 };
+  }
   if (msg === "ambassador_motivation_required") {
     return { ok: false, error: "ambassador_motivation_required", status: 400 };
   }
@@ -390,6 +394,7 @@ export function parseSignupBodyClient(body: unknown):
         | "fullName"
         | "ambassador_motivation"
         | "ambassador_study_where"
+        | "heard_from"
         | "heard_from_other"
         | "generic";
     } {
@@ -402,6 +407,8 @@ export function parseSignupBodyClient(body: unknown):
   if (msg === "invalid_social_url") return { ok: false, code: "invalid_social_url" };
   if (msg === "invalid_email") return { ok: false, code: "invalid_email" };
   if (msg === "fullName_required") return { ok: false, code: "fullName" };
+  if (msg === "heard_from_required" || msg === "heard_from_invalid")
+    return { ok: false, code: "heard_from" };
   if (msg === "ambassador_motivation_required") return { ok: false, code: "ambassador_motivation" };
   if (msg === "ambassador_study_where_required") return { ok: false, code: "ambassador_study_where" };
   if (msg === "heard_from_other_required") return { ok: false, code: "heard_from_other" };

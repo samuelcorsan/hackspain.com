@@ -205,17 +205,17 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         </P>
       ),
       r2c: (
-        <P bg="bg-hs-gold" align="start">
+        <P bg="bg-hs-gold" align="start" className="!gap-0.5 !p-1.5 @[180px]:!gap-1.5 @[180px]:!p-2.5">
           <p className={`${LBL} text-hs-ink/60`}>EMBAJADORES</p>
           <p className={`${BD} text-hs-ink`}>Universidades y centros educativos</p>
           <ButtonLink
             href={ambassadorHref}
-            variant="teal"
-            size="micro"
-            className="mt-1.5 shrink-0 self-start @[220px]:mt-2"
-            aria-label="Programa de embajadores HackSpain — abrir página"
+            variant="gold"
+            size="compact"
+            className="mt-0.5 w-full min-w-0 max-w-full self-stretch !h-auto !border-hs-ink !bg-hs-navy !whitespace-normal !px-1 !py-1 !text-center !text-[clamp(0.48rem,1.05vw+0.3rem,0.78rem)] !font-bungee !normal-case !leading-tight !text-hs-gold !transition-[filter,box-shadow] shadow-[2px_2px_0_0_var(--color-hs-ink)] hover:!brightness-110 focus-visible:!border-hs-paper focus-visible:shadow-[2px_2px_0_0_var(--color-hs-ink),0_0_0_2px_var(--color-hs-ink)] @[220px]:!px-2 @[220px]:!py-1.5 @[220px]:mt-1"
+            aria-label="Ver programa de embajadores — HackSpain, abrir página"
           >
-            Programa de embajadores
+            <span className="block w-full [text-wrap:balance]">Ver programa de embajadores</span>
           </ButtonLink>
         </P>
       ),

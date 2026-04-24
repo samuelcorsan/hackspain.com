@@ -9,6 +9,7 @@ import {
   Textarea,
 } from "./form";
 import { Button, ButtonLink } from "./ui/Button";
+import { getHeardFromSessionDefaults, recordPageAttribution } from "../../lib/trafficAttribution";
 import {
   HEARD_FROM_OPTIONS,
   HEARD_FROM_SOURCE_IDS,
@@ -168,9 +169,10 @@ const t = {
   freeTimeHint:
     "Hobbies, clubes, asociaciones, side projects, cómo desconectas — lo que te represente.",
   heardFrom: "¿Cómo nos has conocido?",
-  heardFromHint: "Elige la opción que mejor encaje (opcional).",
+  heardFromHint: "Obligatorio. Si entras desde una red, intentamos rellenarlo solos.",
   heardFromOtherPlaceholder: "Cuéntanos cómo nos encontraste…",
-  errorHeardFromOther: 'Si eliges «Otro», escribe cómo nos conociste.',
+  errorHeardFrom: "Indica cómo has conocido HackSpain.",
+  errorHeardFromOther: 'Si eliges «Otro», escribe cómo nos encontraste.',
   submit: "Enviar",
   submitting: "Enviando…",
   applicationReceived:
@@ -248,6 +250,36 @@ export function SignupPage() {
     }
   }, []);
 
+  function applyHeardAttribution(onlyIfHeardFromEmpty: boolean) {
+    recordPageAttribution();
+    if (onlyIfHeardFromEmpty) {
+      setHeardFromSource((prev) => {
+        if (prev) return prev;
+        const d = getHeardFromSessionDefaults();
+        return d ? d.source : prev;
+      });
+      setHeardFromOther((prev) => {
+        if (prev) return prev;
+        const d = getHeardFromSessionDefaults();
+        return d?.other ?? prev;
+      });
+      return;
+    }
+    const d = getHeardFromSessionDefaults();
+    if (d) {
+      setHeardFromSource(d.source);
+      setHeardFromOther(d.other ?? "");
+    } else {
+      setHeardFromSource("");
+      setHeardFromOther("");
+    }
+  }
+
+  useEffect(() => {
+    if (readAppliedFlag()) return;
+    applyHeardAttribution(true);
+  }, []);
+
   function applyAgain() {
     clearAppliedFlag();
     clearStoredFields();
@@ -266,6 +298,7 @@ export function SignupPage() {
     setHeardFromOther("");
     setErrorMessage("");
     setStatus("idle");
+    applyHeardAttribution(false);
   }
 
   useEffect(() => {
@@ -334,6 +367,8 @@ export function SignupPage() {
         setErrorMessage(t.errorAmbassadorStudyWhere);
       } else if (parsed.code === "fullName") {
         setErrorMessage(t.errorFullName);
+      } else if (parsed.code === "heard_from") {
+        setErrorMessage(t.errorHeardFrom);
       } else if (parsed.code === "heard_from_other") {
         setErrorMessage(t.errorHeardFromOther);
       } else {
@@ -575,10 +610,13 @@ export function SignupPage() {
                   id="signup-heard-from"
                   label={t.heardFrom}
                   hint={t.heardFromHint}
+                  required
                   className={cellBase}
                 >
                   <fieldset className="min-w-0 border-0 p-0">
-                    <legend className="sr-only">{t.heardFrom}</legend>
+                    <legend className="sr-only">
+                      {t.heardFrom} (obligatorio)
+                    </legend>
                     <div className="grid grid-cols-2 gap-1.5 min-[520px]:grid-cols-3 md:grid-cols-4">
                       {HEARD_FROM_OPTIONS.map((opt) => (
                         <label
