@@ -1,11 +1,8 @@
-import { useId } from "react";
 import { MosaicBackground } from "./MosaicBackground";
 import { ButtonLink } from "./ui/Button";
 import { useLayoutProfile } from "./useLayoutProfile";
 
 const panelBorder = "border-[3px] border-hs-ink bg-hs-ink";
-
-const TRAVEL_PERK_INDEX = 5;
 
 const DUTIES = [
   "Hablar de HackSpain en las redes que ya usas. Te damos fechas, enlaces oficiales y lo imprescindible para no equivocarte, pero el post lo escribes y grabas tú, con tu rollo.",
@@ -16,35 +13,12 @@ const DUTIES = [
 const PERKS = [
   "Participación asegurada en el hackathon",
   "Merch exclusivo",
-  "Badge en X (Twitter)",
   "Carta de recomendación del equipo HackSpain",
   "Certificado físico",
-  "Reembolso de viaje",
 ] as const;
-
-function PerkInfoIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4M12 8h.01" />
-    </svg>
-  );
-}
 
 export function AmbassadorPage() {
   const profile = useLayoutProfile();
-  const travelTipId = useId();
   const signupHref = "/signup?ambassador=1";
 
   return (
@@ -150,43 +124,15 @@ export function AmbassadorPage() {
                 className="relative z-[1] h-[clamp(9rem,28vw,12rem)] w-auto max-w-[min(92%,13rem)] object-contain object-bottom drop-shadow-[3px_4px_0_var(--color-hs-ink)] sm:h-[clamp(10rem,26vw,13rem)] lg:h-full lg:max-h-[min(100%,17rem)] lg:w-full lg:max-w-[11.5rem] xl:max-w-[12.5rem]"
               />
             </div>
-            <div className="grid min-w-0 flex-1 grid-cols-1 overflow-visible border-t-[3px] border-hs-ink bg-hs-paper sm:grid-cols-2 lg:grid-cols-3 lg:border-t-0">
+            <div className="grid min-w-0 flex-1 grid-cols-1 overflow-hidden border-t-[3px] border-hs-ink bg-hs-paper sm:grid-cols-2 sm:border-t-0">
               {PERKS.map((item, i) => (
                 <div
                   key={i}
-                  className={`flex min-h-[5.5rem] flex-col justify-center border-b-[3px] border-r-[3px] border-hs-ink p-4 sm:min-h-[6rem] sm:p-5 ${
-                    i === TRAVEL_PERK_INDEX ? "relative z-0 overflow-visible sm:z-10" : ""
-                  }`}
+                  className="flex min-h-[5.5rem] flex-col justify-center border-b-[3px] border-r-0 border-hs-ink p-4 sm:min-h-[6rem] sm:border-r-[3px] sm:p-5 sm:[&:nth-child(2n)]:border-r-0"
                 >
-                  {i === TRAVEL_PERK_INDEX ? (
-                    <div className="group/travel relative flex w-full flex-col justify-center">
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="min-w-0 font-sans text-base font-bold leading-snug text-hs-ink sm:text-[1.05rem]">
-                          {item}
-                        </span>
-                        <button
-                          type="button"
-                          className="shrink-0 rounded-sm border-[3px] border-hs-ink bg-hs-sand/60 p-1.5 text-hs-ink transition-[filter] hover:bg-hs-gold/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hs-navy focus-visible:ring-offset-2 focus-visible:ring-offset-hs-paper"
-                          aria-describedby={travelTipId}
-                          aria-label="Más información sobre el reembolso de viaje"
-                        >
-                          <PerkInfoIcon />
-                        </button>
-                      </div>
-                      <span
-                        id={travelTipId}
-                        role="tooltip"
-                        className="pointer-events-none invisible absolute bottom-[calc(100%+6px)] right-0 z-[80] w-[min(19rem,calc(100vw-2rem))] translate-y-0.5 border-[3px] border-hs-ink bg-hs-paper px-3 py-2.5 font-sans text-sm font-semibold leading-snug text-hs-ink opacity-0 shadow-[3px_3px_0_var(--color-hs-ink)] transition-[opacity,visibility,transform] duration-150 ease-out group-hover/travel:visible group-hover/travel:translate-y-0 group-hover/travel:opacity-100 group-focus-within/travel:visible group-focus-within/travel:translate-y-0 group-focus-within/travel:opacity-100"
-                      >
-                        Cubrimos el viaje hasta un tope fijo por embajador/a — la cifra exacta y cómo solicitarlo te lo
-                        explicamos al incorporarte, para que las expectativas sean claras y justas para tod@s.
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="font-sans text-base font-bold leading-snug text-hs-ink sm:text-[1.05rem]">
-                      {item}
-                    </span>
-                  )}
+                  <span className="font-sans text-base font-bold leading-snug text-hs-ink sm:text-[1.05rem]">
+                    {item}
+                  </span>
                 </div>
               ))}
             </div>
