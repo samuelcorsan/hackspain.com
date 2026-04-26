@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { initBotId } from "botid/client/core";
 import { AnimatePresence, motion } from "motion/react";
 import { MosaicBackground } from "./MosaicBackground";
@@ -9,7 +9,6 @@ import {
   Textarea,
 } from "./form";
 import { Button, ButtonLink } from "./ui/Button";
-import { getHeardFromSessionDefaults, recordPageAttribution } from "../../lib/trafficAttribution";
 import {
   HEARD_FROM_OPTIONS,
   HEARD_FROM_SOURCE_IDS,
@@ -169,10 +168,7 @@ const t = {
   freeTimeHint:
     "Hobbies, clubes, asociaciones, side projects, cómo desconectas — lo que te represente.",
   heardFrom: "¿Cómo nos has conocido?",
-  heardFromHint: "Obligatorio. Si entras desde una red, intentamos rellenarlo solos.",
   heardFromOtherPlaceholder: "Cuéntanos cómo nos encontraste…",
-  errorHeardFrom: "Indica cómo has conocido HackSpain.",
-  errorHeardFromOther: 'Si eliges «Otro», escribe cómo nos encontraste.',
   submit: "Enviar",
   submitting: "Enviando…",
   applicationReceived:
@@ -185,6 +181,8 @@ const t = {
   errorInvalidSocialUrl:
     "Uno o más enlaces no son válidos para ese campo (revisa X, LinkedIn, GitHub o tu web).",
   errorInvalidEmail: "Introduce un correo electrónico válido.",
+  errorDuplicateEmail:
+    "Ya hay una solicitud con este correo. Si necesitas cambiar algo, escríbenos o usa otro email.",
   errorAccessDenied:
     "No hemos podido verificar la solicitud. Recarga la página e inténtalo de nuevo, o usa un navegador normal con JavaScript activado.",
   ambassadorCheckboxBefore: "Quiero participar como ",
@@ -195,8 +193,6 @@ const t = {
     "Unas frases sobre qué te mueve — comunidad, tech, tu campus, llegar a gente nueva…",
   ambassadorStudyLabel: "¿Dónde estudias?",
   ambassadorStudyHint: "Universidad, bootcamp, centro u organización — lo que encaje.",
-  errorAmbassadorMotivation: "Cuéntanos por qué quieres ser embajador/a.",
-  errorAmbassadorStudyWhere: "Indica dónde estudias.",
   errorFullName: "Indica tu nombre completo.",
   legalSubmitNoticeBefore: "Al enviar este formulario aceptas nuestra ",
   legalPrivacyLinkLabel: "política de privacidad",
@@ -235,6 +231,10 @@ export function SignupPage() {
   );
   const [heardFromSource, setHeardFromSource] = useState(initialFields.heardFromSource);
   const [heardFromOther, setHeardFromOther] = useState(initialFields.heardFromOther);
+  type SignupAttention = null | "heard" | "ambassador";
+  const [attentionTarget, setAttentionTarget] = useState<SignupAttention>(null);
+  const heardFromSectionRef = useRef<HTMLDivElement>(null);
+  const ambassadorSectionRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<FlowStatus>(() => (appliedOnLoad ? "alreadyApplied" : "idle"));
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -250,35 +250,26 @@ export function SignupPage() {
     }
   }, []);
 
-  function applyHeardAttribution(onlyIfHeardFromEmpty: boolean) {
-    recordPageAttribution();
-    if (onlyIfHeardFromEmpty) {
-      setHeardFromSource((prev) => {
-        if (prev) return prev;
-        const d = getHeardFromSessionDefaults();
-        return d ? d.source : prev;
+  function pulseAttention(target: "heard" | "ambassador") {
+    setErrorMessage("");
+    setAttentionTarget(null);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setAttentionTarget(target);
+        const el =
+          target === "heard" ? heardFromSectionRef.current : ambassadorSectionRef.current;
+        if (!el || typeof window === "undefined") return;
+        const smooth = window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
+        el.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
       });
-      setHeardFromOther((prev) => {
-        if (prev) return prev;
-        const d = getHeardFromSessionDefaults();
-        return d?.other ?? prev;
-      });
-      return;
-    }
-    const d = getHeardFromSessionDefaults();
-    if (d) {
-      setHeardFromSource(d.source);
-      setHeardFromOther(d.other ?? "");
-    } else {
-      setHeardFromSource("");
-      setHeardFromOther("");
-    }
+    });
   }
 
   useEffect(() => {
-    if (readAppliedFlag()) return;
-    applyHeardAttribution(true);
-  }, []);
+    if (!attentionTarget) return;
+    const id = window.setTimeout(() => setAttentionTarget(null), 1400);
+    return () => window.clearTimeout(id);
+  }, [attentionTarget]);
 
   function applyAgain() {
     clearAppliedFlag();
@@ -297,8 +288,8 @@ export function SignupPage() {
     setHeardFromSource("");
     setHeardFromOther("");
     setErrorMessage("");
+    setAttentionTarget(null);
     setStatus("idle");
-    applyHeardAttribution(false);
   }
 
   useEffect(() => {
@@ -338,6 +329,10 @@ export function SignupPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrorMessage("");
+    if (!heardFromSource) {
+      pulseAttention("heard");
+      return;
+    }
     const payload = {
       fullName,
       email,
@@ -355,22 +350,29 @@ export function SignupPage() {
     };
     const parsed = parseSignupBodyClient(payload);
     if (!parsed.ok) {
+      if (parsed.code === "heard_from") {
+        pulseAttention("heard");
+        return;
+      }
+      if (parsed.code === "heard_from_other") {
+        pulseAttention("heard");
+        requestAnimationFrame(() => {
+          document.getElementById("signup-heard-from-other")?.focus();
+        });
+        return;
+      }
+      if (parsed.code === "ambassador_motivation" || parsed.code === "ambassador_study_where") {
+        pulseAttention("ambassador");
+        return;
+      }
       if (parsed.code === "social_required") {
         setErrorMessage(t.errorSocialRequired);
       } else if (parsed.code === "invalid_social_url") {
         setErrorMessage(t.errorInvalidSocialUrl);
       } else if (parsed.code === "invalid_email") {
         setErrorMessage(t.errorInvalidEmail);
-      } else if (parsed.code === "ambassador_motivation") {
-        setErrorMessage(t.errorAmbassadorMotivation);
-      } else if (parsed.code === "ambassador_study_where") {
-        setErrorMessage(t.errorAmbassadorStudyWhere);
       } else if (parsed.code === "fullName") {
         setErrorMessage(t.errorFullName);
-      } else if (parsed.code === "heard_from") {
-        setErrorMessage(t.errorHeardFrom);
-      } else if (parsed.code === "heard_from_other") {
-        setErrorMessage(t.errorHeardFromOther);
       } else {
         setErrorMessage(t.errorGeneric);
       }
@@ -382,7 +384,9 @@ export function SignupPage() {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        // Send the same shape the API validates (`heardFromSource` / `heardFromOther`).
+        // `parsed.data` is post-transform and only has `heardFrom`, which the server rejects.
+        body: JSON.stringify(payload),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (res.ok) {
@@ -394,19 +398,30 @@ export function SignupPage() {
       if (res.status === 403) {
         setErrorMessage(t.errorAccessDenied);
       } else if (res.status === 409) {
-        setErrorMessage(t.errorInvalidEmail);
+        setErrorMessage(t.errorDuplicateEmail);
+      } else if (data.error === "duplicate_email") {
+        setErrorMessage(t.errorDuplicateEmail);
       } else if (data.error === "social_required") {
         setErrorMessage(t.errorSocialRequired);
       } else if (data.error === "invalid_social_url") {
         setErrorMessage(t.errorInvalidSocialUrl);
       } else if (data.error === "ambassador_motivation_required") {
-        setErrorMessage(t.errorAmbassadorMotivation);
+        pulseAttention("ambassador");
+        return;
       } else if (data.error === "ambassador_study_where_required") {
-        setErrorMessage(t.errorAmbassadorStudyWhere);
+        pulseAttention("ambassador");
+        return;
       } else if (data.error === "fullName_required") {
         setErrorMessage(t.errorFullName);
       } else if (data.error === "heard_from_other_required") {
-        setErrorMessage(t.errorHeardFromOther);
+        pulseAttention("heard");
+        requestAnimationFrame(() => {
+          document.getElementById("signup-heard-from-other")?.focus();
+        });
+        return;
+      } else if (data.error === "heard_from_required") {
+        pulseAttention("heard");
+        return;
       } else if (data.error === "invalid_email") {
         setErrorMessage(t.errorInvalidEmail);
       } else {
@@ -606,14 +621,14 @@ export function SignupPage() {
                   />
                 </FormField>
 
-                <FormField
-                  id="signup-heard-from"
-                  label={t.heardFrom}
-                  hint={t.heardFromHint}
-                  required
-                  className={cellBase}
-                >
-                  <fieldset className="min-w-0 border-0 p-0">
+                <div ref={heardFromSectionRef} className={`${cellBase} relative isolate`}>
+                  <FormField
+                    id="signup-heard-from"
+                    label={t.heardFrom}
+                    required
+                    className="min-w-0 border-0 bg-transparent p-0 shadow-none"
+                  >
+                    <fieldset className="min-w-0 border-0 p-0">
                     <legend className="sr-only">
                       {t.heardFrom} (obligatorio)
                     </legend>
@@ -632,6 +647,7 @@ export function SignupPage() {
                               value={opt.id}
                               checked={heardFromSource === opt.id}
                               onChange={() => {
+                                setAttentionTarget(null);
                                 setHeardFromSource(opt.id);
                                 if (opt.id !== "other") setHeardFromOther("");
                               }}
@@ -659,13 +675,20 @@ export function SignupPage() {
                           autoComplete="off"
                           placeholder={t.heardFromOtherPlaceholder}
                           value={heardFromOther}
-                          onChange={(e) => setHeardFromOther(e.target.value)}
+                          onChange={(e) => {
+                            setAttentionTarget(null);
+                            setHeardFromOther(e.target.value);
+                          }}
                           aria-required
                         />
                       </div>
                     ) : null}
-                  </fieldset>
-                </FormField>
+                    </fieldset>
+                  </FormField>
+                  {attentionTarget === "heard" ? (
+                    <div className="hs-signup-field-attention-overlay" aria-hidden />
+                  ) : null}
+                </div>
 
                 <div className="border-b-[3px] border-hs-ink bg-hs-teal/15 px-4 py-4">
                   <div className="flex items-start gap-3">
@@ -675,7 +698,10 @@ export function SignupPage() {
                         name="wantsAmbassador"
                         type="checkbox"
                         checked={wantsAmbassador}
-                        onChange={(e) => setWantsAmbassador(e.target.checked)}
+                        onChange={(e) => {
+                          setAttentionTarget(null);
+                          setWantsAmbassador(e.target.checked);
+                        }}
                         className="peer absolute inset-0 z-10 h-6 w-6 cursor-pointer appearance-none opacity-0"
                       />
                       <div
@@ -720,6 +746,7 @@ export function SignupPage() {
                 <AnimatePresence initial={false}>
                   {wantsAmbassador ? (
                     <motion.div
+                      ref={ambassadorSectionRef}
                       key="signup-ambassador-fields"
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
@@ -727,7 +754,7 @@ export function SignupPage() {
                       transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden border-b-[3px] border-hs-ink"
                     >
-                      <div className="grid gap-0">
+                      <div className="relative isolate grid gap-0 bg-hs-paper">
                         <FormField
                           id="signup-ambassador-motivation"
                           label={t.ambassadorWhyLabel}
@@ -740,7 +767,10 @@ export function SignupPage() {
                             name="ambassadorMotivation"
                             rows={4}
                             value={ambassadorMotivation}
-                            onChange={(e) => setAmbassadorMotivation(e.target.value)}
+                            onChange={(e) => {
+                              setAttentionTarget(null);
+                              setAmbassadorMotivation(e.target.value);
+                            }}
                           />
                         </FormField>
                         <FormField
@@ -754,9 +784,15 @@ export function SignupPage() {
                             name="ambassadorStudyWhere"
                             autoComplete="organization"
                             value={ambassadorStudyWhere}
-                            onChange={(e) => setAmbassadorStudyWhere(e.target.value)}
+                            onChange={(e) => {
+                              setAttentionTarget(null);
+                              setAmbassadorStudyWhere(e.target.value);
+                            }}
                           />
                         </FormField>
+                        {attentionTarget === "ambassador" ? (
+                          <div className="hs-signup-field-attention-overlay" aria-hidden />
+                        ) : null}
                       </div>
                     </motion.div>
                   ) : null}

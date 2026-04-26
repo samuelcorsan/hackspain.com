@@ -101,3 +101,51 @@ export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promis
     clearTimeout(timer);
   }
 }
+
+export async function notifyDiscordSignupApiIssue(payload: {
+  status: 400 | 500;
+  error: string;
+  detail?: string;
+  emailHint?: string;
+}): Promise<void> {
+  const url = getWebhookUrl();
+  if (!url) return;
+
+  const embed = {
+    title:
+      payload.status === 500
+        ? "HackSpain signup API — server error"
+        : "HackSpain signup API — client/validation error",
+    color: payload.status === 500 ? 0xed4245 : 0xf0b232,
+    fields: [
+      { name: "HTTP", value: String(payload.status), inline: true },
+      { name: "error", value: fieldVal(payload.error, 256), inline: true },
+      ...(payload.emailHint
+        ? [{ name: "Email (if sent)", value: fieldVal(payload.emailHint, 320), inline: false }]
+        : []),
+      ...(payload.detail
+        ? [{ name: "Detail", value: fieldVal(payload.detail, 1024), inline: false }]
+        : []),
+    ],
+    timestamp: new Date().toISOString(),
+  };
+
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 12_000);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ embeds: [embed] }),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      console.error("Discord signup error webhook failed:", res.status, t.slice(0, 500));
+    }
+  } catch (e) {
+    console.error("Discord signup error webhook error:", e);
+  } finally {
+    clearTimeout(timer);
+  }
+}

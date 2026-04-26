@@ -38,3 +38,34 @@ body {
 	white-space: nowrap;
 	border-width: 0;
 }
+
+/* Paints above form controls (opaque inputs hide inset shadow on parents). */
+@keyframes hs-signup-attention-overlay {
+  0%,
+  100% {
+    opacity: 0.22;
+    box-shadow: inset 0 0 0 2px var(--color-hs-gold);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: inset 0 0 0 5px var(--color-hs-gold),
+      inset 0 0 28px color-mix(in srgb, var(--color-hs-gold) 35%, transparent);
+  }
+}
+
+.hs-signup-field-attention-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: 2px;
+  animation: hs-signup-attention-overlay 0.42s ease-in-out 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-signup-field-attention-overlay {
+    animation: none;
+    opacity: 0.92;
+    box-shadow: inset 0 0 0 4px var(--color-hs-gold);
+  }
+}

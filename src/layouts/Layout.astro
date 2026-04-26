@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 import Analytics from "@vercel/analytics/astro";
-import AttributionCapture from "../components/AttributionCapture.astro";
 import CookieConsent from "../components/CookieConsent.astro";
 import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookieConsent";
 import {
@@ -166,7 +165,6 @@ const faqJson = JSON.stringify(jsonLdFaq());
     ]}
   >
     <a href="#main" class="skip-link font-sans">Ir al contenido principal</a>
-    <AttributionCapture />
     <slot />
     <CookieConsent />
   </body>

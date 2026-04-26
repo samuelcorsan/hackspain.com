@@ -2,13 +2,76 @@ import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
 import { getDb } from "../../db";
 import { hackathonSignups } from "../../db/schema";
-import { notifyDiscordNewSignup } from "../../lib/discordSignupWebhook";
+import { notifyDiscordNewSignup, notifyDiscordSignupApiIssue } from "../../lib/discordSignupWebhook";
 import { parseSignupBody } from "../../lib/signupValidation";
 
 export const prerender = false;
 
 function emptyToNull(s: string): string | null {
   return s.length === 0 ? null : s;
+}
+
+function emailHintFromBody(body: unknown): string | undefined {
+  if (!body || typeof body !== "object") return undefined;
+  const e = (body as { email?: unknown }).email;
+  return typeof e === "string" ? e.trim().slice(0, 320) : undefined;
+}
+
+/** Walk `Error.cause` (Drizzle wraps Neon here) so ops sees the real failure, not only "Failed query". */
+function errDetail(e: unknown): string {
+  const parts: string[] = [];
+  const seen = new Set<unknown>();
+  let cur: unknown = e;
+  for (let depth = 0; depth < 14 && cur != null; depth++) {
+    if (seen.has(cur)) break;
+    seen.add(cur);
+    if (cur instanceof Error) {
+      const line = `${cur.name}: ${cur.message}`.trim();
+      if (line && parts[parts.length - 1] !== line) parts.push(line);
+      cur = cur.cause;
+      continue;
+    }
+    if (typeof cur === "object") {
+      const o = cur as Record<string, unknown>;
+      if (typeof o.message === "string" && o.message.trim()) {
+        const line = o.message.trim();
+        if (parts[parts.length - 1] !== line) parts.push(line);
+      }
+      if ("cause" in o && o.cause != null) {
+        cur = o.cause;
+        continue;
+      }
+      break;
+    }
+    parts.push(String(cur));
+    break;
+  }
+  return parts.join("\n→\n").slice(0, 1024);
+}
+
+/** Drizzle wraps Postgres/Neon errors; `23505` unique violation lives on `cause`. */
+function isPostgresUniqueViolation(e: unknown): boolean {
+  const seen = new Set<unknown>();
+  let cur: unknown = e;
+  for (let depth = 0; depth < 14 && cur != null; depth++) {
+    if (seen.has(cur)) break;
+    seen.add(cur);
+    if (typeof cur === "object" && cur !== null && "code" in cur) {
+      if ((cur as { code: unknown }).code === "23505") return true;
+    }
+    if (cur instanceof Error && cur.cause != null) {
+      cur = cur.cause;
+      continue;
+    }
+    if (typeof cur === "object" && cur !== null && "cause" in cur) {
+      const next = (cur as { cause: unknown }).cause;
+      if (next == null) break;
+      cur = next;
+      continue;
+    }
+    break;
+  }
+  return false;
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -29,15 +92,28 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     body = await request.json();
   } catch {
+    notifyDiscordSignupApiIssue({
+      status: 400,
+      error: "Invalid JSON",
+    }).catch(() => {});
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
   if (!body || typeof body !== "object") {
+    notifyDiscordSignupApiIssue({
+      status: 400,
+      error: "invalid_body",
+    }).catch(() => {});
     return Response.json({ error: "invalid_body" }, { status: 400 });
   }
 
   const parsed = parseSignupBody(body);
   if (!parsed.ok) {
+    notifyDiscordSignupApiIssue({
+      status: 400,
+      error: parsed.error,
+      emailHint: emailHintFromBody(body),
+    }).catch(() => {});
     return Response.json({ error: parsed.error }, { status: parsed.status });
   }
 
@@ -78,13 +154,8 @@ export const POST: APIRoute = async ({ request }) => {
         heardFrom: emptyToNull(heardFrom),
       });
     } catch (e: unknown) {
-      if (
-        e != null &&
-        typeof e === "object" &&
-        "code" in e &&
-        (e as { code: unknown }).code === "23505"
-      ) {
-        return Response.json({ error: "invalid_email" }, { status: 409 });
+      if (isPostgresUniqueViolation(e)) {
+        return Response.json({ error: "duplicate_email" }, { status: 409 });
       }
       throw e;
     }
@@ -107,6 +178,12 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ ok: true });
   } catch (e) {
     console.error(e);
+    notifyDiscordSignupApiIssue({
+      status: 500,
+      error: "save_failed",
+      detail: errDetail(e),
+      emailHint: email,
+    }).catch(() => {});
     return Response.json({ error: "save_failed" }, { status: 500 });
   }
 };
