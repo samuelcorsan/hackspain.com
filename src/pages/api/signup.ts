@@ -92,28 +92,28 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     body = await request.json();
   } catch {
-    notifyDiscordSignupApiIssue({
+    await notifyDiscordSignupApiIssue({
       status: 400,
       error: "Invalid JSON",
-    }).catch(() => {});
+    });
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
   if (!body || typeof body !== "object") {
-    notifyDiscordSignupApiIssue({
+    await notifyDiscordSignupApiIssue({
       status: 400,
       error: "invalid_body",
-    }).catch(() => {});
+    });
     return Response.json({ error: "invalid_body" }, { status: 400 });
   }
 
   const parsed = parseSignupBody(body);
   if (!parsed.ok) {
-    notifyDiscordSignupApiIssue({
+    await notifyDiscordSignupApiIssue({
       status: 400,
       error: parsed.error,
       emailHint: emailHintFromBody(body),
-    }).catch(() => {});
+    });
     return Response.json({ error: parsed.error }, { status: parsed.status });
   }
 
@@ -160,7 +160,7 @@ export const POST: APIRoute = async ({ request }) => {
       throw e;
     }
 
-    notifyDiscordNewSignup({
+    await notifyDiscordNewSignup({
       fullName,
       email,
       xUrl,
@@ -173,17 +173,17 @@ export const POST: APIRoute = async ({ request }) => {
       ambassadorMotivation: wantsAmbassador ? ambassadorMotivation : "",
       ambassadorStudyWhere: wantsAmbassador ? ambassadorStudyWhere : "",
       heardFrom,
-    }).catch((e) => console.error("Discord notify failed:", e));
+    });
 
     return Response.json({ ok: true });
   } catch (e) {
     console.error(e);
-    notifyDiscordSignupApiIssue({
+    await notifyDiscordSignupApiIssue({
       status: 500,
       error: "save_failed",
       detail: errDetail(e),
       emailHint: email,
-    }).catch(() => {});
+    });
     return Response.json({ error: "save_failed" }, { status: 500 });
   }
 };

@@ -101,6 +101,8 @@ export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promis
     if (!res.ok) {
       const t = await res.text().catch(() => "");
       console.error("Discord webhook failed:", res.status, t.slice(0, 500));
+    } else {
+      console.info("Discord new signup webhook ok", res.status);
     }
   } catch (e) {
     const detail =
