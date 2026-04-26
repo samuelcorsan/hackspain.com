@@ -5,8 +5,15 @@ const DISCORD_WEBHOOK_PREFIXES = [
   "https://discordapp.com/api/webhooks/",
 ] as const;
 
+/** Vercel (and other hosts) inject runtime env into `process.env`; Vite may bake `import.meta.env` only at build time. */
+function discordWebhookFromRuntime(): string | undefined {
+  const proc = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process;
+  const v = proc?.env?.DISCORD_WEBHOOK_URL;
+  return typeof v === "string" && v.trim() ? v.trim() : undefined;
+}
+
 function getWebhookUrl(): string | null {
-  const raw = import.meta.env.DISCORD_WEBHOOK_URL;
+  const raw = discordWebhookFromRuntime() ?? import.meta.env.DISCORD_WEBHOOK_URL;
   if (typeof raw !== "string" || !raw.trim()) return null;
   const u = raw.trim();
   if (!DISCORD_WEBHOOK_PREFIXES.some((p) => u.startsWith(p))) {
@@ -96,7 +103,11 @@ export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promis
       console.error("Discord webhook failed:", res.status, t.slice(0, 500));
     }
   } catch (e) {
-    console.error("Discord webhook error:", e);
+    const detail =
+      e instanceof Error
+        ? `${e.name}: ${e.message}${e.cause != null ? ` (cause: ${String(e.cause)})` : ""}`
+        : String(e);
+    console.error("Discord webhook error:", detail);
   } finally {
     clearTimeout(timer);
   }
@@ -144,7 +155,11 @@ export async function notifyDiscordSignupApiIssue(payload: {
       console.error("Discord signup error webhook failed:", res.status, t.slice(0, 500));
     }
   } catch (e) {
-    console.error("Discord signup error webhook error:", e);
+    const detail =
+      e instanceof Error
+        ? `${e.name}: ${e.message}${e.cause != null ? ` (cause: ${String(e.cause)})` : ""}`
+        : String(e);
+    console.error("Discord signup error webhook error:", detail);
   } finally {
     clearTimeout(timer);
   }
