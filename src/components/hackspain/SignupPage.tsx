@@ -245,11 +245,9 @@ export function SignupPage() {
   }, [setValue]);
 
   useEffect(() => {
-    if (import.meta.env.PROD) {
-      initBotId({
-        protect: [{ path: "/api/signup", method: "POST" }],
-      });
-    }
+    initBotId({
+      protect: [{ path: "/api/signup", method: "POST" }],
+    });
   }, []);
 
   useEffect(() => {
