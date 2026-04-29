@@ -1,4 +1,4 @@
-import type { ClipboardEvent } from "react";
+import type { ClipboardEvent, FocusEvent } from "react";
 import { cleanProfilePasteText, type ProfileFieldKind } from "../../../lib/signupValidation";
 
 const socialComboWrapClass =
@@ -17,6 +17,7 @@ export type SocialPrefixInputProps = {
   profileKind: ProfileFieldKind;
   value: string;
   onChange: (value: string) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   placeholder: string;
 };
 
@@ -27,6 +28,7 @@ export function SocialPrefixInput({
   profileKind,
   value,
   onChange,
+  onBlur,
   placeholder,
 }: SocialPrefixInputProps) {
   function onPaste(e: ClipboardEvent<HTMLInputElement>) {
@@ -51,6 +53,7 @@ export function SocialPrefixInput({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         onPaste={onPaste}
       />
     </div>

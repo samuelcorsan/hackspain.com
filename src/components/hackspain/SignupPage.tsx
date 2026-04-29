@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Controller, useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import { initBotId } from "botid/client/core";
 import { AnimatePresence, motion } from "motion/react";
 import { MosaicBackground } from "./MosaicBackground";
@@ -22,7 +23,7 @@ import * as Sentry from "@sentry/astro";
 const STORAGE_KEY = "hackspain-signup-draft-v1";
 const STORAGE_APPLIED_KEY = "hackspain-signup-applied-v1";
 
-type FlowStatus = "idle" | "submitting" | "success" | "error" | "alreadyApplied";
+type FlowStatus = "idle" | "success" | "error" | "alreadyApplied";
 
 function readAppliedFlag(): boolean {
   if (typeof window === "undefined") return false;
@@ -207,41 +208,41 @@ function ambassadorQueryEnabled(): boolean {
   return v === "1" || v === "true" || v === "yes";
 }
 
+type SignupAttention = null | "heard" | "ambassador";
+
 export function SignupPage() {
   const profile = useLayoutProfile();
   const homeHref = "/";
   const ambassadorPageHref = "/ambassador";
   const privacyHref = "/privacy";
 
-  const appliedOnLoad = readAppliedFlag();
-  const initialFields = appliedOnLoad ? EMPTY_FIELDS : readStoredFields();
-  const [fullName, setFullName] = useState(initialFields.fullName);
-  const [email, setEmail] = useState(initialFields.email);
-  const [xUrl, setXUrl] = useState(initialFields.xUrl);
-  const [linkedinUrl, setLinkedinUrl] = useState(initialFields.linkedinUrl);
-  const [githubUrl, setGithubUrl] = useState(initialFields.githubUrl);
-  const [webUrl, setWebUrl] = useState(initialFields.webUrl);
-  const [achievements, setAchievements] = useState(initialFields.achievements);
-  const [freeTime, setFreeTime] = useState(initialFields.freeTime);
-  const [wantsAmbassador, setWantsAmbassador] = useState(initialFields.wantsAmbassador);
-  const [ambassadorMotivation, setAmbassadorMotivation] = useState(
-    initialFields.ambassadorMotivation,
+  const [defaultFormValues] = useState<StoredFields>(() =>
+    readAppliedFlag() ? { ...EMPTY_FIELDS } : readStoredFields(),
   );
-  const [ambassadorStudyWhere, setAmbassadorStudyWhere] = useState(
-    initialFields.ambassadorStudyWhere,
+
+  const { register, handleSubmit, control, setValue, watch, reset, formState } = useForm<StoredFields>(
+    { defaultValues: defaultFormValues },
   );
-  const [heardFromSource, setHeardFromSource] = useState(initialFields.heardFromSource);
-  const [heardFromOther, setHeardFromOther] = useState(initialFields.heardFromOther);
-  type SignupAttention = null | "heard" | "ambassador";
+  const { isSubmitting } = formState;
+  const heardFromSource = watch("heardFromSource");
+  const wantsAmbassador = watch("wantsAmbassador");
+
   const [attentionTarget, setAttentionTarget] = useState<SignupAttention>(null);
   const heardFromSectionRef = useRef<HTMLDivElement>(null);
   const ambassadorSectionRef = useRef<HTMLDivElement>(null);
-  const [status, setStatus] = useState<FlowStatus>(() => (appliedOnLoad ? "alreadyApplied" : "idle"));
+  const [status, setStatus] = useState<FlowStatus>(() => (readAppliedFlag() ? "alreadyApplied" : "idle"));
   const [errorMessage, setErrorMessage] = useState("");
 
+  const watched = useWatch({ control });
   useEffect(() => {
-    if (ambassadorQueryEnabled()) setWantsAmbassador(true);
-  }, []);
+    if (status === "success" || status === "alreadyApplied") return;
+    if (!watched) return;
+    writeStoredFields(watched as StoredFields);
+  }, [watched, status]);
+
+  useEffect(() => {
+    if (ambassadorQueryEnabled()) setValue("wantsAmbassador", true, { shouldDirty: true });
+  }, [setValue]);
 
   useEffect(() => {
     if (import.meta.env.PROD) {
@@ -279,65 +280,18 @@ export function SignupPage() {
   function applyAgain() {
     clearAppliedFlag();
     clearStoredFields();
-    setFullName("");
-    setEmail("");
-    setXUrl("");
-    setLinkedinUrl("");
-    setGithubUrl("");
-    setWebUrl("");
-    setAchievements("");
-    setFreeTime("");
-    setWantsAmbassador(false);
-    setAmbassadorMotivation("");
-    setAmbassadorStudyWhere("");
-    setHeardFromSource("");
-    setHeardFromOther("");
+    reset(EMPTY_FIELDS);
     setErrorMessage("");
     setAttentionTarget(null);
     setStatus("idle");
   }
 
-  useEffect(() => {
-    if (status === "success" || status === "alreadyApplied") return;
-    writeStoredFields({
-      fullName,
-      email,
-      xUrl,
-      linkedinUrl,
-      githubUrl,
-      webUrl,
-      achievements,
-      freeTime,
-      wantsAmbassador,
-      ambassadorMotivation,
-      ambassadorStudyWhere,
-      heardFromSource,
-      heardFromOther,
-    });
-  }, [
-    fullName,
-    email,
-    xUrl,
-    linkedinUrl,
-    githubUrl,
-    webUrl,
-    achievements,
-    freeTime,
-    wantsAmbassador,
-    ambassadorMotivation,
-    ambassadorStudyWhere,
-    heardFromSource,
-    heardFromOther,
-    status,
-  ]);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const onSubmitForm: SubmitHandler<StoredFields> = async (data) => {
     setErrorMessage("");
 
     Sentry.addBreadcrumb({ category: "ui", message: "signup: submit", level: "info" });
 
-    if (!heardFromSource) {
+    if (!data.heardFromSource) {
       Sentry.addBreadcrumb({
         category: "signup",
         message: "no heard from selected",
@@ -346,21 +300,7 @@ export function SignupPage() {
       pulseAttention("heard");
       return;
     }
-    const payload = {
-      fullName,
-      email,
-      xUrl,
-      linkedinUrl,
-      githubUrl,
-      webUrl,
-      achievements,
-      freeTime,
-      wantsAmbassador,
-      ambassadorMotivation,
-      ambassadorStudyWhere,
-      heardFromSource,
-      heardFromOther,
-    };
+    const payload = { ...data };
     const parsed = parseSignupBodyClient(payload);
     if (!parsed.ok) {
       Sentry.addBreadcrumb({
@@ -401,19 +341,21 @@ export function SignupPage() {
       setStatus("error");
       return;
     }
-    setStatus("submitting");
     try {
-      const res = await Sentry.startSpan({ name: "POST /api/signup", op: "http.client" }, async (span) => {
-        const r = await fetch("/api/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          // Same shape as `parseSignupBody` on the server (heardFromSource / heardFromOther).
-          body: JSON.stringify(payload),
-        });
-        span.setAttribute("http.status_code", r.status);
-        return r;
-      });
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      const res = await Sentry.startSpan(
+        { name: "POST /api/signup", op: "http.client" },
+        async (span) => {
+          const r = await fetch("/api/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            // Same shape as `parseSignupBody` on the server (heardFromSource / heardFromOther).
+            body: JSON.stringify(payload),
+          });
+          span.setAttribute("http.status_code", r.status);
+          return r;
+        },
+      );
+      const resJson = (await res.json().catch(() => ({}))) as { error?: string };
       if (res.ok) {
         clearStoredFields();
         setAppliedFlag();
@@ -423,20 +365,20 @@ export function SignupPage() {
       Sentry.addBreadcrumb({
         category: "http",
         type: "http",
-        data: { status: res.status, error: data.error },
+        data: { status: res.status, error: resJson.error },
         level: "error",
       });
       Sentry.withScope((scope) => {
         scope.setTag("flow", "signup");
         scope.setTag("source", "client");
         scope.setTag("http_status", String(res.status));
-        if (data.error) scope.setTag("api_error", data.error);
+        if (resJson.error) scope.setTag("api_error", resJson.error);
         scope.setContext("form", {
-          wantsAmbassador,
-          heardFrom: heardFromSource,
+          wantsAmbassador: data.wantsAmbassador,
+          heardFrom: data.heardFromSource,
         });
         Sentry.captureMessage(
-          `Signup: API rejected ${res.status}${data.error ? ` (${data.error})` : ""}`,
+          `Signup: API rejected ${res.status}${resJson.error ? ` (${resJson.error})` : ""}`,
           "error",
         );
       });
@@ -444,34 +386,34 @@ export function SignupPage() {
         setErrorMessage(t.errorAccessDenied);
       } else if (res.status === 409) {
         setErrorMessage(t.errorDuplicateEmail);
-      } else if (data.error === "duplicate_email") {
+      } else if (resJson.error === "duplicate_email") {
         setErrorMessage(t.errorDuplicateEmail);
-      } else if (data.error === "social_required") {
+      } else if (resJson.error === "social_required") {
         setErrorMessage(t.errorSocialRequired);
-      } else if (data.error === "invalid_social_url") {
+      } else if (resJson.error === "invalid_social_url") {
         setErrorMessage(t.errorInvalidSocialUrl);
-      } else if (data.error === "ambassador_motivation_required") {
+      } else if (resJson.error === "ambassador_motivation_required") {
         setStatus("error");
         pulseAttention("ambassador");
         return;
-      } else if (data.error === "ambassador_study_where_required") {
+      } else if (resJson.error === "ambassador_study_where_required") {
         setStatus("error");
         pulseAttention("ambassador");
         return;
-      } else if (data.error === "fullName_required") {
+      } else if (resJson.error === "fullName_required") {
         setErrorMessage(t.errorFullName);
-      } else if (data.error === "heard_from_other_required") {
+      } else if (resJson.error === "heard_from_other_required") {
         setStatus("error");
         pulseAttention("heard");
         requestAnimationFrame(() => {
           document.getElementById("signup-heard-from-other")?.focus();
         });
         return;
-      } else if (data.error === "heard_from_required") {
+      } else if (resJson.error === "heard_from_required") {
         setStatus("error");
         pulseAttention("heard");
         return;
-      } else if (data.error === "invalid_email") {
+      } else if (resJson.error === "invalid_email") {
         setErrorMessage(t.errorInvalidEmail);
       } else {
         setErrorMessage(t.errorGeneric);
@@ -486,7 +428,9 @@ export function SignupPage() {
       setErrorMessage(t.errorGeneric);
       setStatus("error");
     }
-  }
+  };
+
+  const webReg = register("webUrl", { onChange: () => setAttentionTarget(null) });
 
   return (
     <div className="relative z-0 min-h-dvh w-full">
@@ -532,7 +476,7 @@ export function SignupPage() {
               </div>
             ) : (
               <form
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit(onSubmitForm)}
                 className="flex flex-col gap-0 border-t-[3px] border-hs-ink"
               >
                 <div className="grid gap-0 sm:grid-cols-2">
@@ -543,21 +487,17 @@ export function SignupPage() {
                     className={cellLeftSm}
                   >
                     <Input
-                      name="fullName"
                       autoComplete="name"
                       required
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
+                      {...register("fullName")}
                     />
                   </FormField>
                   <FormField id="signup-email" label={t.email} required className={cellBase}>
                     <Input
-                      name="email"
                       type="email"
                       autoComplete="email"
                       required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      {...register("email")}
                     />
                   </FormField>
                 </div>
@@ -577,13 +517,20 @@ export function SignupPage() {
                     labelVariant="sans"
                     className={cellLeftSm}
                   >
-                    <SocialPrefixInput
+                    <Controller
                       name="xUrl"
-                      prefix={X_PREFIX}
-                      profileKind="x"
-                      value={xUrl}
-                      onChange={setXUrl}
-                      placeholder={t.socialXPlaceholder}
+                      control={control}
+                      render={({ field }) => (
+                        <SocialPrefixInput
+                          name={field.name}
+                          prefix={X_PREFIX}
+                          profileKind="x"
+                          value={field.value}
+                          onChange={(v) => field.onChange(v)}
+                          onBlur={field.onBlur}
+                          placeholder={t.socialXPlaceholder}
+                        />
+                      )}
                     />
                   </FormField>
                   <FormField
@@ -592,13 +539,20 @@ export function SignupPage() {
                     labelVariant="sans"
                     className={cellBase}
                   >
-                    <SocialPrefixInput
+                    <Controller
                       name="linkedinUrl"
-                      prefix={LINKEDIN_PREFIX}
-                      profileKind="linkedin"
-                      value={linkedinUrl}
-                      onChange={setLinkedinUrl}
-                      placeholder={t.socialLinkedinPlaceholder}
+                      control={control}
+                      render={({ field }) => (
+                        <SocialPrefixInput
+                          name={field.name}
+                          prefix={LINKEDIN_PREFIX}
+                          profileKind="linkedin"
+                          value={field.value}
+                          onChange={(v) => field.onChange(v)}
+                          onBlur={field.onBlur}
+                          placeholder={t.socialLinkedinPlaceholder}
+                        />
+                      )}
                     />
                   </FormField>
                   <FormField
@@ -607,27 +561,33 @@ export function SignupPage() {
                     labelVariant="sans"
                     className={cellLeftSm}
                   >
-                    <SocialPrefixInput
+                    <Controller
                       name="githubUrl"
-                      prefix={GITHUB_PREFIX}
-                      profileKind="github"
-                      value={githubUrl}
-                      onChange={setGithubUrl}
-                      placeholder={t.socialGithubPlaceholder}
+                      control={control}
+                      render={({ field }) => (
+                        <SocialPrefixInput
+                          name={field.name}
+                          prefix={GITHUB_PREFIX}
+                          profileKind="github"
+                          value={field.value}
+                          onChange={(v) => field.onChange(v)}
+                          onBlur={field.onBlur}
+                          placeholder={t.socialGithubPlaceholder}
+                        />
+                      )}
                     />
                   </FormField>
                   <FormField id="signup-web-url" label={t.web} labelVariant="sans" className={cellBase}>
                     <Input
-                      name="webUrl"
                       type="text"
                       inputMode="url"
                       autoComplete="url"
                       placeholder="yoursite.com or https://..."
-                      value={webUrl}
-                      onChange={(e) => setWebUrl(e.target.value)}
+                      {...webReg}
                       onBlur={(e) => {
+                        webReg.onBlur(e);
                         const norm = normalizeSocialUrl(e.target.value.trim(), "web");
-                        if (norm) setWebUrl(norm);
+                        if (norm) setValue("webUrl", norm, { shouldValidate: true, shouldTouch: true });
                       }}
                       onPaste={(e) => {
                         e.preventDefault();
@@ -639,7 +599,11 @@ export function SignupPage() {
                             .find((l) => l.length > 0) ?? "";
                         if (!line) return;
                         const norm = normalizeSocialUrl(line, "web");
-                        setWebUrl(norm || line);
+                        setValue("webUrl", norm || line, {
+                          shouldValidate: true,
+                          shouldTouch: true,
+                          shouldDirty: true,
+                        });
                       }}
                     />
                   </FormField>
@@ -653,10 +617,8 @@ export function SignupPage() {
                 >
                   <Textarea
                     className="min-h-[120px] resize-y"
-                    name="achievements"
                     rows={5}
-                    value={achievements}
-                    onChange={(e) => setAchievements(e.target.value)}
+                    {...register("achievements")}
                   />
                 </FormField>
 
@@ -668,10 +630,8 @@ export function SignupPage() {
                 >
                   <Textarea
                     className="min-h-[120px] resize-y"
-                    name="freeTime"
                     rows={5}
-                    value={freeTime}
-                    onChange={(e) => setFreeTime(e.target.value)}
+                    {...register("freeTime")}
                   />
                 </FormField>
 
@@ -696,15 +656,16 @@ export function SignupPage() {
                           <div className="relative mt-px h-4 w-4 shrink-0">
                             <input
                               id={`signup-heard-from-${opt.id}`}
-                              name="heardFromSource"
                               type="radio"
                               value={opt.id}
-                              checked={heardFromSource === opt.id}
-                              onChange={() => {
-                                setAttentionTarget(null);
-                                setHeardFromSource(opt.id);
-                                if (opt.id !== "other") setHeardFromOther("");
-                              }}
+                              {...register("heardFromSource", {
+                                onChange: (e) => {
+                                  setAttentionTarget(null);
+                                  if (e.target.value !== "other") {
+                                    setValue("heardFromOther", "", { shouldDirty: true });
+                                  }
+                                },
+                              })}
                               className="peer absolute inset-0 z-10 h-4 w-4 cursor-pointer appearance-none opacity-0"
                             />
                             <div
@@ -724,16 +685,13 @@ export function SignupPage() {
                       <div className="mt-3">
                         <Input
                           id="signup-heard-from-other"
-                          name="heardFromOther"
                           type="text"
                           autoComplete="off"
                           placeholder={t.heardFromOtherPlaceholder}
-                          value={heardFromOther}
-                          onChange={(e) => {
-                            setAttentionTarget(null);
-                            setHeardFromOther(e.target.value);
-                          }}
                           aria-required
+                          {...register("heardFromOther", {
+                            onChange: () => setAttentionTarget(null),
+                          })}
                         />
                       </div>
                     ) : null}
@@ -749,13 +707,8 @@ export function SignupPage() {
                     <div className="relative mt-0.5 h-6 w-6 shrink-0">
                       <input
                         id="signup-wants-ambassador"
-                        name="wantsAmbassador"
                         type="checkbox"
-                        checked={wantsAmbassador}
-                        onChange={(e) => {
-                          setAttentionTarget(null);
-                          setWantsAmbassador(e.target.checked);
-                        }}
+                        {...register("wantsAmbassador", { onChange: () => setAttentionTarget(null) })}
                         className="peer absolute inset-0 z-10 h-6 w-6 cursor-pointer appearance-none opacity-0"
                       />
                       <div
@@ -818,13 +771,8 @@ export function SignupPage() {
                         >
                           <Textarea
                             className="min-h-[100px] resize-y"
-                            name="ambassadorMotivation"
                             rows={4}
-                            value={ambassadorMotivation}
-                            onChange={(e) => {
-                              setAttentionTarget(null);
-                              setAmbassadorMotivation(e.target.value);
-                            }}
+                            {...register("ambassadorMotivation", { onChange: () => setAttentionTarget(null) })}
                           />
                         </FormField>
                         <FormField
@@ -835,13 +783,8 @@ export function SignupPage() {
                           className="bg-hs-paper p-4"
                         >
                           <Input
-                            name="ambassadorStudyWhere"
                             autoComplete="organization"
-                            value={ambassadorStudyWhere}
-                            onChange={(e) => {
-                              setAttentionTarget(null);
-                              setAmbassadorStudyWhere(e.target.value);
-                            }}
+                            {...register("ambassadorStudyWhere", { onChange: () => setAttentionTarget(null) })}
                           />
                         </FormField>
                         {attentionTarget === "ambassador" ? (
@@ -875,10 +818,10 @@ export function SignupPage() {
                   <Button
                     type="submit"
                     variant="gold"
-                    disabled={status === "submitting"}
+                    disabled={isSubmitting}
                     className="shrink-0 self-end sm:self-auto"
                   >
-                    {status === "submitting" ? t.submitting : t.submit}
+                    {isSubmitting ? t.submitting : t.submit}
                   </Button>
                 </div>
               </form>
