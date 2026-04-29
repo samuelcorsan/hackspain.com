@@ -17,6 +17,7 @@ import {
   parseSignupBodyClient,
 } from "../../lib/signupValidation";
 import { useLayoutProfile } from "./useLayoutProfile";
+import * as Sentry from "@sentry/astro";
 
 const STORAGE_KEY = "hackspain-signup-draft-v1";
 const STORAGE_APPLIED_KEY = "hackspain-signup-applied-v1";
@@ -250,6 +251,10 @@ export function SignupPage() {
     }
   }, []);
 
+  useEffect(() => {
+    Sentry.getCurrentScope().setTag("flow", "signup");
+  }, []);
+
   function pulseAttention(target: "heard" | "ambassador") {
     setErrorMessage("");
     setAttentionTarget(null);
@@ -329,7 +334,15 @@ export function SignupPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrorMessage("");
+
+    Sentry.addBreadcrumb({ category: "ui", message: "signup: submit", level: "info" });
+
     if (!heardFromSource) {
+      Sentry.addBreadcrumb({
+        category: "signup",
+        message: "no heard from selected",
+        level: "info",
+      });
       pulseAttention("heard");
       return;
     }
@@ -350,6 +363,15 @@ export function SignupPage() {
     };
     const parsed = parseSignupBodyClient(payload);
     if (!parsed.ok) {
+      Sentry.addBreadcrumb({
+        category: "signup",
+        message: "client validation",
+        data: { code: parsed.code },
+        level: "info",
+      });
+      if (parsed.code === "generic") {
+        Sentry.captureMessage("Signup: client validation failed (generic)", "warning");
+      }
       if (parsed.code === "heard_from") {
         pulseAttention("heard");
         return;
@@ -381,12 +403,15 @@ export function SignupPage() {
     }
     setStatus("submitting");
     try {
-      const res = await fetch("/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Send the same shape the API validates (`heardFromSource` / `heardFromOther`).
-        // `parsed.data` is post-transform and only has `heardFrom`, which the server rejects.
-        body: JSON.stringify(payload),
+      const res = await Sentry.startSpan({ name: "POST /api/signup", op: "http.client" }, async (span) => {
+        const r = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          // Same shape as `parseSignupBody` on the server (heardFromSource / heardFromOther).
+          body: JSON.stringify(payload),
+        });
+        span.setAttribute("http.status_code", r.status);
+        return r;
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (res.ok) {
@@ -395,6 +420,26 @@ export function SignupPage() {
         setStatus("success");
         return;
       }
+      Sentry.addBreadcrumb({
+        category: "http",
+        type: "http",
+        data: { status: res.status, error: data.error },
+        level: "error",
+      });
+      Sentry.withScope((scope) => {
+        scope.setTag("flow", "signup");
+        scope.setTag("source", "client");
+        scope.setTag("http_status", String(res.status));
+        if (data.error) scope.setTag("api_error", data.error);
+        scope.setContext("form", {
+          wantsAmbassador,
+          heardFrom: heardFromSource,
+        });
+        Sentry.captureMessage(
+          `Signup: API rejected ${res.status}${data.error ? ` (${data.error})` : ""}`,
+          "error",
+        );
+      });
       if (res.status === 403) {
         setErrorMessage(t.errorAccessDenied);
       } else if (res.status === 409) {
@@ -406,20 +451,24 @@ export function SignupPage() {
       } else if (data.error === "invalid_social_url") {
         setErrorMessage(t.errorInvalidSocialUrl);
       } else if (data.error === "ambassador_motivation_required") {
+        setStatus("error");
         pulseAttention("ambassador");
         return;
       } else if (data.error === "ambassador_study_where_required") {
+        setStatus("error");
         pulseAttention("ambassador");
         return;
       } else if (data.error === "fullName_required") {
         setErrorMessage(t.errorFullName);
       } else if (data.error === "heard_from_other_required") {
+        setStatus("error");
         pulseAttention("heard");
         requestAnimationFrame(() => {
           document.getElementById("signup-heard-from-other")?.focus();
         });
         return;
       } else if (data.error === "heard_from_required") {
+        setStatus("error");
         pulseAttention("heard");
         return;
       } else if (data.error === "invalid_email") {
@@ -428,7 +477,12 @@ export function SignupPage() {
         setErrorMessage(t.errorGeneric);
       }
       setStatus("error");
-    } catch {
+    } catch (err) {
+      Sentry.withScope((scope) => {
+        scope.setTag("flow", "signup");
+        scope.setTag("source", "client");
+        Sentry.captureException(err);
+      });
       setErrorMessage(t.errorGeneric);
       setStatus("error");
     }

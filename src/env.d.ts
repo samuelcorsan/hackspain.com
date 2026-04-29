@@ -8,6 +8,8 @@ interface ImportMetaEnv {
   readonly DATABASE_URL?: string;
   /** Discord channel webhook URL (server-only). New signups post here when set. */
   readonly DISCORD_WEBHOOK_URL?: string;
+  /** Sentry DSN (public; embedded in client bundle). */
+  readonly PUBLIC_SENTRY_DSN?: string;
 }
 
 interface ImportMeta {

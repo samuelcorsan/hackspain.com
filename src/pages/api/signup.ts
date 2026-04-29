@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/astro";
 import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
 import { getDb } from "../../db";
@@ -78,13 +79,29 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const verification = await checkBotId();
     if (verification.isBot) {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "access_denied");
+        scope.setContext("signup", { reason: "botid" });
+        Sentry.captureMessage("POST /api/signup blocked (BotID)", "warning");
+      });
       return Response.json({ error: "access_denied" }, { status: 403 });
     }
   } catch (e) {
+    Sentry.withScope((scope) => {
+      scope.setTag("api", "signup");
+      scope.setTag("outcome", "botid_check_failed");
+      Sentry.captureException(e);
+    });
     console.error("BotID check failed:", e);
   }
 
   if (request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json") {
+    Sentry.withScope((scope) => {
+      scope.setTag("api", "signup");
+      scope.setTag("outcome", "expected_json");
+      Sentry.captureMessage("POST /api/signup: wrong Content-Type", "warning");
+    });
     return Response.json({ error: "expected_json" }, { status: 415 });
   }
 
@@ -96,6 +113,11 @@ export const POST: APIRoute = async ({ request }) => {
       status: 400,
       error: "Invalid JSON",
     });
+    Sentry.withScope((scope) => {
+      scope.setTag("api", "signup");
+      scope.setTag("outcome", "invalid_json");
+      Sentry.captureMessage("POST /api/signup: body is not valid JSON", "warning");
+    });
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
@@ -103,6 +125,11 @@ export const POST: APIRoute = async ({ request }) => {
     await notifyDiscordSignupApiIssue({
       status: 400,
       error: "invalid_body",
+    });
+    Sentry.withScope((scope) => {
+      scope.setTag("api", "signup");
+      scope.setTag("outcome", "invalid_body");
+      Sentry.captureMessage("POST /api/signup: body missing or not object", "warning");
     });
     return Response.json({ error: "invalid_body" }, { status: 400 });
   }
@@ -113,6 +140,12 @@ export const POST: APIRoute = async ({ request }) => {
       status: 400,
       error: parsed.error,
       emailHint: emailHintFromBody(body),
+    });
+    Sentry.withScope((scope) => {
+      scope.setTag("api", "signup");
+      scope.setTag("outcome", "validation");
+      scope.setContext("details", { error: parsed.error, status: parsed.status });
+      Sentry.captureMessage("POST /api/signup: validation failed", "warning");
     });
     return Response.json({ error: parsed.error }, { status: parsed.status });
   }
@@ -178,6 +211,12 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ ok: true });
   } catch (e) {
     console.error(e);
+    Sentry.withScope((scope) => {
+      scope.setTag("api", "signup");
+      scope.setTag("outcome", "save_failed");
+      scope.setContext("error", { detail: errDetail(e) });
+      Sentry.captureException(e);
+    });
     await notifyDiscordSignupApiIssue({
       status: 500,
       error: "save_failed",
