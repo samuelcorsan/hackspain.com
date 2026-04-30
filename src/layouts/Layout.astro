@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Analytics from "@vercel/analytics/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 import CookieConsent from "../components/CookieConsent.astro";
 import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookieConsent";
 import {
@@ -157,6 +158,7 @@ const faqJson = JSON.stringify(jsonLdFaq());
       })();
     </script>
     <Analytics />
+    <SpeedInsights />
   </head>
   <body
     class:list={[
