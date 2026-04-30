@@ -68,12 +68,10 @@ import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookieConsent";
     hideBanner();
   }
 
-  acceptBtn?.addEventListener("click", async () => {
+  acceptBtn?.addEventListener("click", () => {
     persist("granted");
-    const { pageview, computeRoute } = await import("@vercel/analytics");
-    pageview({
-      path: window.location.pathname,
-      route: computeRoute(window.location.pathname, null),
+    import("../lib/consentAnalytics").then(({ trackPageviewAfterConsent }) => {
+      trackPageviewAfterConsent();
     });
   });
 </script>
