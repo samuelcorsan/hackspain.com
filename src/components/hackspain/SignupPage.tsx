@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import { initBotId } from "botid/client/core";
 import { AnimatePresence, motion } from "motion/react";
@@ -176,7 +176,7 @@ const t = {
   applicationReceived:
     "¡Gracias! Hemos recibido tu solicitud. Espera nuestra respuesta por correo; te escribiremos en cuanto podamos.",
   alreadyApplied:
-    "Ya enviaste una solicitud desde este navegador. Te contestaremos por correo; usa «Volver a solicitar» solo si necesitas mandar otra.",
+    "Ya enviaste una solicitud desde este navegador. Te contactaremos por correo; usa «Volver a solicitar» solo si necesitas mandar otra.",
   applyAgain: "Volver a solicitar",
   errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
   errorSocialRequired: "Añade al menos un enlace a perfil o web.",
@@ -216,12 +216,8 @@ export function SignupPage() {
   const ambassadorPageHref = "/ambassador";
   const privacyHref = "/privacy";
 
-  const [defaultFormValues] = useState<StoredFields>(() =>
-    readAppliedFlag() ? { ...EMPTY_FIELDS } : readStoredFields(),
-  );
-
   const { register, handleSubmit, control, setValue, watch, reset, formState } = useForm<StoredFields>(
-    { defaultValues: defaultFormValues },
+    { defaultValues: { ...EMPTY_FIELDS } },
   );
   const { isSubmitting } = formState;
   const heardFromSource = watch("heardFromSource");
@@ -230,8 +226,16 @@ export function SignupPage() {
   const [attentionTarget, setAttentionTarget] = useState<SignupAttention>(null);
   const heardFromSectionRef = useRef<HTMLDivElement>(null);
   const ambassadorSectionRef = useRef<HTMLDivElement>(null);
-  const [status, setStatus] = useState<FlowStatus>(() => (readAppliedFlag() ? "alreadyApplied" : "idle"));
+  const [status, setStatus] = useState<FlowStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  useLayoutEffect(() => {
+    if (readAppliedFlag()) {
+      setStatus("alreadyApplied");
+      return;
+    }
+    reset(readStoredFields());
+  }, [reset]);
 
   const watched = useWatch({ control });
   useEffect(() => {
@@ -478,7 +482,7 @@ export function SignupPage() {
                     <ButtonLink href={homeHref} variant="gold" size="success">
                       {t.backHome.replace(/^\u2190\s*/, "").replace(/^←\s*/, "").trim() || t.backHome}
                     </ButtonLink>
-                    <Button type="button" variant="teal" size="success" onClick={applyAgain}>
+                    <Button type="button" variant="teal" size="success" onClick={applyAgain} className="cursor-pointer">
                       {t.applyAgain}
                     </Button>
                   </div>
