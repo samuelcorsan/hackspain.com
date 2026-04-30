@@ -9,6 +9,15 @@ import { parseSignupBody } from "../../lib/signupValidation";
 
 export const prerender = false;
 
+/** Sentry must never break request handling if the SDK misbehaves. */
+function safeSentry(report: () => void): void {
+  try {
+    report();
+  } catch (e) {
+    console.error("[signup] Sentry reporting failed:", e);
+  }
+}
+
 function emptyToNull(s: string): string | null {
   return s.length === 0 ? null : s;
 }
@@ -83,29 +92,35 @@ export const POST: APIRoute = async ({ request }) => {
     try {
       const verification = await checkBotId();
       if (verification.isBot) {
-        Sentry.withScope((scope) => {
-          scope.setTag("api", "signup");
-          scope.setTag("outcome", "access_denied");
-          scope.setContext("signup", { reason: "botid" });
-          Sentry.captureMessage("POST /api/signup blocked (BotID)", "warning");
+        safeSentry(() => {
+          Sentry.withScope((scope) => {
+            scope.setTag("api", "signup");
+            scope.setTag("outcome", "access_denied");
+            scope.setContext("signup", { reason: "botid" });
+            Sentry.captureMessage("POST /api/signup blocked (BotID)", "warning");
+          });
         });
         return Response.json({ error: "access_denied" }, { status: 403 });
       }
     } catch (e) {
-      Sentry.withScope((scope) => {
-        scope.setTag("api", "signup");
-        scope.setTag("outcome", "botid_check_failed");
-        Sentry.captureException(e);
+      safeSentry(() => {
+        Sentry.withScope((scope) => {
+          scope.setTag("api", "signup");
+          scope.setTag("outcome", "botid_check_failed");
+          Sentry.captureException(e);
+        });
       });
       console.error("BotID check failed:", e);
     }
   }
 
   if (request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json") {
-    Sentry.withScope((scope) => {
-      scope.setTag("api", "signup");
-      scope.setTag("outcome", "expected_json");
-      Sentry.captureMessage("POST /api/signup: wrong Content-Type", "warning");
+    safeSentry(() => {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "expected_json");
+        Sentry.captureMessage("POST /api/signup: wrong Content-Type", "warning");
+      });
     });
     return Response.json({ error: "expected_json" }, { status: 415 });
   }
@@ -118,10 +133,12 @@ export const POST: APIRoute = async ({ request }) => {
       status: 400,
       error: "Invalid JSON",
     });
-    Sentry.withScope((scope) => {
-      scope.setTag("api", "signup");
-      scope.setTag("outcome", "invalid_json");
-      Sentry.captureMessage("POST /api/signup: body is not valid JSON", "warning");
+    safeSentry(() => {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "invalid_json");
+        Sentry.captureMessage("POST /api/signup: body is not valid JSON", "warning");
+      });
     });
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -131,10 +148,12 @@ export const POST: APIRoute = async ({ request }) => {
       status: 400,
       error: "invalid_body",
     });
-    Sentry.withScope((scope) => {
-      scope.setTag("api", "signup");
-      scope.setTag("outcome", "invalid_body");
-      Sentry.captureMessage("POST /api/signup: body missing or not object", "warning");
+    safeSentry(() => {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "invalid_body");
+        Sentry.captureMessage("POST /api/signup: body missing or not object", "warning");
+      });
     });
     return Response.json({ error: "invalid_body" }, { status: 400 });
   }
@@ -146,11 +165,13 @@ export const POST: APIRoute = async ({ request }) => {
       error: parsed.error,
       emailHint: emailHintFromBody(body),
     });
-    Sentry.withScope((scope) => {
-      scope.setTag("api", "signup");
-      scope.setTag("outcome", "validation");
-      scope.setContext("details", { error: parsed.error, status: parsed.status });
-      Sentry.captureMessage("POST /api/signup: validation failed", "warning");
+    safeSentry(() => {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "validation");
+        scope.setContext("details", { error: parsed.error, status: parsed.status });
+        Sentry.captureMessage("POST /api/signup: validation failed", "warning");
+      });
     });
     return Response.json({ error: parsed.error }, { status: parsed.status });
   }
@@ -197,7 +218,27 @@ export const POST: APIRoute = async ({ request }) => {
       }
       throw e;
     }
+  } catch (e) {
+    console.error(e);
+    safeSentry(() => {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "save_failed");
+        scope.setContext("error", { detail: errDetail(e) });
+        Sentry.captureException(e);
+      });
+    });
+    await notifyDiscordSignupApiIssue({
+      status: 500,
+      error: "save_failed",
+      detail: errDetail(e),
+      emailHint: email,
+    });
+    return Response.json({ error: "save_failed" }, { status: 500 });
+  }
 
+  // Row persisted — ancillary failures must not change the HTTP outcome.
+  try {
     await notifyDiscordNewSignup({
       fullName,
       email,
@@ -212,36 +253,43 @@ export const POST: APIRoute = async ({ request }) => {
       ambassadorStudyWhere: wantsAmbassador ? ambassadorStudyWhere : "",
       heardFrom,
     });
+  } catch (e) {
+    console.error("[signup] Discord notify failed after successful insert:", e);
+    safeSentry(() => {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "discord_notify_failed");
+        Sentry.captureException(e);
+      });
+    });
+  }
 
+  try {
     const emailResult = await sendSignupConfirmationEmail({
       fullName,
       email,
       wantsAmbassador,
     });
     if (!emailResult.ok && emailResult.reason === "send_failed") {
-      Sentry.withScope((scope) => {
-        scope.setTag("api", "signup");
-        scope.setTag("outcome", "confirmation_email_failed");
-        scope.setContext("email", { detail: emailResult.detail });
-        Sentry.captureMessage("POST /api/signup: confirmation email failed", "warning");
+      safeSentry(() => {
+        Sentry.withScope((scope) => {
+          scope.setTag("api", "signup");
+          scope.setTag("outcome", "confirmation_email_failed");
+          scope.setContext("email", { detail: emailResult.detail });
+          Sentry.captureMessage("POST /api/signup: confirmation email failed", "warning");
+        });
       });
     }
-
-    return Response.json({ ok: true });
   } catch (e) {
-    console.error(e);
-    Sentry.withScope((scope) => {
-      scope.setTag("api", "signup");
-      scope.setTag("outcome", "save_failed");
-      scope.setContext("error", { detail: errDetail(e) });
-      Sentry.captureException(e);
+    console.error("[signup] Confirmation email threw after successful insert:", e);
+    safeSentry(() => {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "confirmation_email_exception");
+        Sentry.captureException(e);
+      });
     });
-    await notifyDiscordSignupApiIssue({
-      status: 500,
-      error: "save_failed",
-      detail: errDetail(e),
-      emailHint: email,
-    });
-    return Response.json({ error: "save_failed" }, { status: 500 });
   }
+
+  return Response.json({ ok: true });
 };
