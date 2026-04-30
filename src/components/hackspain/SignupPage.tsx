@@ -360,26 +360,38 @@ export function SignupPage() {
         setStatus("success");
         return;
       }
-      Sentry.addBreadcrumb({
-        category: "http",
-        type: "http",
-        data: { status: res.status, error: resJson.error },
-        level: "error",
-      });
-      Sentry.withScope((scope) => {
-        scope.setTag("flow", "signup");
-        scope.setTag("source", "client");
-        scope.setTag("http_status", String(res.status));
-        if (resJson.error) scope.setTag("api_error", resJson.error);
-        scope.setContext("form", {
-          wantsAmbassador: data.wantsAmbassador,
-          heardFrom: data.heardFromSource,
+      const isDuplicateEmail =
+        res.status === 409 || resJson.error === "duplicate_email";
+      if (isDuplicateEmail) {
+        Sentry.addBreadcrumb({
+          category: "http",
+          type: "http",
+          data: { status: res.status, error: resJson.error },
+          level: "info",
+          message: "signup duplicate email (expected)",
         });
-        Sentry.captureMessage(
-          `Signup: API rejected ${res.status}${resJson.error ? ` (${resJson.error})` : ""}`,
-          "error",
-        );
-      });
+      } else {
+        Sentry.addBreadcrumb({
+          category: "http",
+          type: "http",
+          data: { status: res.status, error: resJson.error },
+          level: "error",
+        });
+        Sentry.withScope((scope) => {
+          scope.setTag("flow", "signup");
+          scope.setTag("source", "client");
+          scope.setTag("http_status", String(res.status));
+          if (resJson.error) scope.setTag("api_error", resJson.error);
+          scope.setContext("form", {
+            wantsAmbassador: data.wantsAmbassador,
+            heardFrom: data.heardFromSource,
+          });
+          Sentry.captureMessage(
+            `Signup: API rejected ${res.status}${resJson.error ? ` (${resJson.error})` : ""}`,
+            "error",
+          );
+        });
+      }
       if (res.status === 403) {
         setErrorMessage(t.errorAccessDenied);
       } else if (res.status === 409) {
