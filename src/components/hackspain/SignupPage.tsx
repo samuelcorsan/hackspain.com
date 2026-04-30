@@ -249,6 +249,7 @@ export function SignupPage() {
   }, [setValue]);
 
   useEffect(() => {
+    if (import.meta.env.DEV) return;
     initBotId({
       protect: [{ path: "/api/signup", method: "POST" }],
     });
@@ -434,11 +435,20 @@ export function SignupPage() {
       }
       setStatus("error");
     } catch (err) {
-      Sentry.withScope((scope) => {
-        scope.setTag("flow", "signup");
-        scope.setTag("source", "client");
-        Sentry.captureException(err);
-      });
+      if (err instanceof Error) {
+        Sentry.withScope((scope) => {
+          scope.setTag("flow", "signup");
+          scope.setTag("source", "client");
+          Sentry.captureException(err);
+        });
+      } else {
+        Sentry.addBreadcrumb({
+          category: "signup",
+          message: "submit: caught non-Error (ignored for issues)",
+          data: { kind: Object.prototype.toString.call(err) },
+          level: "warning",
+        });
+      }
       setErrorMessage(t.errorGeneric);
       setStatus("error");
     }
@@ -452,7 +462,7 @@ export function SignupPage() {
         className="pointer-events-none fixed inset-0 -z-10 h-full min-h-dvh w-full"
         variant={profile}
       />
-      <div className="relative z-0 mx-auto max-w-5xl px-3 pb-6 sm:px-4 sm:pb-10">
+      <div className="relative z-0 mx-auto max-w-6xl px-3 pb-6 sm:px-4 sm:pb-10">
         <div className="grid grid-cols-1 gap-0 border-[3px] border-hs-ink bg-hs-ink">
           <div className="border-b-[3px] border-hs-ink bg-hs-orange px-4 py-5">
             <h1 className="font-bungee text-2xl leading-tight text-hs-ink sm:text-3xl">

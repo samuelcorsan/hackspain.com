@@ -1,0 +1,173 @@
+---
+export const prerender = false;
+import Layout from "../layouts/Layout.astro";
+import { previewText } from "../emails/SignupConfirmation";
+
+const url = new URL(Astro.request.url);
+const fullName = (url.searchParams.get("name") ?? "Leo Hackspain").slice(0, 64);
+const wantsAmbassador =
+  url.searchParams.get("ambassador") === "1" ||
+  url.searchParams.get("ambassador") === "true";
+const toAddress = (url.searchParams.get("to") ?? "leo@hackspain.com").slice(0, 120);
+
+const firstName = fullName.trim().split(/\s+/)[0] || "hacker";
+const subject = "Hemos recibido tu solicitud — HackSpain 2026";
+const snippet = previewText(firstName);
+
+const previewParams = new URLSearchParams({ name: fullName });
+if (wantsAmbassador) previewParams.set("ambassador", "1");
+const previewSrc = `/api/email-preview?${previewParams.toString()}`;
+
+const fmt = new Intl.DateTimeFormat("es-ES", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+const nowLabel = fmt.format(new Date());
+---
+
+<Layout
+  allowScroll
+  title="Vista previa del email — HackSpain"
+  description="Vista previa del email de confirmación HackSpain (estilo Gmail)."
+  canonicalPathOverride="/email"
+  robotsDirectives="noindex, nofollow"
+  includeStructuredData={false}
+>
+  <main id="main" class="relative min-h-dvh w-full bg-[#f6f8fc] text-[#202124]">
+    {/* Gmail-like top bar */}
+    <header class="sticky top-0 z-20 flex items-center gap-3 border-b border-[#e0e3e8] bg-white px-4 py-2 sm:px-6">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fce8e6] text-[#d93025] font-bold">
+          M
+        </span>
+        <span class="font-sans text-[18px] font-medium text-[#5f6368]">Gmail</span>
+      </div>
+      <div class="ml-3 hidden flex-1 sm:block">
+        <div class="flex h-10 max-w-2xl items-center gap-2 rounded-lg bg-[#eaf1fb] px-4 text-[#5f6368]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span class="text-sm">Buscar en el correo</span>
+        </div>
+      </div>
+      <div class="ml-auto flex items-center gap-2">
+        <a
+          href="/email?ambassador=1"
+          class="rounded-md border border-[#dadce0] px-3 py-1.5 text-xs font-medium text-[#3c4043] hover:bg-[#f1f3f4]"
+        >
+          Variante embajador
+        </a>
+        <a
+          href="/email"
+          class="rounded-md border border-[#dadce0] px-3 py-1.5 text-xs font-medium text-[#3c4043] hover:bg-[#f1f3f4]"
+        >
+          Reset
+        </a>
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-5xl px-3 py-4 sm:px-6 sm:py-6">
+      {/* Inbox row (the "snippet" Gmail shows) */}
+      <section class="mb-4 overflow-hidden rounded-xl border border-[#e0e3e8] bg-white shadow-sm">
+        <header class="border-b border-[#e0e3e8] bg-[#f6f8fc] px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-[#5f6368]">
+          Bandeja de entrada — vista previa
+        </header>
+        <div class="flex items-center gap-3 px-4 py-3 hover:bg-[#f8faff]">
+          <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#eab619] font-bungee text-[#2a170f]">
+            H
+          </span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-baseline gap-2">
+              <span class="truncate text-sm font-semibold text-[#202124]">HackSpain</span>
+              <span class="hidden text-xs text-[#5f6368] sm:inline">&lt;leo@hackspain.com&gt;</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="truncate text-sm text-[#202124]"><strong class="font-semibold">{subject}</strong></span>
+              <span class="hidden truncate text-sm text-[#5f6368] sm:inline">— {snippet}</span>
+            </div>
+          </div>
+          <span class="ml-auto shrink-0 text-xs text-[#5f6368]">{nowLabel}</span>
+        </div>
+      </section>
+
+      {/* Open message view */}
+      <section class="overflow-hidden rounded-xl border border-[#e0e3e8] bg-white shadow-sm">
+        <header class="border-b border-[#e0e3e8] px-5 py-4">
+          <h1 class="font-sans text-xl font-medium text-[#202124] sm:text-2xl">{subject}</h1>
+          <div class="mt-3 flex items-start gap-3">
+            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eab619] font-bungee text-[#2a170f]">
+              H
+            </span>
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-baseline gap-x-2">
+                <span class="text-sm font-semibold text-[#202124]">HackSpain</span>
+                <span class="text-xs text-[#5f6368]">&lt;leo@hackspain.com&gt;</span>
+                <span class="ml-auto text-xs text-[#5f6368]">{nowLabel}</span>
+              </div>
+              <div class="text-xs text-[#5f6368]">
+                para <span class="text-[#3c4043]">{toAddress}</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Iframe: isolates email styles from the page */}
+        <div class="bg-[#f6f8fc] p-3 sm:p-6">
+          <iframe
+            id="hs-email-frame"
+            title="HackSpain confirmation email preview"
+            src={previewSrc}
+            class="block w-full rounded-lg border border-[#e0e3e8] bg-white"
+            style="min-height: 720px;"
+            loading="eager"
+          ></iframe>
+        </div>
+
+        {/* Footer chips */}
+        <footer class="flex flex-wrap items-center gap-2 border-t border-[#e0e3e8] bg-[#f6f8fc] px-5 py-3 text-xs text-[#5f6368]">
+          <span class="rounded-full bg-white px-3 py-1 ring-1 ring-[#dadce0]">↩ Responder</span>
+          <span class="rounded-full bg-white px-3 py-1 ring-1 ring-[#dadce0]">↪ Reenviar</span>
+          <span class="ml-auto">Vista previa local · no se ha enviado ningún correo</span>
+        </footer>
+      </section>
+
+      <p class="mt-4 text-center text-xs text-[#5f6368]">
+        Personaliza con
+        <code class="rounded bg-white px-1.5 py-0.5 ring-1 ring-[#dadce0]">?name=Lucía+Pérez</code>
+        ·
+        <code class="rounded bg-white px-1.5 py-0.5 ring-1 ring-[#dadce0]">?ambassador=1</code>
+        ·
+        <code class="rounded bg-white px-1.5 py-0.5 ring-1 ring-[#dadce0]">?to=test@example.com</code>
+      </p>
+    </div>
+  </main>
+
+  <script is:inline>
+    (function () {
+      const frame = document.getElementById("hs-email-frame");
+      if (!(frame instanceof HTMLIFrameElement)) return;
+      function fit() {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc) return;
+          const h = Math.max(
+            doc.body?.scrollHeight ?? 0,
+            doc.documentElement?.scrollHeight ?? 0,
+          );
+          if (h > 0) frame.style.height = h + 24 + "px";
+        } catch (_) {}
+      }
+      frame.addEventListener("load", function () {
+        fit();
+        try {
+          const ro = new ResizeObserver(fit);
+          if (frame.contentDocument?.body) ro.observe(frame.contentDocument.body);
+        } catch (_) {}
+        setTimeout(fit, 250);
+        setTimeout(fit, 800);
+      });
+      window.addEventListener("resize", fit);
+    })();
+  </script>
+</Layout>

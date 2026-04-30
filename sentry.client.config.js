@@ -1,32 +1,42 @@
 import * as Sentry from '@sentry/astro';
 
 const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
+const isDev = import.meta.env.DEV;
+
 if (dsn) {
+  // Replay lazy-loads extra bundles; in Vite dev that often 404s (UUID chunks) and logs
+  // "Error loading script", which is unrelated to app code. Keep replay for production only.
+  const integrations = [
+    Sentry.browserTracingIntegration({
+      tracePropagationTargets: [
+        /^https?:\/\/localhost(:\d+)?/,
+        /^https:\/\/(www\.)?hackspain\.com/,
+        /^https:\/\/[^/]+\.vercel\.app$/,
+      ],
+    }),
+  ];
+  if (!isDev) {
+    integrations.push(Sentry.replayIntegration());
+  }
+
   Sentry.init({
     dsn,
     // Adds request headers and IP for users, for more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/astro/configuration/options/#sendDefaultPii
     sendDefaultPii: true,
-    // Session replay: full session at sample rate; when an error is sent, the buffer is attached (replaysOnError).
-    // Propagate W3C trace to /api so Sentry links browser submit ↔ server request.
-    integrations: [
-      Sentry.browserTracingIntegration({
-        tracePropagationTargets: [
-          /^https?:\/\/localhost(:\d+)?/,
-          /^https:\/\/(www\.)?hackspain\.com/,
-          /^https:\/\/[^/]+\.vercel\.app$/,
-        ],
-      }),
-      Sentry.replayIntegration(),
-    ],
+    integrations,
+    // Drop DOM error/rejection events mistaken for exceptions (e.g. script load failures).
+    beforeSend(event, hint) {
+      const ex = hint.originalException;
+      if (ex instanceof Event) return null;
+      return event;
+    },
     // Enable logs to be sent to Sentry
     enableLogs: true,
     // Define how likely traces are sampled. Adjust this value in production,
     // or use tracesSampler for greater control.
     tracesSampleRate: 1.0,
-    // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-    replaysSessionSampleRate: 0.1,
-    // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-    replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: isDev ? 0 : 0.1,
+    replaysOnErrorSampleRate: isDev ? 0 : 1.0,
   });
 }

@@ -4,6 +4,7 @@ import { checkBotId } from "botid/server";
 import { getDb } from "../../db";
 import { hackathonSignups } from "../../db/schema";
 import { notifyDiscordNewSignup, notifyDiscordSignupApiIssue } from "../../lib/discordSignupWebhook";
+import { sendSignupConfirmationEmail } from "../../lib/signupConfirmationEmail";
 import { parseSignupBody } from "../../lib/signupValidation";
 
 export const prerender = false;
@@ -76,24 +77,28 @@ function isPostgresUniqueViolation(e: unknown): boolean {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  try {
-    const verification = await checkBotId();
-    if (verification.isBot) {
+  // `vercel.json` Bot Protection rewrites only run on Vercel / `vercel dev`, not `astro dev`.
+  // Without them, client scripts 404 and BotID checks misbehave; skip locally.
+  if (!import.meta.env.DEV) {
+    try {
+      const verification = await checkBotId();
+      if (verification.isBot) {
+        Sentry.withScope((scope) => {
+          scope.setTag("api", "signup");
+          scope.setTag("outcome", "access_denied");
+          scope.setContext("signup", { reason: "botid" });
+          Sentry.captureMessage("POST /api/signup blocked (BotID)", "warning");
+        });
+        return Response.json({ error: "access_denied" }, { status: 403 });
+      }
+    } catch (e) {
       Sentry.withScope((scope) => {
         scope.setTag("api", "signup");
-        scope.setTag("outcome", "access_denied");
-        scope.setContext("signup", { reason: "botid" });
-        Sentry.captureMessage("POST /api/signup blocked (BotID)", "warning");
+        scope.setTag("outcome", "botid_check_failed");
+        Sentry.captureException(e);
       });
-      return Response.json({ error: "access_denied" }, { status: 403 });
+      console.error("BotID check failed:", e);
     }
-  } catch (e) {
-    Sentry.withScope((scope) => {
-      scope.setTag("api", "signup");
-      scope.setTag("outcome", "botid_check_failed");
-      Sentry.captureException(e);
-    });
-    console.error("BotID check failed:", e);
   }
 
   if (request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json") {
@@ -207,6 +212,20 @@ export const POST: APIRoute = async ({ request }) => {
       ambassadorStudyWhere: wantsAmbassador ? ambassadorStudyWhere : "",
       heardFrom,
     });
+
+    const emailResult = await sendSignupConfirmationEmail({
+      fullName,
+      email,
+      wantsAmbassador,
+    });
+    if (!emailResult.ok && emailResult.reason === "send_failed") {
+      Sentry.withScope((scope) => {
+        scope.setTag("api", "signup");
+        scope.setTag("outcome", "confirmation_email_failed");
+        scope.setContext("email", { detail: emailResult.detail });
+        Sentry.captureMessage("POST /api/signup: confirmation email failed", "warning");
+      });
+    }
 
     return Response.json({ ok: true });
   } catch (e) {
