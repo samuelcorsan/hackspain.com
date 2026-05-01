@@ -16,7 +16,14 @@ if (dsn) {
     }),
   ];
   if (!isDev) {
-    integrations.push(Sentry.replayIntegration());
+    integrations.push(
+      Sentry.replayIntegration({
+        // Default masking hides all text; disable so replays show full UI copy (PII risk — ok for internal debugging).
+        maskAllText: false,
+        maskAllInputs: false,
+        blockAllMedia: false,
+      }),
+    );
   }
 
   Sentry.init({
@@ -36,7 +43,8 @@ if (dsn) {
     // Define how likely traces are sampled. Adjust this value in production,
     // or use tracesSampler for greater control.
     tracesSampleRate: 1.0,
-    replaysSessionSampleRate: isDev ? 0 : 0.1,
+    // 0 = no full-session replays; only when an error is reported (replaysOnErrorSampleRate).
+    replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: isDev ? 0 : 1.0,
   });
 }
