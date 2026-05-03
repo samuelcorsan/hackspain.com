@@ -1,9 +1,14 @@
-export { Button, ButtonLink, type ButtonLinkProps, type ButtonProps } from "./Button";
 export {
+  Button,
+  ButtonLink,
+  type ButtonLinkProps,
+  type ButtonProps,
+} from "./Button";
+export {
+  type HsButtonSize,
+  type HsButtonVariant,
   hsButtonBase,
   hsButtonClass,
   hsButtonSizes,
   hsButtonVariants,
-  type HsButtonSize,
-  type HsButtonVariant,
 } from "./buttonStyles";

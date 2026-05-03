@@ -1,26 +1,35 @@
-type Props = {
-  svg: string;
+interface Props {
   className?: string;
   decorative?: boolean;
-  label?: string;
   /** Stretch SVG to fill the box edge-to-edge (distorts if aspect ratio differs). */
   fill?: "none";
-};
+  label?: string;
+  svg: string;
+}
 
 function svgWithPreserveRatio(svg: string, ratio: string): string {
   if (/preserveAspectRatio="/.test(svg)) {
-    return svg.replace(/preserveAspectRatio="[^"]*"/, `preserveAspectRatio="${ratio}"`);
+    return svg.replace(
+      /preserveAspectRatio="[^"]*"/,
+      `preserveAspectRatio="${ratio}"`
+    );
   }
   return svg.replace(/<svg\b/, `<svg preserveAspectRatio="${ratio}"`);
 }
 
-export function InlineSvg({ svg, className = "", decorative = false, label, fill }: Props) {
+export function InlineSvg({
+  svg,
+  className = "",
+  decorative = false,
+  label,
+  fill,
+}: Props) {
   const a11y =
-    label != null
-      ? { role: "img" as const, "aria-label": label }
-      : decorative
+    label == null
+      ? decorative
         ? { "aria-hidden": true as const }
-        : {};
+        : {}
+      : { role: "img" as const, "aria-label": label };
   const html = fill === "none" ? svgWithPreserveRatio(svg, "none") : svg;
   const base =
     fill === "none"

@@ -23,22 +23,23 @@ const PALETTE = {
   ink: "#2a170f",
 } as const;
 
-const FONT_BUNGEE =
-  "'Bungee', 'Impact', 'Arial Black', system-ui, sans-serif";
+const FONT_BUNGEE = "'Bungee', 'Impact', 'Arial Black', system-ui, sans-serif";
 const FONT_SANS =
   "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
-export type SignupConfirmationProps = {
+export interface SignupConfirmationProps {
   fullName: string;
   wantsAmbassador?: boolean;
-};
+}
 
 export const previewText = (firstName: string) =>
   `¡${firstName}, hemos recibido tu solicitud para HackSpain 2026! Madrid · Junio · 24h.`;
 
 function firstNameFrom(fullName: string): string {
   const trimmed = fullName.trim();
-  if (!trimmed) return "hacker";
+  if (!trimmed) {
+    return "hacker";
+  }
   const first = trimmed.split(/\s+/)[0];
   return first.length > 24 ? first.slice(0, 24) : first;
 }
@@ -54,8 +55,8 @@ export function SignupConfirmation({
       <Head>
         <meta charSet="utf-8" />
         <meta name="x-apple-disable-message-reformatting" />
-        <meta name="color-scheme" content="light" />
-        <meta name="supported-color-schemes" content="light" />
+        <meta content="light" name="color-scheme" />
+        <meta content="light" name="supported-color-schemes" />
         <link
           href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:wght@400;500;700;800;900&display=swap"
           rel="stylesheet"
@@ -88,11 +89,11 @@ export function SignupConfirmation({
             }}
           >
             <table
-              width="100%"
               cellPadding={0}
               cellSpacing={0}
               role="presentation"
               style={{ borderCollapse: "collapse" }}
+              width="100%"
             >
               <tbody>
                 <tr>
@@ -174,24 +175,23 @@ export function SignupConfirmation({
                   color: PALETTE.ink,
                 }}
               >
-                Hemos recibido tu solicitud para{" "}
-                <strong>HackSpain 2026</strong>. Estás un paso más cerca del
-                mayor hackathon para jóvenes builders de España.
+                Hemos recibido tu solicitud para <strong>HackSpain 2026</strong>
+                . Estás un paso más cerca del mayor hackathon para jóvenes
+                builders de España.
               </Text>
             </Section>
 
             {/* Squares row 1 */}
             <table
-              width="100%"
               cellPadding={0}
               cellSpacing={0}
               role="presentation"
               style={{ borderCollapse: "collapse" }}
+              width="100%"
             >
               <tbody>
                 <tr>
                   <td
-                    width="50%"
                     style={{
                       padding: "26px 18px",
                       backgroundColor: PALETTE.gold,
@@ -200,6 +200,7 @@ export function SignupConfirmation({
                       textAlign: "center" as const,
                       verticalAlign: "middle",
                     }}
+                    width="50%"
                   >
                     <div
                       style={{
@@ -226,7 +227,6 @@ export function SignupConfirmation({
                     </div>
                   </td>
                   <td
-                    width="50%"
                     style={{
                       padding: "26px 18px",
                       backgroundColor: PALETTE.red,
@@ -234,6 +234,7 @@ export function SignupConfirmation({
                       textAlign: "center" as const,
                       verticalAlign: "middle",
                     }}
+                    width="50%"
                   >
                     <div
                       style={{
@@ -262,7 +263,6 @@ export function SignupConfirmation({
                 </tr>
                 <tr>
                   <td
-                    width="50%"
                     style={{
                       padding: "26px 18px",
                       backgroundColor: PALETTE.orange,
@@ -271,6 +271,7 @@ export function SignupConfirmation({
                       textAlign: "center" as const,
                       verticalAlign: "middle",
                     }}
+                    width="50%"
                   >
                     <div
                       style={{
@@ -297,7 +298,6 @@ export function SignupConfirmation({
                     </div>
                   </td>
                   <td
-                    width="50%"
                     style={{
                       padding: "26px 18px",
                       backgroundColor: PALETTE.navy,
@@ -305,6 +305,7 @@ export function SignupConfirmation({
                       textAlign: "center" as const,
                       verticalAlign: "middle",
                     }}
+                    width="50%"
                   >
                     <div
                       style={{
@@ -403,16 +404,15 @@ export function SignupConfirmation({
 
             {/* Socials row */}
             <table
-              width="100%"
               cellPadding={0}
               cellSpacing={0}
               role="presentation"
               style={{ borderCollapse: "collapse" }}
+              width="100%"
             >
               <tbody>
                 <tr>
                   <td
-                    width="50%"
                     align="center"
                     style={{
                       padding: "18px 14px",
@@ -420,6 +420,7 @@ export function SignupConfirmation({
                       borderRight: `3px solid ${PALETTE.ink}`,
                       borderBottom: `3px solid ${PALETTE.ink}`,
                     }}
+                    width="50%"
                   >
                     <Link
                       href="https://x.com/hackspain26"
@@ -435,13 +436,13 @@ export function SignupConfirmation({
                     </Link>
                   </td>
                   <td
-                    width="50%"
                     align="center"
                     style={{
                       padding: "18px 14px",
                       backgroundColor: PALETTE.ink,
                       borderBottom: `3px solid ${PALETTE.ink}`,
                     }}
+                    width="50%"
                   >
                     <Link
                       href="https://www.instagram.com/hackspain26/"

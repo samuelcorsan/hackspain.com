@@ -51,6 +51,12 @@
       "sourceType": "github",
       "computedHash": "278780f4a2360c77887d99f05a15b91030a34fa52b37e7d5e56a5d85851f4901"
     },
+    "ultracite": {
+      "source": "haydenbleasel/ultracite",
+      "sourceType": "github",
+      "skillPath": "skills/ultracite/SKILL.md",
+      "computedHash": "5efa7db1bc960b8beda708e3a6a4f633bf592e68b9d720524d17a300e091ac0e"
+    },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",

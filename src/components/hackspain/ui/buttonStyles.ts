@@ -27,9 +27,14 @@ export type HsButtonSize = keyof typeof hsButtonSizes;
 export function hsButtonClass(
   variant: HsButtonVariant = "gold",
   size: HsButtonSize = "md",
-  className?: string,
+  className?: string
 ): string {
-  return [hsButtonBase, hsButtonVariants[variant], hsButtonSizes[size], className]
+  return [
+    hsButtonBase,
+    hsButtonVariants[variant],
+    hsButtonSizes[size],
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
 }

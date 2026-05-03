@@ -1,14 +1,19 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import {
   animate,
   motion,
   useMotionValue,
   useMotionValueEvent,
 } from "motion/react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { flushSync } from "react-dom";
 import type { Artboard } from "./artboard";
 import { ChromaKeyVideo } from "./ChromaKeyVideo";
-import { vp } from "./Panel";
 import {
   HORSE_RETURN_DURATION_S,
   HORSE_RETURN_TELEPORT_FADE_IN_S,
@@ -20,6 +25,7 @@ import {
   HORSE_VIDEO_CHROMA_TOLERANCE,
   HORSE_VIDEO_SRC,
 } from "./constants";
+import { vp } from "./Panel";
 
 const OPACITY_IN_S = 0.22;
 const X_DELAY_S = 0.1;
@@ -32,15 +38,20 @@ const OFF_LEFT_MARGIN_PX = 28;
 
 const chromaEnabled = Boolean(HORSE_VIDEO_CHROMA_KEY_HEX);
 
-type HorseBox = { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+interface HorseBox {
+  readonly h: number;
+  readonly w: number;
+  readonly x: number;
+  readonly y: number;
+}
 
-type Props = {
-  horseBox: HorseBox;
+interface Props {
   artboard: Artboard;
+  horseBox: HorseBox;
   onComplete: (travelTotal: number) => void;
   onRideX?: (tx: number, travelTotal: number) => void;
   onVideoReady?: () => void;
-};
+}
 
 export function HorseMissionTransition({
   horseBox,
@@ -67,7 +78,9 @@ export function HorseMissionTransition({
   const opacity = useMotionValue(0);
 
   const fireComplete = () => {
-    if (doneRef.current) return;
+    if (doneRef.current) {
+      return;
+    }
     doneRef.current = true;
     const t = travelTotalRef.current;
     x.set(0);
@@ -79,14 +92,16 @@ export function HorseMissionTransition({
   const [mediaReady, setMediaReady] = useState(false);
 
   const signalMediaReady = useCallback(() => {
-    if (mediaReadyRef.current) return;
+    if (mediaReadyRef.current) {
+      return;
+    }
     mediaReadyRef.current = true;
     setMediaReady(true);
   }, []);
 
   useLayoutEffect(() => {
     const el = wrapRef.current;
-    const w = typeof window !== "undefined" ? window.innerWidth : 0;
+    const w = typeof window === "undefined" ? 0 : window.innerWidth;
     if (!el) {
       travelTotalRef.current = w;
       xOffLeftRef.current = -w;
@@ -98,17 +113,21 @@ export function HorseMissionTransition({
     travelTotalRef.current = tx;
     xOffLeftRef.current = -(rect.left + rect.width + OFF_LEFT_MARGIN_PX);
     setTravelX(tx);
-  }, [horseBox.x, horseBox.y, horseBox.w, horseBox.h, artboard.w, artboard.h]);
+  }, []);
 
   useMotionValueEvent(x, "change", (latest) => {
     const total = travelTotalRef.current;
-    if (total <= 0) return;
+    if (total <= 0) {
+      return;
+    }
     onRideXRef.current?.(latest, total);
   });
 
   useEffect(() => {
     const v = videoRef.current;
-    if (!v) return;
+    if (!v) {
+      return;
+    }
     v.currentTime = 0;
     void v.play().catch(() => {});
   }, []);
@@ -119,14 +138,15 @@ export function HorseMissionTransition({
   }, [signalMediaReady]);
 
   useLayoutEffect(() => {
-    if (chromaEnabled) return;
+    if (chromaEnabled) {
+      return;
+    }
     const v = videoRef.current;
-    if (!v) return;
+    if (!v) {
+      return;
+    }
     const fire = () => signalMediaReady();
-    if (
-      v.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-      v.videoWidth
-    ) {
+    if (v.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && v.videoWidth) {
       requestAnimationFrame(() => requestAnimationFrame(fire));
       return;
     }
@@ -135,12 +155,14 @@ export function HorseMissionTransition({
   }, [signalMediaReady]);
 
   useEffect(() => {
-    const id = window.setTimeout(fireComplete, 16000);
+    const id = window.setTimeout(fireComplete, 16_000);
     return () => window.clearTimeout(id);
-  }, []);
+  }, [fireComplete]);
 
   useLayoutEffect(() => {
-    if (travelX === null || !mediaReady) return;
+    if (travelX === null || !mediaReady) {
+      return;
+    }
     let cancelled = false;
     rideAnimsRef.current = [];
     const track = (a: ReturnType<typeof animate>) => {
@@ -162,7 +184,7 @@ export function HorseMissionTransition({
           animate(opacity, 1, {
             duration: OPACITY_IN_S,
             ease: [0.24, 0.82, 0.28, 1],
-          }),
+          })
         );
       }
       const animX1 = track(
@@ -170,57 +192,65 @@ export function HorseMissionTransition({
           duration: X_DURATION_S,
           delay: X_DELAY_S,
           ease: EASE_IN_RIDE,
-        }),
+        })
       );
       try {
         if (chromaEnabled) {
           await animX1.finished;
         } else {
-          await Promise.all([animO!.finished, animX1.finished]);
+          await Promise.all([animO?.finished, animX1.finished]);
         }
       } catch {
         return;
       }
-      if (cancelled) return;
+      if (cancelled) {
+        return;
+      }
 
       const xLeft = xOffLeftRef.current;
       const fadeOut = track(
         animate(opacity, 0, {
           duration: HORSE_RETURN_TELEPORT_FADE_OUT_S,
           ease: "linear",
-        }),
+        })
       );
       try {
         await fadeOut.finished;
       } catch {
         return;
       }
-      if (cancelled) return;
+      if (cancelled) {
+        return;
+      }
       x.set(xLeft);
       const fadeIn = track(
         animate(opacity, 1, {
           duration: HORSE_RETURN_TELEPORT_FADE_IN_S,
           ease: "linear",
-        }),
+        })
       );
       try {
         await fadeIn.finished;
       } catch {
         return;
       }
-      if (cancelled) return;
+      if (cancelled) {
+        return;
+      }
       const animX2 = track(
         animate(x, 0, {
           duration: HORSE_RETURN_DURATION_S,
           ease: EASE_RETURN,
-        }),
+        })
       );
       try {
         await animX2.finished;
       } catch {
         return;
       }
-      if (!cancelled) fireComplete();
+      if (!cancelled) {
+        fireComplete();
+      }
     };
 
     void run();
@@ -230,38 +260,38 @@ export function HorseMissionTransition({
       rideAnimsRef.current.forEach((a) => a.stop());
       rideAnimsRef.current = [];
     };
-  }, [travelX, mediaReady, x, opacity]);
+  }, [travelX, mediaReady, x, opacity, fireComplete]);
 
   return (
     <motion.div
-      ref={wrapRef}
+      aria-hidden
       className="pointer-events-none absolute z-40 overflow-visible"
+      ref={wrapRef}
       style={{
         ...vp(horseBox.x, horseBox.y, horseBox.w, horseBox.h, artboard),
         x,
         opacity,
       }}
-      aria-hidden
     >
       {HORSE_VIDEO_CHROMA_KEY_HEX ? (
         <ChromaKeyVideo
+          greenLeadB={HORSE_VIDEO_CHROMA_GREEN_LEAD_B}
+          greenLeadR={HORSE_VIDEO_CHROMA_GREEN_LEAD_R}
+          keyColor={HORSE_VIDEO_CHROMA_KEY_HEX}
+          minLuma={HORSE_VIDEO_CHROMA_MIN_LUMA}
+          onMediaReady={signalMediaReady}
           ref={videoRef}
           src={HORSE_VIDEO_SRC}
-          keyColor={HORSE_VIDEO_CHROMA_KEY_HEX}
           tolerance={HORSE_VIDEO_CHROMA_TOLERANCE}
-          minLuma={HORSE_VIDEO_CHROMA_MIN_LUMA}
-          greenLeadR={HORSE_VIDEO_CHROMA_GREEN_LEAD_R}
-          greenLeadB={HORSE_VIDEO_CHROMA_GREEN_LEAD_B}
-          onMediaReady={signalMediaReady}
         />
       ) : (
         <video
-          ref={videoRef}
-          src={HORSE_VIDEO_SRC}
+          className="h-full w-full object-contain object-bottom"
           muted
           playsInline
           preload="auto"
-          className="h-full w-full object-contain object-bottom"
+          ref={videoRef}
+          src={HORSE_VIDEO_SRC}
         />
       )}
     </motion.div>

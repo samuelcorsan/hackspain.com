@@ -7,51 +7,66 @@ const DISCORD_WEBHOOK_PREFIXES = [
 
 /** Vercel (and other hosts) inject runtime env into `process.env`; Vite may bake `import.meta.env` only at build time. */
 function discordWebhookFromRuntime(): string | undefined {
-  const proc = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process;
+  const proc = (
+    globalThis as unknown as {
+      process?: { env?: Record<string, string | undefined> };
+    }
+  ).process;
   const v = proc?.env?.DISCORD_WEBHOOK_URL;
   return typeof v === "string" && v.trim() ? v.trim() : undefined;
 }
 
 function getWebhookUrl(): string | null {
-  const raw = discordWebhookFromRuntime() ?? import.meta.env.DISCORD_WEBHOOK_URL;
-  if (typeof raw !== "string" || !raw.trim()) return null;
+  const raw =
+    discordWebhookFromRuntime() ?? import.meta.env.DISCORD_WEBHOOK_URL;
+  if (typeof raw !== "string" || !raw.trim()) {
+    return null;
+  }
   const u = raw.trim();
   if (!DISCORD_WEBHOOK_PREFIXES.some((p) => u.startsWith(p))) {
-    console.warn("DISCORD_WEBHOOK_URL ignored: must be a discord.com webhook URL");
+    console.warn(
+      "DISCORD_WEBHOOK_URL ignored: must be a discord.com webhook URL"
+    );
     return null;
   }
   return u;
 }
 
 function fieldVal(s: string, max: number): string {
-  if (!s) return "—";
+  if (!s) {
+    return "—";
+  }
   const t = s.replace(/`/g, "'").slice(0, max);
   return t.length === 0 ? "—" : t;
 }
 
-export type SignupDiscordPayload = {
-  fullName: string;
-  email: string;
-  xUrl: string;
-  linkedinUrl: string;
-  githubUrl: string;
-  webUrl: string;
+export interface SignupDiscordPayload {
   achievements: string;
-  freeTime: string;
-  wantsAmbassador: boolean;
   ambassadorMotivation: string;
   ambassadorStudyWhere: string;
+  email: string;
+  freeTime: string;
+  fullName: string;
+  githubUrl: string;
   heardFrom: string;
-};
+  linkedinUrl: string;
+  wantsAmbassador: boolean;
+  webUrl: string;
+  xUrl: string;
+}
 
-export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promise<void> {
+export async function notifyDiscordNewSignup(
+  data: SignupDiscordPayload
+): Promise<void> {
   const url = getWebhookUrl();
-  if (!url) return;
+  if (!url) {
+    return;
+  }
 
   const max = 1024;
   const embed = {
     title: "New HackSpain application",
-    color: 0xeab619,
+    color: 0xea_b6_19,
     fields: [
       { name: "Name", value: fieldVal(data.fullName, max), inline: true },
       { name: "Email", value: fieldVal(data.email, max), inline: true },
@@ -61,11 +76,23 @@ export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promis
         inline: false,
       },
       { name: "X", value: fieldVal(data.xUrl, max), inline: false },
-      { name: "LinkedIn", value: fieldVal(data.linkedinUrl, max), inline: false },
+      {
+        name: "LinkedIn",
+        value: fieldVal(data.linkedinUrl, max),
+        inline: false,
+      },
       { name: "GitHub", value: fieldVal(data.githubUrl, max), inline: false },
       { name: "Web", value: fieldVal(data.webUrl, max), inline: false },
-      { name: "Achievements", value: fieldVal(data.achievements, max), inline: false },
-      { name: "Free time / hobbies", value: fieldVal(data.freeTime, max), inline: false },
+      {
+        name: "Achievements",
+        value: fieldVal(data.achievements, max),
+        inline: false,
+      },
+      {
+        name: "Free time / hobbies",
+        value: fieldVal(data.freeTime, max),
+        inline: false,
+      },
       {
         name: "Ambassador interest",
         value: data.wantsAmbassador ? "Yes" : "No",
@@ -98,16 +125,16 @@ export async function notifyDiscordNewSignup(data: SignupDiscordPayload): Promis
       body: JSON.stringify({ embeds: [embed] }),
       signal: ctrl.signal,
     });
-    if (!res.ok) {
+    if (res.ok) {
+      console.info("Discord new signup webhook ok", res.status);
+    } else {
       const t = await res.text().catch(() => "");
       console.error("Discord webhook failed:", res.status, t.slice(0, 500));
-    } else {
-      console.info("Discord new signup webhook ok", res.status);
     }
   } catch (e) {
     const detail =
       e instanceof Error
-        ? `${e.name}: ${e.message}${e.cause != null ? ` (cause: ${String(e.cause)})` : ""}`
+        ? `${e.name}: ${e.message}${e.cause == null ? "" : ` (cause: ${String(e.cause)})`}`
         : String(e);
     console.error("Discord webhook error:", detail);
   } finally {
@@ -122,22 +149,36 @@ export async function notifyDiscordSignupApiIssue(payload: {
   emailHint?: string;
 }): Promise<void> {
   const url = getWebhookUrl();
-  if (!url) return;
+  if (!url) {
+    return;
+  }
 
   const embed = {
     title:
       payload.status === 500
         ? "HackSpain signup API — server error"
         : "HackSpain signup API — client/validation error",
-    color: payload.status === 500 ? 0xed4245 : 0xf0b232,
+    color: payload.status === 500 ? 0xed_42_45 : 0xf0_b2_32,
     fields: [
       { name: "HTTP", value: String(payload.status), inline: true },
       { name: "error", value: fieldVal(payload.error, 256), inline: true },
       ...(payload.emailHint
-        ? [{ name: "Email (if sent)", value: fieldVal(payload.emailHint, 320), inline: false }]
+        ? [
+            {
+              name: "Email (if sent)",
+              value: fieldVal(payload.emailHint, 320),
+              inline: false,
+            },
+          ]
         : []),
       ...(payload.detail
-        ? [{ name: "Detail", value: fieldVal(payload.detail, 1024), inline: false }]
+        ? [
+            {
+              name: "Detail",
+              value: fieldVal(payload.detail, 1024),
+              inline: false,
+            },
+          ]
         : []),
     ],
     timestamp: new Date().toISOString(),
@@ -154,12 +195,16 @@ export async function notifyDiscordSignupApiIssue(payload: {
     });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      console.error("Discord signup error webhook failed:", res.status, t.slice(0, 500));
+      console.error(
+        "Discord signup error webhook failed:",
+        res.status,
+        t.slice(0, 500)
+      );
     }
   } catch (e) {
     const detail =
       e instanceof Error
-        ? `${e.name}: ${e.message}${e.cause != null ? ` (cause: ${String(e.cause)})` : ""}`
+        ? `${e.name}: ${e.message}${e.cause == null ? "" : ` (cause: ${String(e.cause)})`}`
         : String(e);
     console.error("Discord signup error webhook error:", detail);
   } finally {

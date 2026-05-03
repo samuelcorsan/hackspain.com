@@ -22,7 +22,10 @@ export const HEARD_FROM_SOURCE_IDS = [
 
 export type HeardFromSourceId = (typeof HEARD_FROM_SOURCE_IDS)[number];
 
-export const HEARD_FROM_OPTIONS: readonly { id: HeardFromSourceId; label: string }[] = [
+export const HEARD_FROM_OPTIONS: readonly {
+  id: HeardFromSourceId;
+  label: string;
+}[] = [
   { id: "x", label: "X (Twitter)" },
   { id: "instagram", label: "Instagram" },
   { id: "linkedin", label: "LinkedIn" },
@@ -34,7 +37,9 @@ export const HEARD_FROM_OPTIONS: readonly { id: HeardFromSourceId; label: string
 ] as const;
 
 export function formatHeardFromStored(stored: string): string {
-  if (!stored) return "";
+  if (!stored) {
+    return "";
+  }
   if (stored.startsWith("other:")) {
     const detail = stored.slice(6).trim();
     return detail.length > 0 ? `Otro: ${detail}` : "Otro";
@@ -60,9 +65,15 @@ function baseHostForProfileField(kind: Exclude<SocialKind, "web">): string {
 
 export function expandProfileFieldInput(raw: string, baseHost: string): string {
   const v = raw.trim();
-  if (!v) return "";
-  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(v) || v.startsWith("//")) return v;
-  if (v.startsWith("@")) return v;
+  if (!v) {
+    return "";
+  }
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(v) || v.startsWith("//")) {
+    return v;
+  }
+  if (v.startsWith("@")) {
+    return v;
+  }
 
   const slash = v.indexOf("/");
   const firstSegment = slash === -1 ? v : v.slice(0, slash);
@@ -84,7 +95,13 @@ export function expandProfileFieldInput(raw: string, baseHost: string): string {
     return `https://${rest}`;
   }
   if (host === "linkedin.com" && rl.length > 0) {
-    const linkedinPathPrefixes = ["in/", "company/", "school/", "showcase/", "pulse/"];
+    const linkedinPathPrefixes = [
+      "in/",
+      "company/",
+      "school/",
+      "showcase/",
+      "pulse/",
+    ];
     if (!linkedinPathPrefixes.some((p) => rl.startsWith(p))) {
       return `https://${host}/in/${rest}`;
     }
@@ -136,17 +153,33 @@ function hostMatchesKind(host: string, kind: SocialKind): boolean {
 
 export function normalizeSocialUrl(input: string, kind: SocialKind): string {
   const trimmed = input.trim();
-  if (!trimmed) return "";
+  if (!trimmed) {
+    return "";
+  }
 
   if (kind === "x") {
     if (trimmed.startsWith("@")) {
-      const handle = trimmed.slice(1).split(/[/?#\s]/)[0]?.replace(/^\/+/, "") ?? "";
-      if (!handle) return "";
+      const handle =
+        trimmed
+          .slice(1)
+          .split(/[/?#\s]/)[0]
+          ?.replace(/^\/+/, "") ?? "";
+      if (!handle) {
+        return "";
+      }
       return `https://x.com/${handle}`;
     }
-    if (!trimmed.includes("://") && !trimmed.includes("/") && !trimmed.includes(".")) {
+    if (
+      !(
+        trimmed.includes("://") ||
+        trimmed.includes("/") ||
+        trimmed.includes(".")
+      )
+    ) {
       const h = trimmed.split(/\s/)[0] ?? "";
-      if (h.length > 0) return `https://x.com/${h}`;
+      if (h.length > 0) {
+        return `https://x.com/${h}`;
+      }
     }
   }
 
@@ -179,8 +212,7 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
     path = path.replace(/\/+$/, "");
   }
 
-  const search =
-    kind === "web" && !isProfileHost(host) ? u.search : "";
+  const search = kind === "web" && !isProfileHost(host) ? u.search : "";
 
   if (!hostMatchesKind(host, kind)) {
     return "";
@@ -192,8 +224,13 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
 
 export type ProfileFieldKind = Exclude<SocialKind, "web">;
 
-export function profileNormalizedToInputSuffix(norm: string, kind: ProfileFieldKind): string {
-  if (!norm) return "";
+export function profileNormalizedToInputSuffix(
+  norm: string,
+  kind: ProfileFieldKind
+): string {
+  if (!norm) {
+    return "";
+  }
   let u: URL;
   try {
     u = new URL(norm);
@@ -220,36 +257,46 @@ export function profileNormalizedToInputSuffix(norm: string, kind: ProfileFieldK
   return tail;
 }
 
-export function cleanProfilePasteText(raw: string, kind: ProfileFieldKind): string {
+export function cleanProfilePasteText(
+  raw: string,
+  kind: ProfileFieldKind
+): string {
   const line =
     raw
       .split(/\r?\n/)
       .map((l) => l.trim())
       .find((l) => l.length > 0) ?? "";
-  if (!line) return "";
+  if (!line) {
+    return "";
+  }
   const expanded = expandProfileFieldInput(line, baseHostForProfileField(kind));
   const norm = normalizeSocialUrl(expanded, kind);
-  if (!norm) return line;
+  if (!norm) {
+    return line;
+  }
   return profileNormalizedToInputSuffix(norm, kind);
 }
 
 export function socialField(kind: SocialKind) {
-  return z.string().max(SIGNUP_MAX.url).transform((raw, ctx) => {
-    const trimmed = raw.trim();
-    const expanded =
-      kind === "web"
-        ? trimmed
-        : expandProfileFieldInput(trimmed, baseHostForProfileField(kind));
-    const norm = normalizeSocialUrl(expanded, kind);
-    if (trimmed.length > 0 && norm.length === 0) {
-      ctx.addIssue({
-        code: "custom",
-        message: "invalid_social_url",
-        input: trimmed,
-      });
-    }
-    return norm;
-  });
+  return z
+    .string()
+    .max(SIGNUP_MAX.url)
+    .transform((raw, ctx) => {
+      const trimmed = raw.trim();
+      const expanded =
+        kind === "web"
+          ? trimmed
+          : expandProfileFieldInput(trimmed, baseHostForProfileField(kind));
+      const norm = normalizeSocialUrl(expanded, kind);
+      if (trimmed.length > 0 && norm.length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          message: "invalid_social_url",
+          input: trimmed,
+        });
+      }
+      return norm;
+    });
 }
 
 export const signupBodySchema = z
@@ -292,13 +339,16 @@ export const signupBodySchema = z
         .min(1, { message: "heard_from_required" })
         .refine(
           (s) => (HEARD_FROM_SOURCE_IDS as readonly string[]).includes(s),
-          { message: "heard_from_invalid" },
+          { message: "heard_from_invalid" }
         )
-        .transform((s) => s as HeardFromSourceId),
+        .transform((s) => s as HeardFromSourceId)
     ),
     heardFromOther: z.preprocess(
       (v) => (typeof v === "string" ? v : ""),
-      z.string().max(SIGNUP_MAX.heardFromOther).transform((s) => s.trim()),
+      z
+        .string()
+        .max(SIGNUP_MAX.heardFromOther)
+        .transform((s) => s.trim())
     ),
   })
   .superRefine((data, ctx) => {
@@ -340,13 +390,17 @@ export const signupBodySchema = z
   })
   .transform(({ heardFromSource, heardFromOther, ...rest }) => {
     const heardFrom =
-      heardFromSource === "other" ? `other:${heardFromOther.trim()}` : heardFromSource;
+      heardFromSource === "other"
+        ? `other:${heardFromOther.trim()}`
+        : heardFromSource;
     return { ...rest, heardFrom };
   });
 
 export type SignupBodyParsed = z.infer<typeof signupBodySchema>;
 
-export function parseSignupBody(body: unknown):
+export function parseSignupBody(
+  body: unknown
+):
   | { ok: true; data: SignupBodyParsed }
   | { ok: false; error: string; status: number } {
   const r = signupBodySchema.safeParse(body);
@@ -403,14 +457,29 @@ export function parseSignupBodyClient(body: unknown):
     return { ok: true, data: r.data };
   }
   const msg = r.error.issues[0]?.message;
-  if (msg === "social_required") return { ok: false, code: "social_required" };
-  if (msg === "invalid_social_url") return { ok: false, code: "invalid_social_url" };
-  if (msg === "invalid_email") return { ok: false, code: "invalid_email" };
-  if (msg === "fullName_required") return { ok: false, code: "fullName" };
-  if (msg === "heard_from_required" || msg === "heard_from_invalid")
+  if (msg === "social_required") {
+    return { ok: false, code: "social_required" };
+  }
+  if (msg === "invalid_social_url") {
+    return { ok: false, code: "invalid_social_url" };
+  }
+  if (msg === "invalid_email") {
+    return { ok: false, code: "invalid_email" };
+  }
+  if (msg === "fullName_required") {
+    return { ok: false, code: "fullName" };
+  }
+  if (msg === "heard_from_required" || msg === "heard_from_invalid") {
     return { ok: false, code: "heard_from" };
-  if (msg === "ambassador_motivation_required") return { ok: false, code: "ambassador_motivation" };
-  if (msg === "ambassador_study_where_required") return { ok: false, code: "ambassador_study_where" };
-  if (msg === "heard_from_other_required") return { ok: false, code: "heard_from_other" };
+  }
+  if (msg === "ambassador_motivation_required") {
+    return { ok: false, code: "ambassador_motivation" };
+  }
+  if (msg === "ambassador_study_where_required") {
+    return { ok: false, code: "ambassador_study_where" };
+  }
+  if (msg === "heard_from_other_required") {
+    return { ok: false, code: "heard_from_other" };
+  }
   return { ok: false, code: "generic" };
 }

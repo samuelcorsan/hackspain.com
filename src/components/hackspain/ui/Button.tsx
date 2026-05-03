@@ -1,8 +1,7 @@
-import { forwardRef } from "react";
 import {
-  hsButtonClass,
   type HsButtonSize,
   type HsButtonVariant,
+  hsButtonClass,
 } from "./buttonStyles";
 
 export type ButtonProps = React.ComponentPropsWithoutRef<"button"> & {
@@ -10,29 +9,41 @@ export type ButtonProps = React.ComponentPropsWithoutRef<"button"> & {
   size?: HsButtonSize;
 };
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = "gold", size = "md", className, type = "button", ...props },
+export const Button = function Button({
+  variant = "gold",
+  size = "md",
+  className,
+  type = "button",
   ref,
-) {
+  ...props
+}: ButtonProps & { ref?: RefObject<HTMLButtonElement | null> }) {
   return (
     <button
+      className={hsButtonClass(variant, size, className)}
       ref={ref}
       type={type}
-      className={hsButtonClass(variant, size, className)}
       {...props}
     />
   );
-});
+};
 
 export type ButtonLinkProps = React.ComponentPropsWithoutRef<"a"> & {
   variant?: HsButtonVariant;
   size?: HsButtonSize;
 };
 
-export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
-  function ButtonLink({ variant = "gold", size = "md", className, ...props }, ref) {
-    return (
-      <a ref={ref} className={hsButtonClass(variant, size, className)} {...props} />
-    );
-  },
-);
+export const ButtonLink = function ButtonLink({
+  variant = "gold",
+  size = "md",
+  className,
+  ref,
+  ...props
+}: ButtonLinkProps & { ref?: RefObject<HTMLAnchorElement | null> }) {
+  return (
+    <a
+      className={hsButtonClass(variant, size, className)}
+      ref={ref}
+      {...props}
+    />
+  );
+};

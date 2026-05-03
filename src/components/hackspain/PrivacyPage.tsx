@@ -2,7 +2,11 @@ import { formatRichPolicyText } from "./formatRichPolicyText";
 import { MosaicBackground } from "./MosaicBackground";
 import { useLayoutProfile } from "./useLayoutProfile";
 
-type PrivacySection = { id: string; title: string; paragraphs: string[] };
+interface PrivacySection {
+  id: string;
+  paragraphs: string[];
+  title: string;
+}
 
 const PRIVACY: {
   pageTitle: string;
@@ -73,7 +77,8 @@ const PRIVACY: {
     },
     {
       id: "processors-ai",
-      title: "7. Encargados, algoritmos y herramientas de terceros (incluida IA)",
+      title:
+        "7. Encargados, algoritmos y herramientas de terceros (incluida IA)",
       paragraphs: [
         "Podemos utilizar proveedores (encargados del tratamiento) para alojamiento, bases de datos, correo, analítica, seguridad y funciones similares. Tratan los datos solo siguiendo nuestras instrucciones y con un contrato acorde al RGPD.",
         "Podemos utilizar medios automatizados —incluidos algoritmos y servicios de inteligencia artificial o aprendizaje automático de terceros— para ayudar a revisar, clasificar, resumir o puntuar el contenido de las solicitudes (por ejemplo para priorizar contactos, valorar el encaje en el programa de embajadores/as o detectar spam). Este tratamiento puede implicar la transferencia del contenido estrictamente necesario a proveedores establecidos fuera del EEE. Cuando proceda, nos basamos en garantías apropiadas del RGPD (como las cláusulas contractuales tipo de la Comisión Europea), además de medidas técnicas y organizativas.",
@@ -118,41 +123,45 @@ export function PrivacyPage() {
       />
       <div className="relative z-0 mx-auto max-w-3xl px-3 pb-10 sm:px-4">
         <article className="border-[3px] border-hs-ink bg-hs-ink">
-          <header className="border-b-[3px] border-hs-ink bg-hs-orange px-4 py-5 sm:px-6">
+          <header className="border-hs-ink border-b-[3px] bg-hs-orange px-4 py-5 sm:px-6">
             <h1
+              className="scroll-mt-28 font-bungee text-2xl text-hs-ink leading-tight sm:text-3xl"
               id="privacy-policy"
-              className="scroll-mt-28 font-bungee text-2xl leading-tight text-hs-ink sm:text-3xl"
             >
               {t.pageTitle}
             </h1>
-            <p className="mt-2 font-sans text-sm font-bold text-hs-ink sm:text-base">{t.updatedLine}</p>
+            <p className="mt-2 font-bold font-sans text-hs-ink text-sm sm:text-base">
+              {t.updatedLine}
+            </p>
           </header>
-          <div className="border-t-[3px] border-hs-ink bg-hs-paper px-4 py-6 sm:px-8 sm:py-10">
-            <p className="border-b-[3px] border-hs-ink pb-6 font-sans text-sm font-semibold leading-snug text-hs-brown sm:text-base">
+          <div className="border-hs-ink border-t-[3px] bg-hs-paper px-4 py-6 sm:px-8 sm:py-10">
+            <p className="border-hs-ink border-b-[3px] pb-6 font-sans font-semibold text-hs-brown text-sm leading-snug sm:text-base">
               {formatRichPolicyText(t.disclaimer, "disclaimer")}
             </p>
-            <div className="border-b-[3px] border-hs-ink bg-hs-teal/10 px-3 py-5 sm:px-4 sm:py-6">
-              <h2 className="font-bungee text-base leading-snug text-hs-ink sm:text-lg">
+            <div className="border-hs-ink border-b-[3px] bg-hs-teal/10 px-3 py-5 sm:px-4 sm:py-6">
+              <h2 className="font-bungee text-base text-hs-ink leading-snug sm:text-lg">
                 {t.goodFaithTitle}
               </h2>
-              <p className="mt-2 font-sans text-sm font-semibold leading-relaxed text-hs-ink sm:text-[0.95rem]">
+              <p className="mt-2 font-sans font-semibold text-hs-ink text-sm leading-relaxed sm:text-[0.95rem]">
                 {formatRichPolicyText(t.goodFaithBody, "good-faith")}
               </p>
             </div>
             <div className="divide-y-[3px] divide-hs-ink">
               {t.sections.map((s) => (
                 <section
-                  key={s.id}
+                  aria-labelledby={
+                    s.id === "processors-ai" ? "data-processing" : s.id
+                  }
                   className="scroll-mt-28 pt-8 first:pt-6"
-                  aria-labelledby={s.id === "processors-ai" ? "data-processing" : s.id}
+                  key={s.id}
                 >
                   <h2
+                    className="font-bungee text-hs-ink text-lg leading-snug sm:text-xl"
                     id={s.id === "processors-ai" ? "data-processing" : s.id}
-                    className="font-bungee text-lg leading-snug text-hs-ink sm:text-xl"
                   >
                     {s.title}
                   </h2>
-                  <div className="mt-3 space-y-3 font-sans text-sm font-semibold leading-relaxed text-hs-ink sm:text-[0.95rem]">
+                  <div className="mt-3 space-y-3 font-sans font-semibold text-hs-ink text-sm leading-relaxed sm:text-[0.95rem]">
                     {s.paragraphs.map((p, i) => (
                       <p key={i}>{formatRichPolicyText(p, `${s.id}-${i}`)}</p>
                     ))}

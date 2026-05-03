@@ -1,7 +1,7 @@
-import sharp from "sharp";
 import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -16,7 +16,7 @@ const metaSvg = Buffer.from(
   `<svg width="1200" height="120" xmlns="http://www.w3.org/2000/svg">
   <text x="600" y="72" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="36" fill="#2a170f">hackspain.com</text>
   <text x="600" y="110" text-anchor="middle" font-family="system-ui,sans-serif" font-size="26" fill="#eab619">@hackspain26 · Madrid · 2026</text>
-</svg>`,
+</svg>`
 );
 const metaPng = await sharp(metaSvg).png().toBuffer();
 

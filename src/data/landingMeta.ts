@@ -9,11 +9,11 @@ export const SOCIAL_SHARE_IMAGE = {
 
 const CONTENT_DATE_MODIFIED = "2026-03-21";
 
-export type PageSeo = {
-  title: string;
+export interface PageSeo {
   description: string;
   ogImageAlt: string;
-};
+  title: string;
+}
 
 const PAGES: PageSeo[] = [
   {
@@ -107,7 +107,10 @@ const KEYWORDS_BY_SECTION = [
 ];
 
 export function keywordsForSectionIndex(i: number): string {
-  const extra = KEYWORDS_BY_SECTION[Math.max(0, Math.min(KEYWORDS_BY_SECTION.length - 1, i))] ?? "";
+  const extra =
+    KEYWORDS_BY_SECTION[
+      Math.max(0, Math.min(KEYWORDS_BY_SECTION.length - 1, i))
+    ] ?? "";
   return extra ? `${KEYWORDS_BASE}, ${extra}` : KEYWORDS_BASE;
 }
 
@@ -127,7 +130,12 @@ export function jsonLdOrganization() {
       "https://www.instagram.com/hackspain26/",
       "https://github.com/samuelcorsan/hackspain.com",
     ],
-    knowsAbout: ["hackathon España", "Madrid tech events", "young coders Europe", "machine learning hackathon"],
+    knowsAbout: [
+      "hackathon España",
+      "Madrid tech events",
+      "young coders Europe",
+      "machine learning hackathon",
+    ],
     inLanguage: "es",
   };
 }
@@ -185,7 +193,8 @@ export function jsonLdEvent() {
     description:
       "Hackathon en Madrid, España — HackSpain 2026. 24 horas para jóvenes programadores. Junio 2026.",
     inLanguage: "es",
-    keywords: "hackathon Madrid, hackathon España, Hack Spain, hack spain, HackSpain, ML, patrocinadores",
+    keywords:
+      "hackathon Madrid, hackathon España, Hack Spain, hack spain, HackSpain, ML, patrocinadores",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     eventStatus: "https://schema.org/EventScheduled",
     startDate: "2026-06-01",
@@ -215,7 +224,7 @@ export function jsonLdFaq() {
         name: '¿Qué es HackSpain o "Hack Spain"?',
         acceptedAnswer: {
           "@type": "Answer",
-          text: 'HackSpain (también buscado como Hack Spain o hack spain) es un hackathon con misión social en Madrid, España, en 2026: 24 horas, cientos de jóvenes programadores, tracks de ML y no técnicos, y patrocinadores como Google. Web oficial: hackspain.com.',
+          text: "HackSpain (también buscado como Hack Spain o hack spain) es un hackathon con misión social en Madrid, España, en 2026: 24 horas, cientos de jóvenes programadores, tracks de ML y no técnicos, y patrocinadores como Google. Web oficial: hackspain.com.",
         },
       },
       {

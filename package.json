@@ -1,23 +1,4 @@
 {
-  "name": "",
-  "type": "module",
-  "version": "0.0.1",
-  "engines": {
-    "node": ">=22.12.0"
-  },
-  "scripts": {
-    "assets:quiver": "bun scripts/quiver-generate-assets.mjs",
-    "assets:quiver:tiles": "node scripts/quiver-generate-tile-illustrations.mjs",
-    "assets:quiver:tiles+heroes": "node scripts/quiver-generate-tile-illustrations.mjs --with-heroes",
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "og:generate": "node scripts/generate-og.mjs",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "astro": "astro"
-  },
   "dependencies": {
     "@astrojs/react": "^5.0.1",
     "@astrojs/vercel": "^10.0.2",
@@ -42,10 +23,33 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.12",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/nodemailer": "^8.0.0",
     "drizzle-kit": "^0.31.10",
     "postcss": "^8.5.8",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "ultracite": "7.6.2"
+  },
+  "name": "",
+  "scripts": {
+    "assets:quiver": "bun scripts/quiver-generate-assets.mjs",
+    "assets:quiver:tiles": "node scripts/quiver-generate-tile-illustrations.mjs",
+    "assets:quiver:tiles+heroes": "node scripts/quiver-generate-tile-illustrations.mjs --with-heroes",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "og:generate": "node scripts/generate-og.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "astro": "astro",
+    "check": "ultracite check",
+    "fix": "ultracite fix"
+  },
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

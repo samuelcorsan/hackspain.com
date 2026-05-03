@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -12,27 +12,33 @@ function loadKey() {
     const raw = readFileSync(envPath, "utf8");
     for (const line of raw.split(/\r?\n/)) {
       const m = line.match(/^(?:QUIVERAI_API_KEY|QUIVER_API_KEY)=(.*)$/);
-      if (m) return m[1].trim().replace(/^["']|["']$/g, "");
+      if (m) {
+        return m[1].trim().replace(/^["']|["']$/g, "");
+      }
     }
   } catch {
     /* no .env */
   }
-  if (process.env.QUIVERAI_API_KEY) return process.env.QUIVERAI_API_KEY;
-  if (process.env.QUIVER_API_KEY) return process.env.QUIVER_API_KEY;
+  if (process.env.QUIVERAI_API_KEY) {
+    return process.env.QUIVERAI_API_KEY;
+  }
+  if (process.env.QUIVER_API_KEY) {
+    return process.env.QUIVER_API_KEY;
+  }
   throw new Error("Set QUIVER_API_KEY or QUIVERAI_API_KEY in .env or env");
 }
 
 const API = "https://api.quiver.ai/v1/svgs/generations";
 
-const TILE_STYLE = `HackSpain mosaic GRID TILE illustration for a multi-panel landing page (like ceramic patchwork). Rules: cubist stained-glass poster look; every region is a triangle, rectangle, or trapezoid; flat fills only; thick uniform dark ink strokes (#000000 or #4a2c1f) on ALL shared edges like grout lines, miter joins; no gradients, no glow, no drop shadows, no watermark. Palette limited to warm Spanish hackathon: cream #f4ecd8, sand #e8dcc4, gold #eab619, orange #d96b2a, red #cc291f, teal #35858a, navy #1e3958. Subject centered, valid SVG, aspect ratio as given in prompt. No text except if prompt explicitly allows one short label.`;
+const TILE_STYLE =
+  "HackSpain mosaic GRID TILE illustration for a multi-panel landing page (like ceramic patchwork). Rules: cubist stained-glass poster look; every region is a triangle, rectangle, or trapezoid; flat fills only; thick uniform dark ink strokes (#000000 or #4a2c1f) on ALL shared edges like grout lines, miter joins; no gradients, no glow, no drop shadows, no watermark. Palette limited to warm Spanish hackathon: cream #f4ecd8, sand #e8dcc4, gold #eab619, orange #d96b2a, red #cc291f, teal #35858a, navy #1e3958. Subject centered, valid SVG, aspect ratio as given in prompt. No text except if prompt explicitly allows one short label.";
 
 const heroJobs = [
   {
     out: "illustration-windmill.svg",
     prompt:
       "Spanish Don Quixote windmill in strict cubist stained-glass poster style: tall tapered tower in cream and ochre, four sails are printed circuit boards with visible traces, vias as small circles, orthogonal lines only, no curves on PCB areas. Flat color fills terracotta red burnt orange golden yellow slate blue navy accents. Every shape separated by heavy uniform black stroke 3px equivalent, miter joins, no gradients, no drop shadows, no text, no watermark. Isolated illustration centered, view from slight three-quarter angle, SVG-friendly simplified geometry for web hero asset, aspect ratio roughly 3:4 portrait.",
-    instructions:
-      `${TILE_STYLE} Output valid compact SVG only: flat vector, geometric primitives, thick outlines matching HACKSPAIN event poster, warm Spanish palette plus teal-blue PCB details on sails.`,
+    instructions: `${TILE_STYLE} Output valid compact SVG only: flat vector, geometric primitives, thick outlines matching HACKSPAIN event poster, warm Spanish palette plus teal-blue PCB details on sails.`,
   },
   {
     out: "illustration-horse.svg",
@@ -115,7 +121,9 @@ async function generate(key, { prompt, instructions }) {
     throw new Error(`Quiver API: ${msg}`);
   }
   const svg = json?.data?.[0]?.svg;
-  if (!svg) throw new Error("Quiver API returned no SVG");
+  if (!svg) {
+    throw new Error("Quiver API returned no SVG");
+  }
   return svg;
 }
 
@@ -133,5 +141,8 @@ for (const job of runJobs) {
 }
 
 process.stdout.write(
-  JSON.stringify({ saved: runJobs.map((j) => `src/assets/${j.out}`), withHeroes }) + "\n",
+  `${JSON.stringify({
+    saved: runJobs.map((j) => `src/assets/${j.out}`),
+    withHeroes,
+  })}\n`
 );

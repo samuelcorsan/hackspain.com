@@ -29,7 +29,9 @@ export function initCookieConsentBanner(): void {
     } catch {
       /* ignore */
     }
-    (window as unknown as { __hsAnalyticsConsent?: string }).__hsAnalyticsConsent = value;
+    (
+      window as unknown as { __hsAnalyticsConsent?: string }
+    ).__hsAnalyticsConsent = value;
     hideBanner();
   }
 

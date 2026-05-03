@@ -78,9 +78,7 @@
         "hackathon_signups_email_unique": {
           "name": "hackathon_signups_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},

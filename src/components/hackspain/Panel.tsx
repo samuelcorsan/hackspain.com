@@ -6,30 +6,38 @@ export function vp(
   y: number,
   w: number,
   h: number,
-  artboard: Artboard = ARTBOARD_DESKTOP,
+  artboard: Artboard = ARTBOARD_DESKTOP
 ): React.CSSProperties {
   return {
     position: "absolute",
-    left:   `${(x / artboard.w) * 100}%`,
-    top:    `${(y / artboard.h) * 100}%`,
-    width:  `${(w / artboard.w) * 100}%`,
+    left: `${(x / artboard.w) * 100}%`,
+    top: `${(y / artboard.h) * 100}%`,
+    width: `${(w / artboard.w) * 100}%`,
     height: `${(h / artboard.h) * 100}%`,
   };
 }
 
-export function P({ bg = "bg-hs-paper", align = "center", className, children }: {
+export function P({
+  bg = "bg-hs-paper",
+  align = "center",
+  className,
+  children,
+}: {
   bg?: string;
   align?: "center" | "start";
   className?: string;
   children: React.ReactNode;
 }) {
-  const a = align === "start" ? "items-start justify-start" : "items-center justify-center";
+  const a =
+    align === "start"
+      ? "items-start justify-start"
+      : "items-center justify-center";
   return (
     <div
       className={[
         "flex h-full w-full flex-col",
         a,
-        "gap-1 p-1.5 @[180px]:gap-2 @[180px]:p-3",
+        "@[180px]:gap-2 gap-1 @[180px]:p-3 p-1.5",
         bg,
         className,
       ]

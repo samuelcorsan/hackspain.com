@@ -1,11 +1,12 @@
 ---
 export const prerender = false;
+
 import { LandingPage } from "../components/hackspain";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout sectionIndex={0}>
-	<main id="main" class="contents">
-		<LandingPage client:load initialSection={0} />
-	</main>
+  <main id="main" class="contents">
+    <LandingPage client:load initialSection={0} />
+  </main>
 </Layout>

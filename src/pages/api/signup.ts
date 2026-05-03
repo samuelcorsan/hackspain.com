@@ -3,7 +3,10 @@ import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
 import { getDb } from "../../db";
 import { hackathonSignups } from "../../db/schema";
-import { notifyDiscordNewSignup, notifyDiscordSignupApiIssue } from "../../lib/discordSignupWebhook";
+import {
+  notifyDiscordNewSignup,
+  notifyDiscordSignupApiIssue,
+} from "../../lib/discordSignupWebhook";
 import { sendSignupConfirmationEmail } from "../../lib/signupConfirmationEmail";
 import { parseSignupBody } from "../../lib/signupValidation";
 
@@ -23,7 +26,9 @@ function emptyToNull(s: string): string | null {
 }
 
 function emailHintFromBody(body: unknown): string | undefined {
-  if (!body || typeof body !== "object") return undefined;
+  if (!body || typeof body !== "object") {
+    return;
+  }
   const e = (body as { email?: unknown }).email;
   return typeof e === "string" ? e.trim().slice(0, 320) : undefined;
 }
@@ -34,11 +39,15 @@ function errDetail(e: unknown): string {
   const seen = new Set<unknown>();
   let cur: unknown = e;
   for (let depth = 0; depth < 14 && cur != null; depth++) {
-    if (seen.has(cur)) break;
+    if (seen.has(cur)) {
+      break;
+    }
     seen.add(cur);
     if (cur instanceof Error) {
       const line = `${cur.name}: ${cur.message}`.trim();
-      if (line && parts[parts.length - 1] !== line) parts.push(line);
+      if (line && parts.at(-1) !== line) {
+        parts.push(line);
+      }
       cur = cur.cause;
       continue;
     }
@@ -46,7 +55,9 @@ function errDetail(e: unknown): string {
       const o = cur as Record<string, unknown>;
       if (typeof o.message === "string" && o.message.trim()) {
         const line = o.message.trim();
-        if (parts[parts.length - 1] !== line) parts.push(line);
+        if (parts.at(-1) !== line) {
+          parts.push(line);
+        }
       }
       if ("cause" in o && o.cause != null) {
         cur = o.cause;
@@ -65,10 +76,17 @@ function isPostgresUniqueViolation(e: unknown): boolean {
   const seen = new Set<unknown>();
   let cur: unknown = e;
   for (let depth = 0; depth < 14 && cur != null; depth++) {
-    if (seen.has(cur)) break;
+    if (seen.has(cur)) {
+      break;
+    }
     seen.add(cur);
-    if (typeof cur === "object" && cur !== null && "code" in cur) {
-      if ((cur as { code: unknown }).code === "23505") return true;
+    if (
+      typeof cur === "object" &&
+      cur !== null &&
+      "code" in cur &&
+      (cur as { code: unknown }).code === "23505"
+    ) {
+      return true;
     }
     if (cur instanceof Error && cur.cause != null) {
       cur = cur.cause;
@@ -76,7 +94,9 @@ function isPostgresUniqueViolation(e: unknown): boolean {
     }
     if (typeof cur === "object" && cur !== null && "cause" in cur) {
       const next = (cur as { cause: unknown }).cause;
-      if (next == null) break;
+      if (next == null) {
+        break;
+      }
       cur = next;
       continue;
     }
@@ -97,7 +117,10 @@ export const POST: APIRoute = async ({ request }) => {
             scope.setTag("api", "signup");
             scope.setTag("outcome", "access_denied");
             scope.setContext("signup", { reason: "botid" });
-            Sentry.captureMessage("POST /api/signup blocked (BotID)", "warning");
+            Sentry.captureMessage(
+              "POST /api/signup blocked (BotID)",
+              "warning"
+            );
           });
         });
         return Response.json({ error: "access_denied" }, { status: 403 });
@@ -114,12 +137,18 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  if (request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json") {
+  if (
+    request.headers.get("content-type")?.split(";")[0]?.trim() !==
+    "application/json"
+  ) {
     safeSentry(() => {
       Sentry.withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "expected_json");
-        Sentry.captureMessage("POST /api/signup: wrong Content-Type", "warning");
+        Sentry.captureMessage(
+          "POST /api/signup: wrong Content-Type",
+          "warning"
+        );
       });
     });
     return Response.json({ error: "expected_json" }, { status: 415 });
@@ -137,7 +166,10 @@ export const POST: APIRoute = async ({ request }) => {
       Sentry.withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "invalid_json");
-        Sentry.captureMessage("POST /api/signup: body is not valid JSON", "warning");
+        Sentry.captureMessage(
+          "POST /api/signup: body is not valid JSON",
+          "warning"
+        );
       });
     });
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
@@ -152,7 +184,10 @@ export const POST: APIRoute = async ({ request }) => {
       Sentry.withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "invalid_body");
-        Sentry.captureMessage("POST /api/signup: body missing or not object", "warning");
+        Sentry.captureMessage(
+          "POST /api/signup: body missing or not object",
+          "warning"
+        );
       });
     });
     return Response.json({ error: "invalid_body" }, { status: 400 });
@@ -169,7 +204,10 @@ export const POST: APIRoute = async ({ request }) => {
       Sentry.withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "validation");
-        scope.setContext("details", { error: parsed.error, status: parsed.status });
+        scope.setContext("details", {
+          error: parsed.error,
+          status: parsed.status,
+        });
         Sentry.captureMessage("POST /api/signup: validation failed", "warning");
       });
     });
@@ -191,7 +229,9 @@ export const POST: APIRoute = async ({ request }) => {
     heardFrom,
   } = parsed.data;
 
-  const motivationDb = wantsAmbassador ? emptyToNull(ambassadorMotivation) : null;
+  const motivationDb = wantsAmbassador
+    ? emptyToNull(ambassadorMotivation)
+    : null;
   const studyDb = wantsAmbassador ? emptyToNull(ambassadorStudyWhere) : null;
 
   try {
@@ -276,12 +316,18 @@ export const POST: APIRoute = async ({ request }) => {
           scope.setTag("api", "signup");
           scope.setTag("outcome", "confirmation_email_failed");
           scope.setContext("email", { detail: emailResult.detail });
-          Sentry.captureMessage("POST /api/signup: confirmation email failed", "warning");
+          Sentry.captureMessage(
+            "POST /api/signup: confirmation email failed",
+            "warning"
+          );
         });
       });
     }
   } catch (e) {
-    console.error("[signup] Confirmation email threw after successful insert:", e);
+    console.error(
+      "[signup] Confirmation email threw after successful insert:",
+      e
+    );
     safeSentry(() => {
       Sentry.withScope((scope) => {
         scope.setTag("api", "signup");

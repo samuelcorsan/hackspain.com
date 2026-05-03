@@ -1,9 +1,18 @@
 function esc(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
-export function buildSitemapUrlsetXml(pageUrls: string[], siteOrigin: string): string {
-  const urls = [...pageUrls].sort((a, b) => a.localeCompare(b, "es", { numeric: true }));
+export function buildSitemapUrlsetXml(
+  pageUrls: string[],
+  _siteOrigin: string
+): string {
+  const urls = [...pageUrls].sort((a, b) =>
+    a.localeCompare(b, "es", { numeric: true })
+  );
   const lines: string[] = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',

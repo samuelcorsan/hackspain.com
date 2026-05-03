@@ -16,29 +16,39 @@ function linkifyPlain(segment: string, keyBase: string): ReactNode[] {
   LINK_RE.lastIndex = 0;
   while ((m = LINK_RE.exec(segment)) !== null) {
     const idx = m.index;
-    if (idx > last) nodes.push(segment.slice(last, idx));
+    if (idx > last) {
+      nodes.push(segment.slice(last, idx));
+    }
     const token = m[0];
     const isEmail = token.includes("@") && !/^https?:/i.test(token);
     let href = token;
-    if (isEmail) href = `mailto:${token}`;
-    else if (/^www\./i.test(token)) href = `https://${token}`;
+    if (isEmail) {
+      href = `mailto:${token}`;
+    } else if (/^www\./i.test(token)) {
+      href = `https://${token}`;
+    }
     nodes.push(
       <a
-        key={`${keyBase}-a-${ki++}`}
-        href={href}
         className={linkClass}
+        href={href}
+        key={`${keyBase}-a-${ki++}`}
         {...(isEmail ? {} : { target: "_blank", rel: "noopener noreferrer" })}
       >
         {token}
-      </a>,
+      </a>
     );
     last = idx + token.length;
   }
-  if (last < segment.length) nodes.push(segment.slice(last));
+  if (last < segment.length) {
+    nodes.push(segment.slice(last));
+  }
   return nodes.length ? nodes : [segment];
 }
 
-export function formatRichPolicyText(text: string, keyPrefix: string): ReactNode {
+export function formatRichPolicyText(
+  text: string,
+  keyPrefix: string
+): ReactNode {
   const parts: ReactNode[] = [];
   let pos = 0;
   let bi = 0;
@@ -47,13 +57,18 @@ export function formatRichPolicyText(text: string, keyPrefix: string): ReactNode
     foundBold = true;
     const idx = m.index ?? 0;
     if (idx > pos) {
-      parts.push(...linkifyPlain(text.slice(pos, idx), `${keyPrefix}-t-${pos}`));
+      parts.push(
+        ...linkifyPlain(text.slice(pos, idx), `${keyPrefix}-t-${pos}`)
+      );
     }
     const inner = m[1] ?? "";
     parts.push(
-      <strong key={`${keyPrefix}-b-${bi++}`} className="font-extrabold text-hs-ink">
+      <strong
+        className="font-extrabold text-hs-ink"
+        key={`${keyPrefix}-b-${bi++}`}
+      >
         {linkifyPlain(inner, `${keyPrefix}-ib-${idx}`)}
-      </strong>,
+      </strong>
     );
     pos = idx + m[0].length;
   }

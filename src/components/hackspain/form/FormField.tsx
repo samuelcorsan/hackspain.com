@@ -1,4 +1,9 @@
-import { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
+import {
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import {
   hsHintClass,
   hsLabelBungeeClass,
@@ -7,15 +12,15 @@ import {
 
 type LabelVariant = "bungee" | "sans";
 
-export type FormFieldProps = {
+export interface FormFieldProps {
+  children: ReactElement<{ id?: string }>;
+  className?: string;
+  hint?: ReactNode;
   id: string;
   label: ReactNode;
-  hint?: ReactNode;
-  required?: boolean;
   labelVariant?: LabelVariant;
-  className?: string;
-  children: ReactElement<{ id?: string }>;
-};
+  required?: boolean;
+}
 
 export function FormField({
   id,
@@ -29,16 +34,18 @@ export function FormField({
   const labelTextClass =
     labelVariant === "bungee" ? hsLabelBungeeClass : hsLabelSansClass;
 
-  const control = isValidElement(children) ? cloneElement(children, { id }) : children;
+  const control = isValidElement(children)
+    ? cloneElement(children, { id })
+    : children;
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="flex flex-col gap-1">
+      <label className="flex flex-col gap-1" htmlFor={id}>
         <span className={labelTextClass}>
           {label}
           {required ? " *" : null}
         </span>
-        {hint != null ? <span className={hsHintClass}>{hint}</span> : null}
+        {hint == null ? null : <span className={hsHintClass}>{hint}</span>}
         {control}
       </label>
     </div>

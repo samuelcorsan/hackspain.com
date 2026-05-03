@@ -28,15 +28,15 @@ body {
 }
 
 .sr-only {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border-width: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  border-width: 0;
+  clip: rect(0, 0, 0, 0);
 }
 
 /* Paints above form controls (opaque inputs hide inset shadow on parents). */
@@ -48,24 +48,25 @@ body {
   }
   50% {
     opacity: 1;
-    box-shadow: inset 0 0 0 5px var(--color-hs-gold),
+    box-shadow:
+      inset 0 0 0 5px var(--color-hs-gold),
       inset 0 0 28px color-mix(in srgb, var(--color-hs-gold) 35%, transparent);
   }
 }
 
 .hs-signup-field-attention-overlay {
-  pointer-events: none;
   position: absolute;
   inset: 0;
   z-index: 5;
+  pointer-events: none;
   border-radius: 2px;
   animation: hs-signup-attention-overlay 0.42s ease-in-out 3;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hs-signup-field-attention-overlay {
-    animation: none;
-    opacity: 0.92;
     box-shadow: inset 0 0 0 4px var(--color-hs-gold);
+    opacity: 0.92;
+    animation: none;
   }
 }

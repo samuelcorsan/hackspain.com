@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,7 +11,9 @@ function loadKey() {
   const raw = readFileSync(envPath, "utf8");
   for (const line of raw.split(/\r?\n/)) {
     const m = line.match(/^(?:QUIVERAI_API_KEY|QUIVER_API_KEY)=(.*)$/);
-    if (m) return m[1].trim();
+    if (m) {
+      return m[1].trim();
+    }
   }
   throw new Error("Add QUIVER_API_KEY or QUIVERAI_API_KEY to .env");
 }
@@ -57,7 +59,9 @@ async function generate(key, { prompt, instructions }) {
     throw new Error(`Quiver API: ${msg}`);
   }
   const svg = json?.data?.[0]?.svg;
-  if (!svg) throw new Error("Quiver API returned no SVG");
+  if (!svg) {
+    throw new Error("Quiver API returned no SVG");
+  }
   return svg;
 }
 
@@ -71,4 +75,6 @@ for (const job of jobs) {
   process.stderr.write(`Saved src/assets/${job.out}\n`);
 }
 
-process.stdout.write(JSON.stringify({ saved: jobs.map((j) => `src/assets/${j.out}`) }) + "\n");
+process.stdout.write(
+  `${JSON.stringify({ saved: jobs.map((j) => `src/assets/${j.out}`) })}\n`
+);

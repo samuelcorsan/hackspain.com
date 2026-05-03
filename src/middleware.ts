@@ -1,21 +1,30 @@
 import { defineMiddleware } from "astro:middleware";
-import { SECTION_SLUGS } from "./data/sectionRoutes";
 import llmsBody from "./data/llms.txt?raw";
+import { SECTION_SLUGS } from "./data/sectionRoutes";
 
 type SectionSlug = (typeof SECTION_SLUGS)[number];
 
 function stripTrailingSlash(pathname: string): string {
-  if (pathname.length <= 1) return pathname || "/";
+  if (pathname.length <= 1) {
+    return pathname || "/";
+  }
   const s = pathname.replace(/\/$/, "");
   return s === "" ? "/" : s;
 }
 
-function redirectIfLegacyLocalePath(pathname: string, baseUrl: string): Response | null {
+function redirectIfLegacyLocalePath(
+  pathname: string,
+  baseUrl: string
+): Response | null {
   const p = stripTrailingSlash(pathname);
   const parts = p === "/" ? [] : p.slice(1).split("/").filter(Boolean);
-  if (parts.length === 0) return null;
+  if (parts.length === 0) {
+    return null;
+  }
   const first = parts[0];
-  if (first !== "en" && first !== "es") return null;
+  if (first !== "en" && first !== "es") {
+    return null;
+  }
   const rest = parts.slice(1);
   const targetPath = rest.length === 0 ? "/" : `/${rest.join("/")}`;
   return Response.redirect(new URL(targetPath, baseUrl), 301);
@@ -23,30 +32,49 @@ function redirectIfLegacyLocalePath(pathname: string, baseUrl: string): Response
 
 function isLandingDocumentPath(pathname: string): boolean {
   const p = stripTrailingSlash(pathname);
-  if (p === "/") return true;
+  if (p === "/") {
+    return true;
+  }
   const parts = p.slice(1).split("/").filter(Boolean);
-  if (parts.length === 0) return true;
+  if (parts.length === 0) {
+    return true;
+  }
   const [a] = parts;
-  if (parts.length === 1) return SECTION_SLUGS.includes(a as SectionSlug);
+  if (parts.length === 1) {
+    return SECTION_SLUGS.includes(a as SectionSlug);
+  }
   return false;
 }
 
 function shouldServeMarkdownVariant(accept: string | null): boolean {
-  if (accept == null || accept === "") return false;
+  if (accept == null || accept === "") {
+    return false;
+  }
   return accept.toLowerCase().includes("text/markdown");
 }
 
 function shouldAttachLlmsDiscovery(pathname: string): boolean {
   const p = stripTrailingSlash(pathname);
-  if (p.startsWith("/api/")) return false;
-  if (p === "/llms.txt" || p === "/sitemap.xml") return false;
+  if (p.startsWith("/api/")) {
+    return false;
+  }
+  if (p === "/llms.txt" || p === "/sitemap.xml") {
+    return false;
+  }
   return true;
 }
 
 function mergeVary(existing: string | null, token: string): string {
-  if (!existing?.trim()) return token;
-  const parts = existing.split(",").map((s) => s.trim()).filter(Boolean);
-  if (parts.includes(token)) return existing;
+  if (!existing?.trim()) {
+    return token;
+  }
+  const parts = existing
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (parts.includes(token)) {
+    return existing;
+  }
   return `${existing}, ${token}`;
 }
 
@@ -59,12 +87,17 @@ const MARKDOWN_NEGOTIATION_HEADERS: Record<string, string> = {
   Vary: "Accept",
 };
 
-function withLlmsDiscoveryHeaders(response: Response, pathname: string): Response {
+function withLlmsDiscoveryHeaders(
+  response: Response,
+  pathname: string
+): Response {
   const headers = new Headers(response.headers);
   const existingLink = headers.get("Link");
   headers.set(
     "Link",
-    existingLink ? `${existingLink}, ${LLMS_TXT_DISCOVERY_LINK}` : LLMS_TXT_DISCOVERY_LINK,
+    existingLink
+      ? `${existingLink}, ${LLMS_TXT_DISCOVERY_LINK}`
+      : LLMS_TXT_DISCOVERY_LINK
   );
   headers.set("X-Llms-Txt", "/llms.txt");
   if (isLandingDocumentPath(pathname)) {
@@ -82,11 +115,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const method = request.method;
   const path = new URL(request.url).pathname;
   const redirect = redirectIfLegacyLocalePath(path, request.url);
-  if (redirect) return redirect;
+  if (redirect) {
+    return redirect;
+  }
 
-  if (method !== "GET" && method !== "HEAD") return next();
+  if (method !== "GET" && method !== "HEAD") {
+    return next();
+  }
 
-  if (isLandingDocumentPath(path) && shouldServeMarkdownVariant(request.headers.get("accept"))) {
+  if (
+    isLandingDocumentPath(path) &&
+    shouldServeMarkdownVariant(request.headers.get("accept"))
+  ) {
     if (method === "HEAD") {
       return new Response(null, { headers: MARKDOWN_NEGOTIATION_HEADERS });
     }
@@ -94,7 +134,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const response = await next();
-  if ((method === "GET" || method === "HEAD") && shouldAttachLlmsDiscovery(path)) {
+  if (
+    (method === "GET" || method === "HEAD") &&
+    shouldAttachLlmsDiscovery(path)
+  ) {
     return withLlmsDiscoveryHeaders(response, path);
   }
   return response;

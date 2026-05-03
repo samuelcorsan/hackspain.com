@@ -1,15 +1,13 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Controller, useForm, useWatch, type SubmitHandler } from "react-hook-form";
+import * as Sentry from "@sentry/astro";
 import { initBotId } from "botid/client/core";
 import { AnimatePresence, motion } from "motion/react";
-import { MosaicBackground } from "./MosaicBackground";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  FormField,
-  Input,
-  SocialPrefixInput,
-  Textarea,
-} from "./form";
-import { Button, ButtonLink } from "./ui/Button";
+  Controller,
+  type SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import {
   HEARD_FROM_OPTIONS,
   HEARD_FROM_SOURCE_IDS,
@@ -17,8 +15,10 @@ import {
   normalizeSocialUrl,
   parseSignupBodyClient,
 } from "../../lib/signupValidation";
+import { FormField, Input, SocialPrefixInput, Textarea } from "./form";
+import { MosaicBackground } from "./MosaicBackground";
+import { Button, ButtonLink } from "./ui/Button";
 import { useLayoutProfile } from "./useLayoutProfile";
-import * as Sentry from "@sentry/astro";
 
 const STORAGE_KEY = "hackspain-signup-draft-v1";
 const STORAGE_APPLIED_KEY = "hackspain-signup-applied-v1";
@@ -26,7 +26,9 @@ const STORAGE_APPLIED_KEY = "hackspain-signup-applied-v1";
 type FlowStatus = "idle" | "success" | "error" | "alreadyApplied";
 
 function readAppliedFlag(): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof window === "undefined") {
+    return false;
+  }
   return localStorage.getItem(STORAGE_APPLIED_KEY) === "1";
 }
 
@@ -46,21 +48,21 @@ function clearAppliedFlag() {
   }
 }
 
-type StoredFields = {
-  fullName: string;
-  email: string;
-  xUrl: string;
-  linkedinUrl: string;
-  githubUrl: string;
-  webUrl: string;
+interface StoredFields {
   achievements: string;
-  freeTime: string;
-  wantsAmbassador: boolean;
   ambassadorMotivation: string;
   ambassadorStudyWhere: string;
-  heardFromSource: HeardFromSourceId | "";
+  email: string;
+  freeTime: string;
+  fullName: string;
+  githubUrl: string;
   heardFromOther: string;
-};
+  heardFromSource: HeardFromSourceId | "";
+  linkedinUrl: string;
+  wantsAmbassador: boolean;
+  webUrl: string;
+  xUrl: string;
+}
 
 const EMPTY_FIELDS: StoredFields = {
   fullName: "",
@@ -79,20 +81,28 @@ const EMPTY_FIELDS: StoredFields = {
 };
 
 function readStoredFields(): StoredFields {
-  if (typeof window === "undefined") return { ...EMPTY_FIELDS };
+  if (typeof window === "undefined") {
+    return { ...EMPTY_FIELDS };
+  }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...EMPTY_FIELDS };
+    if (!raw) {
+      return { ...EMPTY_FIELDS };
+    }
     const o = JSON.parse(raw) as Record<string, unknown>;
     const s = (k: keyof StoredFields) =>
       typeof o[k] === "string" ? (o[k] as string) : "";
     const wantsAmbassador =
       o.wantsAmbassador === true || o.wantsAmbassador === "true";
     const ids = HEARD_FROM_SOURCE_IDS as readonly string[];
-    const sourceRaw = typeof o.heardFromSource === "string" ? o.heardFromSource.trim() : "";
+    const sourceRaw =
+      typeof o.heardFromSource === "string" ? o.heardFromSource.trim() : "";
     let heardFromSource: HeardFromSourceId | "" =
-      sourceRaw !== "" && ids.includes(sourceRaw) ? (sourceRaw as HeardFromSourceId) : "";
-    let heardFromOther = typeof o.heardFromOther === "string" ? o.heardFromOther : "";
+      sourceRaw !== "" && ids.includes(sourceRaw)
+        ? (sourceRaw as HeardFromSourceId)
+        : "";
+    let heardFromOther =
+      typeof o.heardFromOther === "string" ? o.heardFromOther : "";
     const legacy = typeof o.heardFrom === "string" ? o.heardFrom.trim() : "";
     if (!heardFromSource && legacy) {
       if (legacy.startsWith("other:")) {
@@ -155,7 +165,8 @@ const t = {
   fullName: "Nombre completo",
   email: "Email",
   socialsTitle: "Redes y enlaces",
-  socialsRequiredHint: "Añade al menos un enlace (X, LinkedIn, GitHub o tu web).",
+  socialsRequiredHint:
+    "Añade al menos un enlace (X, LinkedIn, GitHub o tu web).",
   x: "X (Twitter)",
   linkedin: "LinkedIn",
   github: "GitHub",
@@ -194,7 +205,8 @@ const t = {
   ambassadorWhyHint:
     "Unas frases sobre qué te mueve — comunidad, tech, tu campus, llegar a gente nueva…",
   ambassadorStudyLabel: "¿Dónde estudias?",
-  ambassadorStudyHint: "Universidad, bootcamp, centro u organización — lo que encaje.",
+  ambassadorStudyHint:
+    "Universidad, bootcamp, centro u organización — lo que encaje.",
   errorFullName: "Indica tu nombre completo.",
   legalSubmitNoticeBefore: "Al enviar este formulario aceptas nuestra ",
   legalPrivacyLinkLabel: "política de privacidad",
@@ -203,7 +215,9 @@ const t = {
 } as const;
 
 function ambassadorQueryEnabled(): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof window === "undefined") {
+    return false;
+  }
   const v = new URLSearchParams(window.location.search).get("ambassador");
   return v === "1" || v === "true" || v === "yes";
 }
@@ -216,9 +230,8 @@ export function SignupPage() {
   const ambassadorPageHref = "/ambassador";
   const privacyHref = "/privacy";
 
-  const { register, handleSubmit, control, setValue, watch, reset, formState } = useForm<StoredFields>(
-    { defaultValues: { ...EMPTY_FIELDS } },
-  );
+  const { register, handleSubmit, control, setValue, watch, reset, formState } =
+    useForm<StoredFields>({ defaultValues: { ...EMPTY_FIELDS } });
   const { isSubmitting } = formState;
   const heardFromSource = watch("heardFromSource");
   const wantsAmbassador = watch("wantsAmbassador");
@@ -239,17 +252,25 @@ export function SignupPage() {
 
   const watched = useWatch({ control });
   useEffect(() => {
-    if (status === "success" || status === "alreadyApplied") return;
-    if (!watched) return;
+    if (status === "success" || status === "alreadyApplied") {
+      return;
+    }
+    if (!watched) {
+      return;
+    }
     writeStoredFields(watched as StoredFields);
   }, [watched, status]);
 
   useEffect(() => {
-    if (ambassadorQueryEnabled()) setValue("wantsAmbassador", true, { shouldDirty: true });
+    if (ambassadorQueryEnabled()) {
+      setValue("wantsAmbassador", true, { shouldDirty: true });
+    }
   }, [setValue]);
 
   useEffect(() => {
-    if (import.meta.env.DEV) return;
+    if (import.meta.env.DEV) {
+      return;
+    }
     initBotId({
       protect: [{ path: "/api/signup", method: "POST" }],
     });
@@ -266,16 +287,27 @@ export function SignupPage() {
       requestAnimationFrame(() => {
         setAttentionTarget(target);
         const el =
-          target === "heard" ? heardFromSectionRef.current : ambassadorSectionRef.current;
-        if (!el || typeof window === "undefined") return;
-        const smooth = window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
-        el.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
+          target === "heard"
+            ? heardFromSectionRef.current
+            : ambassadorSectionRef.current;
+        if (!el || typeof window === "undefined") {
+          return;
+        }
+        const smooth = window.matchMedia(
+          "(prefers-reduced-motion: no-preference)"
+        ).matches;
+        el.scrollIntoView({
+          behavior: smooth ? "smooth" : "auto",
+          block: "center",
+        });
       });
     });
   }
 
   useEffect(() => {
-    if (!attentionTarget) return;
+    if (!attentionTarget) {
+      return;
+    }
     const id = window.setTimeout(() => setAttentionTarget(null), 1400);
     return () => window.clearTimeout(id);
   }, [attentionTarget]);
@@ -292,7 +324,11 @@ export function SignupPage() {
   const onSubmitForm: SubmitHandler<StoredFields> = async (data) => {
     setErrorMessage("");
 
-    Sentry.addBreadcrumb({ category: "ui", message: "signup: submit", level: "info" });
+    Sentry.addBreadcrumb({
+      category: "ui",
+      message: "signup: submit",
+      level: "info",
+    });
 
     if (!data.heardFromSource) {
       Sentry.addBreadcrumb({
@@ -313,7 +349,10 @@ export function SignupPage() {
         level: "info",
       });
       if (parsed.code === "generic") {
-        Sentry.captureMessage("Signup: client validation failed (generic)", "warning");
+        Sentry.captureMessage(
+          "Signup: client validation failed (generic)",
+          "warning"
+        );
       }
       if (parsed.code === "heard_from") {
         pulseAttention("heard");
@@ -326,7 +365,10 @@ export function SignupPage() {
         });
         return;
       }
-      if (parsed.code === "ambassador_motivation" || parsed.code === "ambassador_study_where") {
+      if (
+        parsed.code === "ambassador_motivation" ||
+        parsed.code === "ambassador_study_where"
+      ) {
         pulseAttention("ambassador");
         return;
       }
@@ -356,9 +398,11 @@ export function SignupPage() {
           });
           span.setAttribute("http.status_code", r.status);
           return r;
-        },
+        }
       );
-      const resJson = (await res.json().catch(() => ({}))) as { error?: string };
+      const resJson = (await res.json().catch(() => ({}))) as {
+        error?: string;
+      };
       if (res.ok) {
         clearStoredFields();
         setAppliedFlag();
@@ -386,14 +430,16 @@ export function SignupPage() {
           scope.setTag("flow", "signup");
           scope.setTag("source", "client");
           scope.setTag("http_status", String(res.status));
-          if (resJson.error) scope.setTag("api_error", resJson.error);
+          if (resJson.error) {
+            scope.setTag("api_error", resJson.error);
+          }
           scope.setContext("form", {
             wantsAmbassador: data.wantsAmbassador,
             heardFrom: data.heardFromSource,
           });
           Sentry.captureMessage(
             `Signup: API rejected ${res.status}${resJson.error ? ` (${resJson.error})` : ""}`,
-            "error",
+            "error"
           );
         });
       }
@@ -454,7 +500,9 @@ export function SignupPage() {
     }
   };
 
-  const webReg = register("webUrl", { onChange: () => setAttentionTarget(null) });
+  const webReg = register("webUrl", {
+    onChange: () => setAttentionTarget(null),
+  });
 
   return (
     <div className="relative z-0 min-h-dvh w-full">
@@ -464,35 +512,46 @@ export function SignupPage() {
       />
       <div className="relative z-0 mx-auto max-w-6xl px-3 pb-6 sm:px-4 sm:pb-10">
         <div className="grid grid-cols-1 gap-0 border-[3px] border-hs-ink bg-hs-ink">
-          <div className="border-b-[3px] border-hs-ink bg-hs-orange px-4 py-5">
-            <h1 className="font-bungee text-2xl leading-tight text-hs-ink sm:text-3xl">
+          <div className="border-hs-ink border-b-[3px] bg-hs-orange px-4 py-5">
+            <h1 className="font-bungee text-2xl text-hs-ink leading-tight sm:text-3xl">
               {t.title}
             </h1>
-            <p className="mt-2 max-w-xl font-sans text-base font-semibold leading-snug text-hs-ink sm:text-lg">
+            <p className="mt-2 max-w-xl font-sans font-semibold text-base text-hs-ink leading-snug sm:text-lg">
               {t.subtitle}
             </p>
           </div>
 
           <div className="bg-hs-paper">
             {status === "success" || status === "alreadyApplied" ? (
-              <div className="flex min-h-[min(52vh,440px)] flex-col items-center justify-center gap-8 border-t-[3px] border-hs-ink bg-gradient-to-b from-hs-paper/90 to-hs-sand/50 px-6 py-12 text-center sm:min-h-[min(48vh,480px)] sm:px-10 sm:py-16">
+              <div className="flex min-h-[min(52vh,440px)] flex-col items-center justify-center gap-8 border-hs-ink border-t-[3px] bg-gradient-to-b from-hs-paper/90 to-hs-sand/50 px-6 py-12 text-center sm:min-h-[min(48vh,480px)] sm:px-10 sm:py-16">
                 <img
-                  src="/happy_quijote.png"
                   alt=""
-                  width={320}
-                  height={320}
+                  className="h-auto max-h-[min(42vh,300px)] w-[min(88vw,260px)] object-contain object-bottom drop-shadow-[2px_3px_0_var(--color-hs-ink)]"
                   decoding="async"
-                  className="h-auto w-[min(88vw,260px)] max-h-[min(42vh,300px)] object-contain object-bottom drop-shadow-[2px_3px_0_var(--color-hs-ink)]"
+                  height={320}
+                  src="/happy_quijote.png"
+                  width={320}
                 />
                 <div className="flex max-w-lg flex-col items-center gap-6">
-                  <p className="font-sans text-lg font-bold leading-snug text-hs-ink sm:text-xl">
-                    {status === "alreadyApplied" ? t.alreadyApplied : t.applicationReceived}
+                  <p className="font-bold font-sans text-hs-ink text-lg leading-snug sm:text-xl">
+                    {status === "alreadyApplied"
+                      ? t.alreadyApplied
+                      : t.applicationReceived}
                   </p>
                   <div className="flex w-full flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
-                    <ButtonLink href={homeHref} variant="gold" size="success">
-                      {t.backHome.replace(/^\u2190\s*/, "").replace(/^←\s*/, "").trim() || t.backHome}
+                    <ButtonLink href={homeHref} size="success" variant="gold">
+                      {t.backHome
+                        .replace(/^\u2190\s*/, "")
+                        .replace(/^←\s*/, "")
+                        .trim() || t.backHome}
                     </ButtonLink>
-                    <Button type="button" variant="teal" size="success" onClick={applyAgain} className="cursor-pointer">
+                    <Button
+                      className="cursor-pointer"
+                      onClick={applyAgain}
+                      size="success"
+                      type="button"
+                      variant="teal"
+                    >
                       {t.applyAgain}
                     </Button>
                   </div>
@@ -500,15 +559,15 @@ export function SignupPage() {
               </div>
             ) : (
               <form
+                className="flex flex-col gap-0 border-hs-ink border-t-[3px]"
                 onSubmit={handleSubmit(onSubmitForm)}
-                className="flex flex-col gap-0 border-t-[3px] border-hs-ink"
               >
                 <div className="grid gap-0 sm:grid-cols-2">
                   <FormField
+                    className={cellLeftSm}
                     id="signup-full-name"
                     label={t.fullName}
                     required
-                    className={cellLeftSm}
                   >
                     <Input
                       autoComplete="name"
@@ -516,102 +575,120 @@ export function SignupPage() {
                       {...register("fullName")}
                     />
                   </FormField>
-                  <FormField id="signup-email" label={t.email} required className={cellBase}>
+                  <FormField
+                    className={cellBase}
+                    id="signup-email"
+                    label={t.email}
+                    required
+                  >
                     <Input
-                      type="email"
                       autoComplete="email"
                       required
+                      type="email"
                       {...register("email")}
                     />
                   </FormField>
                 </div>
 
-                <div className="border-b-[3px] border-hs-ink bg-hs-teal/25 px-4 py-3">
-                  <p className="font-bungee text-base tracking-wide text-hs-ink sm:text-lg">
+                <div className="border-hs-ink border-b-[3px] bg-hs-teal/25 px-4 py-3">
+                  <p className="font-bungee text-base text-hs-ink tracking-wide sm:text-lg">
                     {t.socialsTitle}
                   </p>
-                  <p className="mt-1 font-sans text-sm font-semibold text-hs-ink sm:text-base">
+                  <p className="mt-1 font-sans font-semibold text-hs-ink text-sm sm:text-base">
                     {t.socialsRequiredHint}
                   </p>
                 </div>
                 <div className="grid gap-0 sm:grid-cols-2">
                   <FormField
+                    className={cellLeftSm}
                     id="signup-x-url"
                     label={t.x}
                     labelVariant="sans"
-                    className={cellLeftSm}
                   >
                     <Controller
-                      name="xUrl"
                       control={control}
+                      name="xUrl"
                       render={({ field }) => (
                         <SocialPrefixInput
                           name={field.name}
+                          onBlur={field.onBlur}
+                          onChange={(v) => field.onChange(v)}
+                          placeholder={t.socialXPlaceholder}
                           prefix={X_PREFIX}
                           profileKind="x"
                           value={field.value}
-                          onChange={(v) => field.onChange(v)}
-                          onBlur={field.onBlur}
-                          placeholder={t.socialXPlaceholder}
                         />
                       )}
                     />
                   </FormField>
                   <FormField
+                    className={cellBase}
                     id="signup-linkedin-url"
                     label={t.linkedin}
                     labelVariant="sans"
-                    className={cellBase}
                   >
                     <Controller
-                      name="linkedinUrl"
                       control={control}
+                      name="linkedinUrl"
                       render={({ field }) => (
                         <SocialPrefixInput
                           name={field.name}
+                          onBlur={field.onBlur}
+                          onChange={(v) => field.onChange(v)}
+                          placeholder={t.socialLinkedinPlaceholder}
                           prefix={LINKEDIN_PREFIX}
                           profileKind="linkedin"
                           value={field.value}
-                          onChange={(v) => field.onChange(v)}
-                          onBlur={field.onBlur}
-                          placeholder={t.socialLinkedinPlaceholder}
                         />
                       )}
                     />
                   </FormField>
                   <FormField
+                    className={cellLeftSm}
                     id="signup-github-url"
                     label={t.github}
                     labelVariant="sans"
-                    className={cellLeftSm}
                   >
                     <Controller
-                      name="githubUrl"
                       control={control}
+                      name="githubUrl"
                       render={({ field }) => (
                         <SocialPrefixInput
                           name={field.name}
+                          onBlur={field.onBlur}
+                          onChange={(v) => field.onChange(v)}
+                          placeholder={t.socialGithubPlaceholder}
                           prefix={GITHUB_PREFIX}
                           profileKind="github"
                           value={field.value}
-                          onChange={(v) => field.onChange(v)}
-                          onBlur={field.onBlur}
-                          placeholder={t.socialGithubPlaceholder}
                         />
                       )}
                     />
                   </FormField>
-                  <FormField id="signup-web-url" label={t.web} labelVariant="sans" className={cellBase}>
+                  <FormField
+                    className={cellBase}
+                    id="signup-web-url"
+                    label={t.web}
+                    labelVariant="sans"
+                  >
                     <Input
-                      type="text"
-                      inputMode="url"
                       autoComplete="url"
+                      inputMode="url"
                       placeholder="yoursite.com or https://..."
+                      type="text"
                       {...webReg}
                       onBlur={(e) => {
                         webReg.onBlur(e);
-                        const norm = normalizeSocialUrl(e.target.value.trim(), "web");
-                        if (norm) setValue("webUrl", norm, { shouldValidate: true, shouldTouch: true });
+                        const norm = normalizeSocialUrl(
+                          e.target.value.trim(),
+                          "web"
+                        );
+                        if (norm) {
+                          setValue("webUrl", norm, {
+                            shouldValidate: true,
+                            shouldTouch: true,
+                          });
+                        }
                       }}
                       onPaste={(e) => {
                         e.preventDefault();
@@ -621,7 +698,9 @@ export function SignupPage() {
                             .split(/\r?\n/)
                             .map((l) => l.trim())
                             .find((l) => l.length > 0) ?? "";
-                        if (!line) return;
+                        if (!line) {
+                          return;
+                        }
                         const norm = normalizeSocialUrl(line, "web");
                         setValue("webUrl", norm || line, {
                           shouldValidate: true,
@@ -634,10 +713,10 @@ export function SignupPage() {
                 </div>
 
                 <FormField
+                  className={cellBase}
+                  hint={t.achievementsHint}
                   id="signup-achievements"
                   label={t.achievements}
-                  hint={t.achievementsHint}
-                  className={cellBase}
                 >
                   <Textarea
                     className="min-h-[120px] resize-y"
@@ -647,10 +726,10 @@ export function SignupPage() {
                 </FormField>
 
                 <FormField
+                  className={cellBase}
+                  hint={t.freeTimeHint}
                   id="signup-free-time"
                   label={t.freeTime}
-                  hint={t.freeTimeHint}
-                  className={cellBase}
                 >
                   <Textarea
                     className="min-h-[120px] resize-y"
@@ -659,115 +738,131 @@ export function SignupPage() {
                   />
                 </FormField>
 
-                <div ref={heardFromSectionRef} className={`${cellBase} relative isolate`}>
+                <div
+                  className={`${cellBase} relative isolate`}
+                  ref={heardFromSectionRef}
+                >
                   <FormField
+                    className="min-w-0 border-0 bg-transparent p-0 shadow-none"
                     id="signup-heard-from"
                     label={t.heardFrom}
                     required
-                    className="min-w-0 border-0 bg-transparent p-0 shadow-none"
                   >
                     <fieldset className="min-w-0 border-0 p-0">
-                    <legend className="sr-only">
-                      {t.heardFrom} (obligatorio)
-                    </legend>
-                    <div className="grid grid-cols-2 gap-1.5 min-[520px]:grid-cols-3 md:grid-cols-4">
-                      {HEARD_FROM_OPTIONS.map((opt) => (
-                        <label
-                          key={opt.id}
-                          htmlFor={`signup-heard-from-${opt.id}`}
-                          className="flex cursor-pointer items-start gap-1.5 rounded-sm border-[3px] border-hs-ink bg-hs-paper px-2 py-1.5 shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow] has-[:focus-visible]:border-hs-navy hover:bg-hs-sand/40 has-[:checked]:bg-hs-gold/35"
-                        >
-                          <div className="relative mt-px h-4 w-4 shrink-0">
-                            <input
-                              id={`signup-heard-from-${opt.id}`}
-                              type="radio"
-                              value={opt.id}
-                              {...register("heardFromSource", {
-                                onChange: (e) => {
-                                  setAttentionTarget(null);
-                                  if (e.target.value !== "other") {
-                                    setValue("heardFromOther", "", { shouldDirty: true });
-                                  }
-                                },
-                              })}
-                              className="peer absolute inset-0 z-10 h-4 w-4 cursor-pointer appearance-none opacity-0"
-                            />
-                            <div
-                              className="pointer-events-none flex h-4 w-4 items-center justify-center rounded-full border-2 border-hs-ink bg-hs-paper peer-checked:bg-hs-gold [&_span]:opacity-0 peer-checked:[&_span]:opacity-100 [&_span]:transition-opacity"
-                              aria-hidden
-                            >
-                              <span className="h-1.5 w-1.5 rounded-full bg-hs-ink" />
+                      <legend className="sr-only">
+                        {t.heardFrom} (obligatorio)
+                      </legend>
+                      <div className="grid grid-cols-2 gap-1.5 md:grid-cols-4 min-[520px]:grid-cols-3">
+                        {HEARD_FROM_OPTIONS.map((opt) => (
+                          <label
+                            className="flex cursor-pointer items-start gap-1.5 rounded-sm border-[3px] border-hs-ink bg-hs-paper px-2 py-1.5 shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow] hover:bg-hs-sand/40 has-[:focus-visible]:border-hs-navy has-[:checked]:bg-hs-gold/35"
+                            htmlFor={`signup-heard-from-${opt.id}`}
+                            key={opt.id}
+                          >
+                            <div className="relative mt-px h-4 w-4 shrink-0">
+                              <input
+                                id={`signup-heard-from-${opt.id}`}
+                                type="radio"
+                                value={opt.id}
+                                {...register("heardFromSource", {
+                                  onChange: (e) => {
+                                    setAttentionTarget(null);
+                                    if (e.target.value !== "other") {
+                                      setValue("heardFromOther", "", {
+                                        shouldDirty: true,
+                                      });
+                                    }
+                                  },
+                                })}
+                                className="peer absolute inset-0 z-10 h-4 w-4 cursor-pointer appearance-none opacity-0"
+                              />
+                              <div
+                                aria-hidden
+                                className="pointer-events-none flex h-4 w-4 items-center justify-center rounded-full border-2 border-hs-ink bg-hs-paper peer-checked:bg-hs-gold [&_span]:opacity-0 [&_span]:transition-opacity peer-checked:[&_span]:opacity-100"
+                              >
+                                <span className="h-1.5 w-1.5 rounded-full bg-hs-ink" />
+                              </div>
                             </div>
-                          </div>
-                          <span className="min-w-0 font-sans text-xs font-semibold leading-tight text-hs-ink sm:text-sm">
-                            {opt.label}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                    {heardFromSource === "other" ? (
-                      <div className="mt-3">
-                        <Input
-                          id="signup-heard-from-other"
-                          type="text"
-                          autoComplete="off"
-                          placeholder={t.heardFromOtherPlaceholder}
-                          aria-required
-                          {...register("heardFromOther", {
-                            onChange: () => setAttentionTarget(null),
-                          })}
-                        />
+                            <span className="min-w-0 font-sans font-semibold text-hs-ink text-xs leading-tight sm:text-sm">
+                              {opt.label}
+                            </span>
+                          </label>
+                        ))}
                       </div>
-                    ) : null}
+                      {heardFromSource === "other" ? (
+                        <div className="mt-3">
+                          <Input
+                            aria-required
+                            autoComplete="off"
+                            id="signup-heard-from-other"
+                            placeholder={t.heardFromOtherPlaceholder}
+                            type="text"
+                            {...register("heardFromOther", {
+                              onChange: () => setAttentionTarget(null),
+                            })}
+                          />
+                        </div>
+                      ) : null}
                     </fieldset>
                   </FormField>
                   {attentionTarget === "heard" ? (
-                    <div className="hs-signup-field-attention-overlay" aria-hidden />
+                    <div
+                      aria-hidden
+                      className="hs-signup-field-attention-overlay"
+                    />
                   ) : null}
                 </div>
 
-                <div className="border-b-[3px] border-hs-ink bg-hs-teal/15 px-4 py-4">
+                <div className="border-hs-ink border-b-[3px] bg-hs-teal/15 px-4 py-4">
                   <div className="flex items-start gap-3">
                     <div className="relative mt-0.5 h-6 w-6 shrink-0">
                       <input
                         id="signup-wants-ambassador"
                         type="checkbox"
-                        {...register("wantsAmbassador", { onChange: () => setAttentionTarget(null) })}
+                        {...register("wantsAmbassador", {
+                          onChange: () => setAttentionTarget(null),
+                        })}
                         className="peer absolute inset-0 z-10 h-6 w-6 cursor-pointer appearance-none opacity-0"
                       />
                       <div
-                        className="pointer-events-none flex h-6 w-6 items-center justify-center rounded-sm border-[3px] border-hs-ink bg-hs-paper shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow,border-color] duration-200 peer-hover:bg-hs-sand/55 peer-focus-visible:border-hs-navy peer-checked:bg-hs-gold [&_svg]:opacity-0 [&_svg]:transition-opacity [&_svg]:duration-200 [&_svg]:ease-out peer-checked:[&_svg]:opacity-100"
                         aria-hidden
+                        className="pointer-events-none flex h-6 w-6 items-center justify-center rounded-sm border-[3px] border-hs-ink bg-hs-paper shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow,border-color] duration-200 peer-checked:bg-hs-gold peer-hover:bg-hs-sand/55 peer-focus-visible:border-hs-navy [&_svg]:opacity-0 [&_svg]:transition-opacity [&_svg]:duration-200 [&_svg]:ease-out peer-checked:[&_svg]:opacity-100"
                       >
                         <svg
-                          width="14"
+                          className="text-hs-ink"
+                          fill="none"
                           height="14"
                           viewBox="0 0 14 14"
-                          fill="none"
+                          width="14"
                           xmlns="http://www.w3.org/2000/svg"
-                          className="text-hs-ink"
                         >
                           <path
                             d="M2.5 7.2 5.6 10.3 11.5 3.8"
                             stroke="currentColor"
-                            strokeWidth="2.2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
+                            strokeWidth="2.2"
                           />
                         </svg>
                       </div>
                     </div>
-                    <div className="min-w-0 font-sans text-base font-semibold leading-snug text-hs-ink sm:text-[1.05rem]">
-                      <label htmlFor="signup-wants-ambassador" className="cursor-pointer">
+                    <div className="min-w-0 font-sans font-semibold text-base text-hs-ink leading-snug sm:text-[1.05rem]">
+                      <label
+                        className="cursor-pointer"
+                        htmlFor="signup-wants-ambassador"
+                      >
                         {t.ambassadorCheckboxBefore}
                       </label>
                       <a
-                        href={ambassadorPageHref}
                         className="font-extrabold text-hs-navy underline decoration-2 underline-offset-2 hover:text-hs-ink"
+                        href={ambassadorPageHref}
                       >
                         {t.ambassadorCheckboxLink}
                       </a>
-                      <label htmlFor="signup-wants-ambassador" className="cursor-pointer">
+                      <label
+                        className="cursor-pointer"
+                        htmlFor="signup-wants-ambassador"
+                      >
                         {t.ambassadorCheckboxAfter}
                       </label>
                     </div>
@@ -777,42 +872,49 @@ export function SignupPage() {
                 <AnimatePresence initial={false}>
                   {wantsAmbassador ? (
                     <motion.div
-                      ref={ambassadorSectionRef}
-                      key="signup-ambassador-fields"
-                      initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
+                      className="overflow-hidden border-hs-ink border-b-[3px]"
                       exit={{ opacity: 0, height: 0 }}
+                      initial={{ opacity: 0, height: 0 }}
+                      key="signup-ambassador-fields"
+                      ref={ambassadorSectionRef}
                       transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden border-b-[3px] border-hs-ink"
                     >
                       <div className="relative isolate grid gap-0 bg-hs-paper">
                         <FormField
+                          className={cellBase}
+                          hint={t.ambassadorWhyHint}
                           id="signup-ambassador-motivation"
                           label={t.ambassadorWhyLabel}
-                          hint={t.ambassadorWhyHint}
                           required
-                          className={cellBase}
                         >
                           <Textarea
                             className="min-h-[100px] resize-y"
                             rows={4}
-                            {...register("ambassadorMotivation", { onChange: () => setAttentionTarget(null) })}
+                            {...register("ambassadorMotivation", {
+                              onChange: () => setAttentionTarget(null),
+                            })}
                           />
                         </FormField>
                         <FormField
+                          className="bg-hs-paper p-4"
+                          hint={t.ambassadorStudyHint}
                           id="signup-ambassador-study"
                           label={t.ambassadorStudyLabel}
-                          hint={t.ambassadorStudyHint}
                           required
-                          className="bg-hs-paper p-4"
                         >
                           <Input
                             autoComplete="organization"
-                            {...register("ambassadorStudyWhere", { onChange: () => setAttentionTarget(null) })}
+                            {...register("ambassadorStudyWhere", {
+                              onChange: () => setAttentionTarget(null),
+                            })}
                           />
                         </FormField>
                         {attentionTarget === "ambassador" ? (
-                          <div className="hs-signup-field-attention-overlay" aria-hidden />
+                          <div
+                            aria-hidden
+                            className="hs-signup-field-attention-overlay"
+                          />
                         ) : null}
                       </div>
                     </motion.div>
@@ -821,7 +923,7 @@ export function SignupPage() {
 
                 {status === "error" && errorMessage ? (
                   <div
-                    className="border-b-[3px] border-hs-ink bg-hs-red/20 px-4 py-3 font-sans text-base font-bold text-hs-ink"
+                    className="border-hs-ink border-b-[3px] bg-hs-red/20 px-4 py-3 font-bold font-sans text-base text-hs-ink"
                     role="alert"
                   >
                     {errorMessage}
@@ -829,21 +931,21 @@ export function SignupPage() {
                 ) : null}
 
                 <div className="flex flex-col gap-4 bg-hs-sand/30 p-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-                  <p className="max-w-xl font-sans text-xs font-semibold leading-snug text-hs-ink sm:max-w-md sm:text-sm">
+                  <p className="max-w-xl font-sans font-semibold text-hs-ink text-xs leading-snug sm:max-w-md sm:text-sm">
                     {t.legalSubmitNoticeBefore}
                     <a
-                      href={`${privacyHref}#privacy-policy`}
                       className="font-extrabold text-hs-navy underline decoration-2 underline-offset-2 hover:text-hs-ink"
+                      href={`${privacyHref}#privacy-policy`}
                     >
                       {t.legalPrivacyLinkLabel}
                     </a>
                     {t.legalSubmitNoticeAfter}
                   </p>
                   <Button
+                    className="shrink-0 self-end sm:self-auto"
+                    disabled={isSubmitting}
                     type="submit"
                     variant="gold"
-                    disabled={isSubmitting}
-                    className="shrink-0 self-end sm:self-auto"
                   >
                     {isSubmitting ? t.submitting : t.submit}
                   </Button>

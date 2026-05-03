@@ -7,7 +7,10 @@ function easeOutCubic(t: number) {
   return 1 - (1 - t) ** 3;
 }
 
-type Props = { className?: string; ariaLabel: string };
+interface Props {
+  ariaLabel: string;
+  className?: string;
+}
 
 export function ParticipantsCountUp({ className = "", ariaLabel }: Props) {
   const [value, setValue] = useState(0);
@@ -23,11 +26,15 @@ export function ParticipantsCountUp({ className = "", ariaLabel }: Props) {
     let frame = 0;
 
     const step = (now: number) => {
-      if (startTime === undefined) startTime = now;
+      if (startTime === undefined) {
+        startTime = now;
+      }
       const elapsed = now - startTime;
       const p = Math.min(1, elapsed / DURATION_MS);
       setValue(Math.round(TARGET * easeOutCubic(p)));
-      if (p < 1) frame = requestAnimationFrame(step);
+      if (p < 1) {
+        frame = requestAnimationFrame(step);
+      }
     };
 
     frame = requestAnimationFrame(step);
@@ -35,7 +42,7 @@ export function ParticipantsCountUp({ className = "", ariaLabel }: Props) {
   }, []);
 
   return (
-    <span className={`tabular-nums ${className}`.trim()} aria-label={ariaLabel}>
+    <span aria-label={ariaLabel} className={`tabular-nums ${className}`.trim()}>
       +{value}
     </span>
   );

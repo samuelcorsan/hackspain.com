@@ -1,5 +1,8 @@
 import type { ClipboardEvent, FocusEvent } from "react";
-import { cleanProfilePasteText, type ProfileFieldKind } from "../../../lib/signupValidation";
+import {
+  cleanProfilePasteText,
+  type ProfileFieldKind,
+} from "../../../lib/signupValidation";
 
 const socialComboWrapClass =
   "flex w-full min-w-0 rounded-sm border-[3px] border-hs-ink bg-hs-paper transition-[border-color] duration-150 ease-out focus-within:border-hs-navy [&:-webkit-autofill]:shadow-[inset_0_0_0_1000px_var(--color-hs-paper)]";
@@ -10,16 +13,16 @@ const socialPrefixClass =
 const socialInnerInputClass =
   "font-sans min-w-0 flex-1 border-0 bg-transparent px-2 py-2 text-base text-hs-ink outline-none focus:outline-none focus-visible:outline-none [color-scheme:light] placeholder:text-hs-ink/42 selection:bg-hs-gold/50 selection:text-hs-ink focus:ring-0 focus-visible:ring-0 [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-hs-ink)]";
 
-export type SocialPrefixInputProps = {
+export interface SocialPrefixInputProps {
   id?: string;
   name: string;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void;
+  placeholder: string;
   prefix: string;
   profileKind: ProfileFieldKind;
   value: string;
-  onChange: (value: string) => void;
-  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
-  placeholder: string;
-};
+}
 
 export function SocialPrefixInput({
   id,
@@ -39,22 +42,22 @@ export function SocialPrefixInput({
 
   return (
     <div className={socialComboWrapClass}>
-      <span className={socialPrefixClass} aria-hidden="true">
+      <span aria-hidden="true" className={socialPrefixClass}>
         {prefix}
       </span>
       <input
-        id={id ?? undefined}
-        className={socialInnerInputClass}
-        name={name}
-        type="text"
-        inputMode="text"
         autoComplete="off"
-        spellCheck={false}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        className={socialInnerInputClass}
+        id={id ?? undefined}
+        inputMode="text"
+        name={name}
         onBlur={onBlur}
+        onChange={(e) => onChange(e.target.value)}
         onPaste={onPaste}
+        placeholder={placeholder}
+        spellCheck={false}
+        type="text"
+        value={value}
       />
     </div>
   );

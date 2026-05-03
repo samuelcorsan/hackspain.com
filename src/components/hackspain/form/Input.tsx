@@ -1,17 +1,19 @@
-import { forwardRef } from "react";
 import { hsControlBaseClass } from "./fieldClasses";
 
 export type InputProps = React.ComponentPropsWithoutRef<"input">;
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { className, ...props },
+export const Input = function Input({
+  className,
   ref,
-) {
+  ...props
+}: InputProps & { ref?: RefObject<HTMLInputElement | null> }) {
   return (
     <input
+      className={
+        className ? `${hsControlBaseClass} ${className}` : hsControlBaseClass
+      }
       ref={ref}
-      className={className ? `${hsControlBaseClass} ${className}` : hsControlBaseClass}
       {...props}
     />
   );
-});
+};

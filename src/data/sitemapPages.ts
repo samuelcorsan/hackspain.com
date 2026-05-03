@@ -4,7 +4,9 @@ export const SITEMAP_SITE_ORIGIN = "https://hackspain.com";
 
 export function normalizeSitemapPageUrl(href: string): string {
   const u = new URL(href);
-  if (u.pathname === "/" || u.pathname === "") return u.origin;
+  if (u.pathname === "/" || u.pathname === "") {
+    return u.origin;
+  }
   return `${u.origin}${u.pathname.replace(/\/+$/, "")}`;
 }
 

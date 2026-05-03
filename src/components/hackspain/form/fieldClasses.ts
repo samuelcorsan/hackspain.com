@@ -1,7 +1,8 @@
 export const hsHintClass =
   "font-sans text-sm leading-snug text-hs-brown sm:text-[0.95rem]";
 
-export const hsLabelBungeeClass = "font-bungee text-sm tracking-wide text-hs-ink";
+export const hsLabelBungeeClass =
+  "font-bungee text-sm tracking-wide text-hs-ink";
 
 export const hsLabelSansClass =
   "font-sans text-sm font-extrabold text-hs-ink sm:text-base";

@@ -2,7 +2,9 @@ import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const hackathonSignups = pgTable("hackathon_signups", {
   id: uuid("id").defaultRandom().primaryKey(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
   xUrl: text("x_url"),
@@ -22,7 +24,9 @@ export type NewHackathonSignup = typeof hackathonSignups.$inferInsert;
 
 export const ambassadorApplications = pgTable("ambassador_applications", {
   id: uuid("id").defaultRandom().primaryKey(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
   institution: text("institution").notNull(),
@@ -36,4 +40,5 @@ export const ambassadorApplications = pgTable("ambassador_applications", {
 });
 
 export type AmbassadorApplication = typeof ambassadorApplications.$inferSelect;
-export type NewAmbassadorApplication = typeof ambassadorApplications.$inferInsert;
+export type NewAmbassadorApplication =
+  typeof ambassadorApplications.$inferInsert;

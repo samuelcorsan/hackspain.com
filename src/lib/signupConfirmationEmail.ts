@@ -3,33 +3,47 @@ import nodemailer, { type Transporter } from "nodemailer";
 import { SignupConfirmation } from "../emails/SignupConfirmation";
 
 function envFromRuntime(name: string): string | undefined {
-  const proc = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process;
+  const proc = (
+    globalThis as unknown as {
+      process?: { env?: Record<string, string | undefined> };
+    }
+  ).process;
   const v = proc?.env?.[name];
-  if (typeof v === "string" && v.trim()) return v.trim();
-  const ime = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
+  if (typeof v === "string" && v.trim()) {
+    return v.trim();
+  }
+  const ime = (
+    import.meta as unknown as { env?: Record<string, string | undefined> }
+  ).env;
   const w = ime?.[name];
   return typeof w === "string" && w.trim() ? w.trim() : undefined;
 }
 
-type SmtpConfig = {
+interface SmtpConfig {
+  fromAddress: string;
+  fromName: string;
   host: string;
+  pass: string;
   port: number;
   secure: boolean;
   user: string;
-  pass: string;
-  fromName: string;
-  fromAddress: string;
-};
+}
 
 function readSmtpConfig(): SmtpConfig | null {
   const host = envFromRuntime("SMTP_HOST");
   const user = envFromRuntime("SMTP_USER");
   const pass = envFromRuntime("SMTP_PASS");
-  if (!host || !user || !pass) return null;
+  if (!(host && user && pass)) {
+    return null;
+  }
   const portRaw = envFromRuntime("SMTP_PORT") ?? "465";
   const port = Number.parseInt(portRaw, 10);
-  if (!Number.isFinite(port) || port <= 0 || port > 65535) return null;
-  const secure = (envFromRuntime("SMTP_SECURE") ?? (port === 465 ? "true" : "false")) === "true";
+  if (!Number.isFinite(port) || port <= 0 || port > 65_535) {
+    return null;
+  }
+  const secure =
+    (envFromRuntime("SMTP_SECURE") ?? (port === 465 ? "true" : "false")) ===
+    "true";
   const fromAddress = envFromRuntime("SMTP_FROM") ?? user;
   const fromName = envFromRuntime("SMTP_FROM_NAME") ?? "HackSpain";
   return { host, port, secure, user, pass, fromName, fromAddress };
@@ -40,7 +54,9 @@ let cachedKey = "";
 
 function getTransporter(cfg: SmtpConfig): Transporter {
   const key = `${cfg.host}|${cfg.port}|${cfg.secure}|${cfg.user}`;
-  if (cachedTransporter && cachedKey === key) return cachedTransporter;
+  if (cachedTransporter && cachedKey === key) {
+    return cachedTransporter;
+  }
   cachedTransporter = nodemailer.createTransport({
     host: cfg.host,
     port: cfg.port,
@@ -51,18 +67,18 @@ function getTransporter(cfg: SmtpConfig): Transporter {
   return cachedTransporter;
 }
 
-export type ConfirmationEmailInput = {
-  fullName: string;
+export interface ConfirmationEmailInput {
   email: string;
+  fullName: string;
   wantsAmbassador: boolean;
-};
+}
 
 export type ConfirmationEmailResult =
   | { ok: true; messageId: string }
   | { ok: false; reason: "smtp_disabled" | "send_failed"; detail?: string };
 
 export async function renderSignupConfirmationHtml(
-  input: Pick<ConfirmationEmailInput, "fullName" | "wantsAmbassador">,
+  input: Pick<ConfirmationEmailInput, "fullName" | "wantsAmbassador">
 ): Promise<{ html: string; text: string }> {
   const node = SignupConfirmation({
     fullName: input.fullName,
@@ -76,10 +92,12 @@ export async function renderSignupConfirmationHtml(
 }
 
 export async function sendSignupConfirmationEmail(
-  input: ConfirmationEmailInput,
+  input: ConfirmationEmailInput
 ): Promise<ConfirmationEmailResult> {
   const cfg = readSmtpConfig();
-  if (!cfg) return { ok: false, reason: "smtp_disabled" };
+  if (!cfg) {
+    return { ok: false, reason: "smtp_disabled" };
+  }
 
   try {
     const { html, text } = await renderSignupConfirmationHtml(input);

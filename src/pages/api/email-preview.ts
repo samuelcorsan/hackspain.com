@@ -4,7 +4,10 @@ import { renderSignupConfirmationHtml } from "../../lib/signupConfirmationEmail"
 export const prerender = false;
 
 export const GET: APIRoute = async ({ url }) => {
-  const fullName = (url.searchParams.get("name") ?? "Leo Hackspain").slice(0, 64);
+  const fullName = (url.searchParams.get("name") ?? "Leo Hackspain").slice(
+    0,
+    64
+  );
   const wantsAmbassador =
     url.searchParams.get("ambassador") === "1" ||
     url.searchParams.get("ambassador") === "true";

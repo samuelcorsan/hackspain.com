@@ -1,14 +1,15 @@
 ---
 export const prerender = false;
+
 import { LandingPage } from "../components/hackspain";
-import Layout from "../layouts/Layout.astro";
 import { SECTION_SLUGS } from "../data/sectionRoutes";
+import Layout from "../layouts/Layout.astro";
 
 const sectionIndex = SECTION_SLUGS.indexOf("mission") + 1;
 ---
 
 <Layout sectionIndex={sectionIndex}>
-	<main id="main" class="contents">
-		<LandingPage client:load initialSection={sectionIndex} />
-	</main>
+  <main id="main" class="contents">
+    <LandingPage client:load initialSection={sectionIndex} />
+  </main>
 </Layout>

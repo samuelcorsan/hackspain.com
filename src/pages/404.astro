@@ -1,7 +1,8 @@
 ---
 export const prerender = true;
-import Layout from "../layouts/Layout.astro";
+
 import { hsButtonClass } from "../components/hackspain/ui/buttonStyles";
+import Layout from "../layouts/Layout.astro";
 
 const title = "404 — Página no encontrada | HackSpain";
 const description =
@@ -30,7 +31,10 @@ const homeCtaClass = hsButtonClass("gold", "compact", "mt-8 shrink-0 lg:mt-10");
       class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_15%_20%,rgba(234,182,25,0.22),transparent),radial-gradient(ellipse_55%_50%_at_90%_75%,rgba(53,133,138,0.14),transparent),radial-gradient(ellipse_100%_80%_at_50%_100%,rgba(232,220,196,0.65),transparent),linear-gradient(115deg,var(--color-hs-paper)0%,var(--color-hs-sand)38%,var(--color-hs-paper)72%,var(--color-hs-sand)100%)]"
       aria-hidden="true"
     />
-    <div class="pointer-events-none absolute inset-0 hs-grain opacity-90" aria-hidden="true" />
+    <div
+      class="pointer-events-none absolute inset-0 hs-grain opacity-90"
+      aria-hidden="true"
+    />
     <div
       class="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12 xl:gap-16"
     >
@@ -42,18 +46,18 @@ const homeCtaClass = hsButtonClass("gold", "compact", "mt-8 shrink-0 lg:mt-10");
         >
           404
         </p>
-        <h1 class="mt-3 max-w-[24ch] font-sans text-xl font-bold text-hs-brown sm:text-2xl lg:max-w-none">
+        <h1
+          class="mt-3 max-w-[24ch] font-sans text-xl font-bold text-hs-brown sm:text-2xl lg:max-w-none"
+        >
           Aquí no hay molinos (ni páginas)
         </h1>
         <p
           class="mt-4 max-w-md text-pretty text-base leading-relaxed text-hs-ink/85 sm:text-lg lg:max-w-none"
         >
-          El enlace puede estar roto o la ruta haber cambiado. No pasa nada: hasta el mejor
-          caballero se pierde a veces.
+          El enlace puede estar roto o la ruta haber cambiado. No pasa nada:
+          hasta el mejor caballero se pierde a veces.
         </p>
-        <a href="/" class={homeCtaClass}>
-          Volver al inicio
-        </a>
+        <a href="/" class={homeCtaClass}> Volver al inicio </a>
       </div>
       <div
         class="flex w-full max-w-xs items-center justify-center sm:max-w-sm lg:max-w-none lg:flex-1 lg:justify-end"
@@ -66,7 +70,7 @@ const homeCtaClass = hsButtonClass("gold", "compact", "mt-8 shrink-0 lg:mt-10");
           class="h-auto w-full max-h-[min(52dvh,28rem)] object-contain drop-shadow-[0_20px_40px_rgba(42,23,15,0.18)] sm:max-h-[min(56dvh,32rem)] lg:max-h-[min(78dvh,44rem)] lg:w-[min(100%,26rem)] xl:w-[min(100%,30rem)]"
           decoding="async"
           fetchpriority="high"
-        />
+        >
       </div>
     </div>
   </main>

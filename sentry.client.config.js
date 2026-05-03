@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/astro';
+import * as Sentry from "@sentry/astro";
 
 const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
 const isDev = import.meta.env.DEV;
@@ -22,7 +22,7 @@ if (dsn) {
         maskAllText: false,
         maskAllInputs: false,
         blockAllMedia: false,
-      }),
+      })
     );
   }
 
@@ -35,7 +35,9 @@ if (dsn) {
     // Drop DOM error/rejection events mistaken for exceptions (e.g. script load failures).
     beforeSend(event, hint) {
       const ex = hint.originalException;
-      if (ex instanceof Event) return null;
+      if (ex instanceof Event) {
+        return null;
+      }
       return event;
     },
     // Enable logs to be sent to Sentry

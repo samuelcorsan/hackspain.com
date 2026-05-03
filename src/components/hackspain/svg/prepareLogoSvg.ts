@@ -12,7 +12,7 @@ export function prepareLogoSvg(raw: string): string {
 
   out = out.replace(
     /<svg\b/,
-    '<svg role="img" aria-label="HACKSPAIN" focusable="false" width="100%" height="100%"',
+    '<svg role="img" aria-label="HACKSPAIN" focusable="false" width="100%" height="100%"'
   );
 
   return out;
