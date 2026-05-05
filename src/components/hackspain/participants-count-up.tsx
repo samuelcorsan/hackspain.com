@@ -42,7 +42,11 @@ export function ParticipantsCountUp({ className = "", ariaLabel }: Props) {
   }, []);
 
   return (
-    <span aria-label={ariaLabel} className={`tabular-nums ${className}`.trim()}>
+    <span
+      aria-label={ariaLabel}
+      className={`tabular-nums ${className}`.trim()}
+      role="img"
+    >
       +{value}
     </span>
   );

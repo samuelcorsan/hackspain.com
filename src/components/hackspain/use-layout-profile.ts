@@ -10,7 +10,9 @@ function getSnapshot(): LayoutProfile {
 
 function subscribe(onChange: () => void): () => void {
   if (typeof window === "undefined") {
-    return () => {};
+    return () => {
+      /* no-op: matchMedia / resize are unavailable during SSR */
+    };
   }
   const mq = window.matchMedia(COMPACT_MEDIA_QUERY);
   mq.addEventListener("change", onChange);

@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   keywordsForSectionIndex,
   seoForSectionIndex,
-} from "../../data/landingMeta";
-import { parsePath, pathRootFromSectionIndex } from "../../data/sectionRoutes";
+} from "../../data/landing-meta";
+import { parsePath, pathRootFromSectionIndex } from "../../data/section-routes";
 import { artboardFor, horseArtboardFor } from "./artboard";
 import { type CellDef, cellsForProfile } from "./cells";
 import {
@@ -27,14 +27,14 @@ import {
   SPRING,
   slideVariants,
 } from "./constants";
-import { HorseMissionTransition } from "./HorseMissionTransition";
-import { InlineSvg } from "./InlineSvg";
-import { illustrationsForSection } from "./illustrationThemes";
-import { MosaicBackground } from "./MosaicBackground";
-import { vp } from "./Panel";
-import { ScrollSectionHint } from "./ScrollSectionHint";
+import { HorseMissionTransition } from "./horse-mission-transition";
+import { illustrationsForSection } from "./illustration-themes";
+import { InlineSvg } from "./inline-svg";
+import { MosaicBackground } from "./mosaic-background";
+import { vp } from "./panel";
+import { ScrollSectionHint } from "./scroll-section-hint";
 import { buildSections } from "./sections";
-import { useLayoutProfile } from "./useLayoutProfile";
+import { useLayoutProfile } from "./use-layout-profile";
 
 const SECTION_NAV = [
   "Inicio",
@@ -132,16 +132,14 @@ export function LandingPage({ initialSection = 0 }: Props) {
   );
   const horseRevealedRef = useRef<ReadonlySet<string>>(horseRevealed);
   horseRevealedRef.current = horseRevealed;
-  const horseRevealTimeoutsRef = useRef(
-    new Map<string, ReturnType<typeof window.setTimeout>>()
-  );
-  const horseFinishOutRef = useRef<ReturnType<typeof window.setTimeout> | null>(
-    null
-  );
+  const horseRevealTimeoutsRef = useRef(new Map<string, number>());
+  const horseFinishOutRef = useRef<number | null>(null);
   const locked = useRef(false);
 
   const clearHorseRevealTimeouts = useCallback(() => {
-    horseRevealTimeoutsRef.current.forEach((id) => window.clearTimeout(id));
+    for (const id of horseRevealTimeoutsRef.current.values()) {
+      window.clearTimeout(id);
+    }
     horseRevealTimeoutsRef.current.clear();
   }, []);
   const layoutProfile = useLayoutProfile();
@@ -370,7 +368,9 @@ export function LandingPage({ initialSection = 0 }: Props) {
       if (flush.size > 0) {
         setHorseRevealed((prev) => {
           const next = new Set(prev);
-          flush.forEach((id) => next.add(id));
+          for (const id of flush) {
+            next.add(id);
+          }
           return next;
         });
         if (horseFinishOutRef.current) {
@@ -464,7 +464,9 @@ export function LandingPage({ initialSection = 0 }: Props) {
         window.clearTimeout(horseFinishOutRef.current);
         horseFinishOutRef.current = null;
       }
-      horseRevealTimeoutsRef.current.forEach((id) => window.clearTimeout(id));
+      for (const id of horseRevealTimeoutsRef.current.values()) {
+        window.clearTimeout(id);
+      }
       horseRevealTimeoutsRef.current.clear();
       setHorseToUnique(false);
       setSkipUniqueGridEnter(false);
@@ -711,10 +713,9 @@ export function LandingPage({ initialSection = 0 }: Props) {
   );
 
   return (
-    <div
+    <section
       aria-label={REGION_ARIA}
       className="fixed inset-0 font-sans"
-      role="region"
       style={{ background: INK }}
     >
       <p aria-atomic="true" aria-live="polite" className="sr-only">
@@ -733,6 +734,6 @@ export function LandingPage({ initialSection = 0 }: Props) {
         reducedMotion={reducedMotion}
         visible={section < NUM_SECTIONS - 1 && !horseToUnique}
       />
-    </div>
+    </section>
   );
 }

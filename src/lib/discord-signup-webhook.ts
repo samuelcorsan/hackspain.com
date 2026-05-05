@@ -1,4 +1,4 @@
-import { formatHeardFromStored } from "./signupValidation";
+import { formatHeardFromStored } from "./signup-validation";
 
 const DISCORD_WEBHOOK_PREFIXES = [
   "https://discord.com/api/webhooks/",

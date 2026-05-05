@@ -2,8 +2,8 @@
 import "../styles/global.css";
 import Analytics from "@vercel/analytics/astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
-import CookieConsent from "../components/CookieConsent.astro";
-import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookieConsent";
+import CookieConsent from "../components/cookie-consent.astro";
+import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookie-consent";
 import {
   jsonLdEvent,
   jsonLdFaq,
@@ -13,8 +13,8 @@ import {
   keywordsForSectionIndex,
   SOCIAL_SHARE_IMAGE,
   seoForSectionIndex,
-} from "../data/landingMeta";
-import { pathRootFromSectionIndex } from "../data/sectionRoutes";
+} from "../data/landing-meta";
+import { pathRootFromSectionIndex } from "../data/section-routes";
 
 interface Props {
   allowScroll?: boolean;
@@ -118,10 +118,10 @@ const faqJson = JSON.stringify(jsonLdFaq());
     <meta name="twitter:image:alt" content={ogImageAlt}>
 
     {googleVerify && (
-        <meta name="google-site-verification" content={googleVerify} />
+        <meta content={googleVerify} name="google-site-verification" />
       )}
-    {bingVerify && <meta name="msvalidate.01" content={bingVerify} />}
-    {yandexVerify && <meta name="yandex-verification" content={yandexVerify} />}
+    {bingVerify && <meta content={bingVerify} name="msvalidate.01" />}
+    {yandexVerify && <meta content={yandexVerify} name="yandex-verification" />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,11 +133,11 @@ const faqJson = JSON.stringify(jsonLdFaq());
     <title>{title}</title>
     {includeStructuredData && (
         <>
-          <script type="application/ld+json" set:html={orgJson} />
-          <script type="application/ld+json" set:html={webSiteJson} />
-          <script type="application/ld+json" set:html={eventJson} />
-          <script type="application/ld+json" set:html={webPageJson} />
-          <script type="application/ld+json" set:html={faqJson} />
+          <script set:html={orgJson} type="application/ld+json" />
+          <script set:html={webSiteJson} type="application/ld+json" />
+          <script set:html={eventJson} type="application/ld+json" />
+          <script set:html={webPageJson} type="application/ld+json" />
+          <script set:html={faqJson} type="application/ld+json" />
         </>
       )}
     <script is:inline define:vars={{ ANALYTICS_CONSENT_STORAGE_KEY }}>
@@ -148,7 +148,9 @@ const faqJson = JSON.stringify(jsonLdFaq());
           if (v === "granted" || v === "denied") {
             window.__hsAnalyticsConsent = v;
           }
-        } catch {}
+        } catch {
+          /* localStorage may be unavailable (privacy mode, SSR mismatch) */
+        }
         window.webAnalyticsBeforeSend = (event) => {
           if (window.__hsAnalyticsConsent !== "granted") {
             return null;

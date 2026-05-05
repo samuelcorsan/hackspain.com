@@ -1,6 +1,6 @@
-import { formatRichPolicyText } from "./formatRichPolicyText";
-import { MosaicBackground } from "./MosaicBackground";
-import { useLayoutProfile } from "./useLayoutProfile";
+import { formatRichPolicyText } from "./format-rich-policy-text";
+import { MosaicBackground } from "./mosaic-background";
+import { useLayoutProfile } from "./use-layout-profile";
 
 interface PrivacySection {
   id: string;
@@ -162,8 +162,10 @@ export function PrivacyPage() {
                     {s.title}
                   </h2>
                   <div className="mt-3 space-y-3 font-sans font-semibold text-hs-ink text-sm leading-relaxed sm:text-[0.95rem]">
-                    {s.paragraphs.map((p, i) => (
-                      <p key={i}>{formatRichPolicyText(p, `${s.id}-${i}`)}</p>
+                    {s.paragraphs.map((p) => (
+                      <p key={`${s.id}-${p}`}>
+                        {formatRichPolicyText(p, `${s.id}-${p.slice(0, 48)}`)}
+                      </p>
                     ))}
                   </div>
                 </section>

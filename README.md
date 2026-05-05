@@ -29,7 +29,6 @@ Apply schema to your database when using Drizzle (see [Database](#database)).
 | `bun build` | Production build to `./dist/` |
 | `bun preview` | Preview the production build locally |
 | `bun astro check` | Astro + TypeScript checks |
-| `bun og:generate` | Regenerate Open Graph images (`scripts/generate-og.mjs`) |
 | `bun assets:quiver` | Quiver asset pipeline (`scripts/quiver-generate-assets.mjs`) |
 | `bun assets:quiver:tiles` | Tile illustrations only |
 | `bun assets:quiver:tiles+heroes` | Tiles + hero illustrations |

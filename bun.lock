@@ -32,7 +32,6 @@
         "@types/nodemailer": "^8.0.0",
         "drizzle-kit": "^0.31.10",
         "postcss": "^8.5.8",
-        "sharp": "^0.34.5",
         "ultracite": "7.6.2",
       },
     },

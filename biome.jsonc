@@ -4,5 +4,18 @@
     "ultracite/biome/core",
     "ultracite/biome/astro",
     "ultracite/biome/react"
-  ]
+  ],
+  "linter": {
+    "rules": {
+      "style": {
+        "useFilenamingConvention": "error"
+      },
+      "performance": {
+        "noBarrelFile": "off"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off"
+      }
+    }
+  }
 }

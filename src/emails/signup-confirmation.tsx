@@ -27,6 +27,8 @@ const FONT_BUNGEE = "'Bungee', 'Impact', 'Arial Black', system-ui, sans-serif";
 const FONT_SANS =
   "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
+const WHITESPACE_SPLIT_RE = /\s+/;
+
 export interface SignupConfirmationProps {
   fullName: string;
   wantsAmbassador?: boolean;
@@ -40,7 +42,7 @@ function firstNameFrom(fullName: string): string {
   if (!trimmed) {
     return "hacker";
   }
-  const first = trimmed.split(/\s+/)[0];
+  const first = trimmed.split(WHITESPACE_SPLIT_RE)[0];
   return first.length > 24 ? first.slice(0, 24) : first;
 }
 

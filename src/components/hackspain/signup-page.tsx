@@ -1,4 +1,11 @@
-import * as Sentry from "@sentry/astro";
+import {
+  addBreadcrumb,
+  captureException,
+  captureMessage,
+  getCurrentScope,
+  startSpan,
+  withScope,
+} from "@sentry/astro";
 import { initBotId } from "botid/client/core";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -14,14 +21,18 @@ import {
   type HeardFromSourceId,
   normalizeSocialUrl,
   parseSignupBodyClient,
-} from "../../lib/signupValidation";
+} from "../../lib/signup-validation";
 import { FormField, Input, SocialPrefixInput, Textarea } from "./form";
-import { MosaicBackground } from "./MosaicBackground";
-import { Button, ButtonLink } from "./ui/Button";
-import { useLayoutProfile } from "./useLayoutProfile";
+import { MosaicBackground } from "./mosaic-background";
+import { Button, ButtonLink } from "./ui/button";
+import { useLayoutProfile } from "./use-layout-profile";
 
 const STORAGE_KEY = "hackspain-signup-draft-v1";
 const STORAGE_APPLIED_KEY = "hackspain-signup-applied-v1";
+
+const UNICODE_LEFT_ARROW_PREFIX_RE = /^\u2190\s*/;
+const ASCII_LEFT_ARROW_PREFIX_RE = /^←\s*/;
+const LINE_BREAK_SPLIT_RE = /\r?\n/;
 
 type FlowStatus = "idle" | "success" | "error" | "alreadyApplied";
 
@@ -277,7 +288,7 @@ export function SignupPage() {
   }, []);
 
   useEffect(() => {
-    Sentry.getCurrentScope().setTag("flow", "signup");
+    getCurrentScope().setTag("flow", "signup");
   }, []);
 
   function pulseAttention(target: "heard" | "ambassador") {
@@ -324,14 +335,14 @@ export function SignupPage() {
   const onSubmitForm: SubmitHandler<StoredFields> = async (data) => {
     setErrorMessage("");
 
-    Sentry.addBreadcrumb({
+    addBreadcrumb({
       category: "ui",
       message: "signup: submit",
       level: "info",
     });
 
     if (!data.heardFromSource) {
-      Sentry.addBreadcrumb({
+      addBreadcrumb({
         category: "signup",
         message: "no heard from selected",
         level: "info",
@@ -342,17 +353,14 @@ export function SignupPage() {
     const payload = { ...data };
     const parsed = parseSignupBodyClient(payload);
     if (!parsed.ok) {
-      Sentry.addBreadcrumb({
+      addBreadcrumb({
         category: "signup",
         message: "client validation",
         data: { code: parsed.code },
         level: "info",
       });
       if (parsed.code === "generic") {
-        Sentry.captureMessage(
-          "Signup: client validation failed (generic)",
-          "warning"
-        );
+        captureMessage("Signup: client validation failed (generic)", "warning");
       }
       if (parsed.code === "heard_from") {
         pulseAttention("heard");
@@ -387,7 +395,7 @@ export function SignupPage() {
       return;
     }
     try {
-      const res = await Sentry.startSpan(
+      const res = await startSpan(
         { name: "POST /api/signup", op: "http.client" },
         async (span) => {
           const r = await fetch("/api/signup", {
@@ -412,7 +420,7 @@ export function SignupPage() {
       const isDuplicateEmail =
         res.status === 409 || resJson.error === "duplicate_email";
       if (isDuplicateEmail) {
-        Sentry.addBreadcrumb({
+        addBreadcrumb({
           category: "http",
           type: "http",
           data: { status: res.status, error: resJson.error },
@@ -420,13 +428,13 @@ export function SignupPage() {
           message: "signup duplicate email (expected)",
         });
       } else {
-        Sentry.addBreadcrumb({
+        addBreadcrumb({
           category: "http",
           type: "http",
           data: { status: res.status, error: resJson.error },
           level: "error",
         });
-        Sentry.withScope((scope) => {
+        withScope((scope) => {
           scope.setTag("flow", "signup");
           scope.setTag("source", "client");
           scope.setTag("http_status", String(res.status));
@@ -437,7 +445,7 @@ export function SignupPage() {
             wantsAmbassador: data.wantsAmbassador,
             heardFrom: data.heardFromSource,
           });
-          Sentry.captureMessage(
+          captureMessage(
             `Signup: API rejected ${res.status}${resJson.error ? ` (${resJson.error})` : ""}`,
             "error"
           );
@@ -482,13 +490,13 @@ export function SignupPage() {
       setStatus("error");
     } catch (err) {
       if (err instanceof Error) {
-        Sentry.withScope((scope) => {
+        withScope((scope) => {
           scope.setTag("flow", "signup");
           scope.setTag("source", "client");
-          Sentry.captureException(err);
+          captureException(err);
         });
       } else {
-        Sentry.addBreadcrumb({
+        addBreadcrumb({
           category: "signup",
           message: "submit: caught non-Error (ignored for issues)",
           data: { kind: Object.prototype.toString.call(err) },
@@ -541,8 +549,8 @@ export function SignupPage() {
                   <div className="flex w-full flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
                     <ButtonLink href={homeHref} size="success" variant="gold">
                       {t.backHome
-                        .replace(/^\u2190\s*/, "")
-                        .replace(/^←\s*/, "")
+                        .replace(UNICODE_LEFT_ARROW_PREFIX_RE, "")
+                        .replace(ASCII_LEFT_ARROW_PREFIX_RE, "")
                         .trim() || t.backHome}
                     </ButtonLink>
                     <Button
@@ -695,7 +703,7 @@ export function SignupPage() {
                         const raw = e.clipboardData.getData("text/plain");
                         const line =
                           raw
-                            .split(/\r?\n/)
+                            .split(LINE_BREAK_SPLIT_RE)
                             .map((l) => l.trim())
                             .find((l) => l.length > 0) ?? "";
                         if (!line) {
@@ -836,6 +844,7 @@ export function SignupPage() {
                           width="14"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title>Marca de verificación</title>
                           <path
                             d="M2.5 7.2 5.6 10.3 11.5 3.8"
                             stroke="currentColor"

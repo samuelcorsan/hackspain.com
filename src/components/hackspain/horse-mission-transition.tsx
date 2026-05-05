@@ -13,7 +13,7 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import type { Artboard } from "./artboard";
-import { ChromaKeyVideo } from "./ChromaKeyVideo";
+import { ChromaKeyVideo } from "./chroma-key-video";
 import {
   HORSE_RETURN_DURATION_S,
   HORSE_RETURN_TELEPORT_FADE_IN_S,
@@ -25,7 +25,7 @@ import {
   HORSE_VIDEO_CHROMA_TOLERANCE,
   HORSE_VIDEO_SRC,
 } from "./constants";
-import { vp } from "./Panel";
+import { vp } from "./panel";
 
 const OPACITY_IN_S = 0.22;
 const X_DELAY_S = 0.1;
@@ -77,7 +77,7 @@ export function HorseMissionTransition({
   const x = useMotionValue(0);
   const opacity = useMotionValue(0);
 
-  const fireComplete = () => {
+  const fireComplete = useCallback(() => {
     if (doneRef.current) {
       return;
     }
@@ -86,7 +86,7 @@ export function HorseMissionTransition({
     x.set(0);
     onRideXRef.current?.(t, t);
     onCompleteRef.current(t);
-  };
+  }, [x]);
 
   const [travelX, setTravelX] = useState<number | null>(null);
   const [mediaReady, setMediaReady] = useState(false);
@@ -129,7 +129,7 @@ export function HorseMissionTransition({
       return;
     }
     v.currentTime = 0;
-    void v.play().catch(() => {});
+    v.play().catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -253,11 +253,13 @@ export function HorseMissionTransition({
       }
     };
 
-    void run();
+    run().catch(() => undefined);
 
     return () => {
       cancelled = true;
-      rideAnimsRef.current.forEach((a) => a.stop());
+      for (const a of rideAnimsRef.current) {
+        a.stop();
+      }
       rideAnimsRef.current = [];
     };
   }, [travelX, mediaReady, x, opacity, fireComplete]);

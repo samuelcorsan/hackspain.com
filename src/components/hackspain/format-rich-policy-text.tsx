@@ -8,23 +8,27 @@ const LINK_RE =
 
 const BOLD_RE = /\*\*(.+?)\*\*/gs;
 
+const HTTP_OR_HTTPS_PREFIX_RE = /^https?:/i;
+const WWW_DOT_PREFIX_RE = /^www\./i;
+
 function linkifyPlain(segment: string, keyBase: string): ReactNode[] {
   const nodes: ReactNode[] = [];
   let last = 0;
   let ki = 0;
   let m: RegExpExecArray | null;
   LINK_RE.lastIndex = 0;
-  while ((m = LINK_RE.exec(segment)) !== null) {
+  m = LINK_RE.exec(segment);
+  while (m !== null) {
     const idx = m.index;
     if (idx > last) {
       nodes.push(segment.slice(last, idx));
     }
     const token = m[0];
-    const isEmail = token.includes("@") && !/^https?:/i.test(token);
+    const isEmail = token.includes("@") && !HTTP_OR_HTTPS_PREFIX_RE.test(token);
     let href = token;
     if (isEmail) {
       href = `mailto:${token}`;
-    } else if (/^www\./i.test(token)) {
+    } else if (WWW_DOT_PREFIX_RE.test(token)) {
       href = `https://${token}`;
     }
     nodes.push(
@@ -38,6 +42,7 @@ function linkifyPlain(segment: string, keyBase: string): ReactNode[] {
       </a>
     );
     last = idx + token.length;
+    m = LINK_RE.exec(segment);
   }
   if (last < segment.length) {
     nodes.push(segment.slice(last));

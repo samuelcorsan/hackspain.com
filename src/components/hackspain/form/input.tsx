@@ -1,12 +1,13 @@
-import { hsControlBaseClass } from "./fieldClasses";
+import type { ComponentPropsWithoutRef, Ref } from "react";
+import { hsControlBaseClass } from "./field-classes";
 
-export type InputProps = React.ComponentPropsWithoutRef<"input">;
+export type InputProps = ComponentPropsWithoutRef<"input">;
 
 export const Input = function Input({
   className,
   ref,
   ...props
-}: InputProps & { ref?: RefObject<HTMLInputElement | null> }) {
+}: InputProps & { ref?: Ref<HTMLInputElement | null> }) {
   return (
     <input
       className={

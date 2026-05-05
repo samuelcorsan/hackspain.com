@@ -7,6 +7,8 @@ export const SECTION_SLUGS = [
 ] as const;
 export type SectionSlug = (typeof SECTION_SLUGS)[number];
 
+const TRAILING_SLASH_PATH = /\/$/;
+
 export function pathRootFromSectionIndex(index: number): string {
   if (index <= 0) {
     return "/";
@@ -16,7 +18,7 @@ export function pathRootFromSectionIndex(index: number): string {
 }
 
 export function parsePath(pathname: string): { sectionIndex: number } {
-  const clean = (pathname.replace(/\/$/, "") || "/").slice(1);
+  const clean = (pathname.replace(TRAILING_SLASH_PATH, "") || "/").slice(1);
   const parts = clean.split("/").filter(Boolean);
   if (parts.length === 0) {
     return { sectionIndex: 0 };

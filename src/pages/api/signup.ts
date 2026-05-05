@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/astro";
+import { captureException, captureMessage, withScope } from "@sentry/astro";
 import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
 import { getDb } from "../../db";
@@ -6,9 +6,9 @@ import { hackathonSignups } from "../../db/schema";
 import {
   notifyDiscordNewSignup,
   notifyDiscordSignupApiIssue,
-} from "../../lib/discordSignupWebhook";
-import { sendSignupConfirmationEmail } from "../../lib/signupConfirmationEmail";
-import { parseSignupBody } from "../../lib/signupValidation";
+} from "../../lib/discord-signup-webhook";
+import { sendSignupConfirmationEmail } from "../../lib/signup-confirmation-email";
+import { parseSignupBody } from "../../lib/signup-validation";
 
 export const prerender = false;
 
@@ -113,24 +113,21 @@ export const POST: APIRoute = async ({ request }) => {
       const verification = await checkBotId();
       if (verification.isBot) {
         safeSentry(() => {
-          Sentry.withScope((scope) => {
+          withScope((scope) => {
             scope.setTag("api", "signup");
             scope.setTag("outcome", "access_denied");
             scope.setContext("signup", { reason: "botid" });
-            Sentry.captureMessage(
-              "POST /api/signup blocked (BotID)",
-              "warning"
-            );
+            captureMessage("POST /api/signup blocked (BotID)", "warning");
           });
         });
         return Response.json({ error: "access_denied" }, { status: 403 });
       }
     } catch (e) {
       safeSentry(() => {
-        Sentry.withScope((scope) => {
+        withScope((scope) => {
           scope.setTag("api", "signup");
           scope.setTag("outcome", "botid_check_failed");
-          Sentry.captureException(e);
+          captureException(e);
         });
       });
       console.error("BotID check failed:", e);
@@ -142,13 +139,10 @@ export const POST: APIRoute = async ({ request }) => {
     "application/json"
   ) {
     safeSentry(() => {
-      Sentry.withScope((scope) => {
+      withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "expected_json");
-        Sentry.captureMessage(
-          "POST /api/signup: wrong Content-Type",
-          "warning"
-        );
+        captureMessage("POST /api/signup: wrong Content-Type", "warning");
       });
     });
     return Response.json({ error: "expected_json" }, { status: 415 });
@@ -163,13 +157,10 @@ export const POST: APIRoute = async ({ request }) => {
       error: "Invalid JSON",
     });
     safeSentry(() => {
-      Sentry.withScope((scope) => {
+      withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "invalid_json");
-        Sentry.captureMessage(
-          "POST /api/signup: body is not valid JSON",
-          "warning"
-        );
+        captureMessage("POST /api/signup: body is not valid JSON", "warning");
       });
     });
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
@@ -181,10 +172,10 @@ export const POST: APIRoute = async ({ request }) => {
       error: "invalid_body",
     });
     safeSentry(() => {
-      Sentry.withScope((scope) => {
+      withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "invalid_body");
-        Sentry.captureMessage(
+        captureMessage(
           "POST /api/signup: body missing or not object",
           "warning"
         );
@@ -201,14 +192,14 @@ export const POST: APIRoute = async ({ request }) => {
       emailHint: emailHintFromBody(body),
     });
     safeSentry(() => {
-      Sentry.withScope((scope) => {
+      withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "validation");
         scope.setContext("details", {
           error: parsed.error,
           status: parsed.status,
         });
-        Sentry.captureMessage("POST /api/signup: validation failed", "warning");
+        captureMessage("POST /api/signup: validation failed", "warning");
       });
     });
     return Response.json({ error: parsed.error }, { status: parsed.status });
@@ -261,11 +252,11 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (e) {
     console.error(e);
     safeSentry(() => {
-      Sentry.withScope((scope) => {
+      withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "save_failed");
         scope.setContext("error", { detail: errDetail(e) });
-        Sentry.captureException(e);
+        captureException(e);
       });
     });
     await notifyDiscordSignupApiIssue({
@@ -296,10 +287,10 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (e) {
     console.error("[signup] Discord notify failed after successful insert:", e);
     safeSentry(() => {
-      Sentry.withScope((scope) => {
+      withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "discord_notify_failed");
-        Sentry.captureException(e);
+        captureException(e);
       });
     });
   }
@@ -312,11 +303,11 @@ export const POST: APIRoute = async ({ request }) => {
     });
     if (!emailResult.ok && emailResult.reason === "send_failed") {
       safeSentry(() => {
-        Sentry.withScope((scope) => {
+        withScope((scope) => {
           scope.setTag("api", "signup");
           scope.setTag("outcome", "confirmation_email_failed");
           scope.setContext("email", { detail: emailResult.detail });
-          Sentry.captureMessage(
+          captureMessage(
             "POST /api/signup: confirmation email failed",
             "warning"
           );
@@ -329,10 +320,10 @@ export const POST: APIRoute = async ({ request }) => {
       e
     );
     safeSentry(() => {
-      Sentry.withScope((scope) => {
+      withScope((scope) => {
         scope.setTag("api", "signup");
         scope.setTag("outcome", "confirmation_email_exception");
-        Sentry.captureException(e);
+        captureException(e);
       });
     });
   }

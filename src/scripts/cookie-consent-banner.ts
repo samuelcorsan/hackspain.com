@@ -1,5 +1,5 @@
-import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookieConsent";
-import { trackPageviewAfterConsent } from "../lib/consentAnalytics";
+import { ANALYTICS_CONSENT_STORAGE_KEY } from "../data/cookie-consent";
+import { trackPageviewAfterConsent } from "../lib/consent-analytics";
 
 /** Cookie banner + consent-driven Vercel Analytics pageview (bundled as ES module — no broken `/lib/...` URLs). */
 export function initCookieConsentBanner(): void {

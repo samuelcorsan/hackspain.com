@@ -1,5 +1,5 @@
 import type { LayoutProfile } from "./artboard";
-import { CELLS_COMPACT } from "./cellsCompact";
+import { CELLS_COMPACT } from "./cells-compact";
 import { TRI_BL, TRI_R1A } from "./constants";
 
 export interface CellDef {

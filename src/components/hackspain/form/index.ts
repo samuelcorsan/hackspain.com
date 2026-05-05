@@ -1,13 +1,13 @@
-export { FormField, type FormFieldProps } from "./FormField";
 export {
   hsControlBaseClass,
   hsHintClass,
   hsLabelBungeeClass,
   hsLabelSansClass,
-} from "./fieldClasses";
-export { Input, type InputProps } from "./Input";
+} from "./field-classes";
+export { FormField, type FormFieldProps } from "./form-field";
+export { Input, type InputProps } from "./input";
 export {
   SocialPrefixInput,
   type SocialPrefixInputProps,
-} from "./SocialPrefixInput";
-export { Textarea, type TextareaProps } from "./Textarea";
+} from "./social-prefix-input";
+export { Textarea, type TextareaProps } from "./textarea";

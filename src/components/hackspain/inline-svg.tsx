@@ -1,3 +1,5 @@
+import type { HTMLAttributes } from "react";
+
 interface Props {
   className?: string;
   decorative?: boolean;
@@ -7,14 +9,15 @@ interface Props {
   svg: string;
 }
 
+const HAS_PRESERVE_ASPECT = /preserveAspectRatio="/;
+const PRESERVE_ASPECT_ATTR = /preserveAspectRatio="[^"]*"/;
+const OPEN_SVG_TAG = /<svg\b/;
+
 function svgWithPreserveRatio(svg: string, ratio: string): string {
-  if (/preserveAspectRatio="/.test(svg)) {
-    return svg.replace(
-      /preserveAspectRatio="[^"]*"/,
-      `preserveAspectRatio="${ratio}"`
-    );
+  if (HAS_PRESERVE_ASPECT.test(svg)) {
+    return svg.replace(PRESERVE_ASPECT_ATTR, `preserveAspectRatio="${ratio}"`);
   }
-  return svg.replace(/<svg\b/, `<svg preserveAspectRatio="${ratio}"`);
+  return svg.replace(OPEN_SVG_TAG, `<svg preserveAspectRatio="${ratio}"`);
 }
 
 export function InlineSvg({
@@ -24,12 +27,14 @@ export function InlineSvg({
   label,
   fill,
 }: Props) {
-  const a11y =
-    label == null
-      ? decorative
-        ? { "aria-hidden": true as const }
-        : {}
-      : { role: "img" as const, "aria-label": label };
+  let a11y: HTMLAttributes<HTMLSpanElement>;
+  if (label != null) {
+    a11y = { role: "img", "aria-label": label };
+  } else if (decorative) {
+    a11y = { "aria-hidden": true };
+  } else {
+    a11y = {};
+  }
   const html = fill === "none" ? svgWithPreserveRatio(svg, "none") : svg;
   const base =
     fill === "none"
@@ -38,6 +43,7 @@ export function InlineSvg({
   return (
     <span
       className={`${base} ${className}`.trim()}
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: SVG markup is authored/bundled in-repo, not user input.
       dangerouslySetInnerHTML={{ __html: html }}
       {...a11y}
     />

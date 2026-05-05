@@ -1,6 +1,6 @@
-import { MosaicBackground } from "./MosaicBackground";
-import { ButtonLink } from "./ui/Button";
-import { useLayoutProfile } from "./useLayoutProfile";
+import { MosaicBackground } from "./mosaic-background";
+import { ButtonLink } from "./ui/button";
+import { useLayoutProfile } from "./use-layout-profile";
 
 const panelBorder = "border-[3px] border-hs-ink bg-hs-ink";
 
@@ -79,7 +79,7 @@ export function AmbassadorPage() {
           </div>
           <ul className="divide-y-[3px] divide-hs-ink bg-hs-paper">
             {DUTIES.map((item, i) => (
-              <li className="flex gap-3 px-4 py-4 sm:px-5 sm:py-4" key={i}>
+              <li className="flex gap-3 px-4 py-4 sm:px-5 sm:py-4" key={item}>
                 <span
                   aria-hidden
                   className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center border-[3px] border-hs-ink bg-hs-sand/50 font-bungee text-hs-ink text-sm"
@@ -147,10 +147,10 @@ export function AmbassadorPage() {
               />
             </div>
             <div className="grid min-w-0 flex-1 grid-cols-1 overflow-hidden border-hs-ink border-t-[3px] bg-hs-paper sm:grid-cols-2 sm:border-t-0">
-              {PERKS.map((item, i) => (
+              {PERKS.map((item) => (
                 <div
                   className="flex min-h-[5.5rem] flex-col justify-center border-hs-ink border-r-0 border-b-[3px] p-4 sm:min-h-[6rem] sm:border-r-[3px] sm:p-5 sm:[&:nth-child(2n)]:border-r-0"
-                  key={i}
+                  key={item}
                 >
                   <span className="font-bold font-sans text-base text-hs-ink leading-snug sm:text-[1.05rem]">
                     {item}

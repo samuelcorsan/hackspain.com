@@ -1,6 +1,6 @@
 import { render } from "@react-email/render";
 import nodemailer, { type Transporter } from "nodemailer";
-import { SignupConfirmation } from "../emails/SignupConfirmation";
+import { SignupConfirmation } from "../emails/signup-confirmation";
 
 function envFromRuntime(name: string): string | undefined {
   const proc = (

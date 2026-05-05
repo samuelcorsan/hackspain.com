@@ -8,7 +8,7 @@ import {
   hsHintClass,
   hsLabelBungeeClass,
   hsLabelSansClass,
-} from "./fieldClasses";
+} from "./field-classes";
 
 type LabelVariant = "bungee" | "sans";
 

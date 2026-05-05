@@ -45,6 +45,7 @@ function MosaicBackgroundDesktop({
       preserveAspectRatio="none"
       viewBox="0 0 1440 900"
     >
+      <title>Mosaic background</title>
       {!strokeOnly && (
         <rect fill="var(--color-hs-paper)" height="900" width="1440" />
       )}
@@ -375,14 +376,15 @@ function MosaicBackgroundCompact({
       preserveAspectRatio="none"
       viewBox="0 0 1440 900"
     >
+      <title>Mosaic background</title>
       {!strokeOnly && (
         <rect fill="var(--color-hs-paper)" height="900" width="1440" />
       )}
-      {COMPACT_TILES.map(([x, y, w, h, fill], i) => (
+      {COMPACT_TILES.map(([x, y, w, h, fill]) => (
         <rect
           fill={f(fill)}
           height={h}
-          key={i}
+          key={`${x}-${y}-${w}-${h}-${fill}`}
           stroke={ink}
           strokeWidth={sw}
           width={w}

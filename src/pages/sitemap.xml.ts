@@ -2,8 +2,8 @@ import type { APIRoute } from "astro";
 import {
   getAllSitemapPageUrls,
   SITEMAP_SITE_ORIGIN,
-} from "../data/sitemapPages";
-import { buildSitemapUrlsetXml } from "../lib/sitemapUrlsetXml";
+} from "../data/sitemap-pages";
+import { buildSitemapUrlsetXml } from "../lib/sitemap-urlset-xml";
 
 export const prerender = true;
 

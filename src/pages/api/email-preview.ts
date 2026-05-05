@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { renderSignupConfirmationHtml } from "../../lib/signupConfirmationEmail";
+import { renderSignupConfirmationHtml } from "../../lib/signup-confirmation-email";
 
 export const prerender = false;
 

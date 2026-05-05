@@ -1,5 +1,7 @@
 const SECTIONS = ["mission", "unique", "tracks", "sponsors", "vision"] as const;
 
+const TRAILING_SLASHES = /\/+$/;
+
 export const SITEMAP_SITE_ORIGIN = "https://hackspain.com";
 
 export function normalizeSitemapPageUrl(href: string): string {
@@ -7,7 +9,7 @@ export function normalizeSitemapPageUrl(href: string): string {
   if (u.pathname === "/" || u.pathname === "") {
     return u.origin;
   }
-  return `${u.origin}${u.pathname.replace(/\/+$/, "")}`;
+  return `${u.origin}${u.pathname.replace(TRAILING_SLASHES, "")}`;
 }
 
 /** Every indexable HTML URL (full origin URLs). */

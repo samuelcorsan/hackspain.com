@@ -50,6 +50,18 @@ export function formatHeardFromStored(stored: string): string {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const PROTOCOL_FULL_URI_START_RE = /^[a-z][a-z0-9+.-]*:\/\//i;
+const HOSTNAME_CHARS_ONLY_RE = /^[a-z0-9.-]+$/i;
+const TRAILING_SLASH_RE = /\/$/;
+const LEADING_SLASHES_RE = /^\/+/;
+const HANDLE_TERM_BOUNDARY_RE = /[/?#\s]/;
+const FIRST_WHITESPACE_CHUNK_RE = /\s/;
+const URL_SCHEME_PREFIX_RE = /^[a-z][a-z0-9+.-]*:/i;
+const DUPLICATE_SLASHES_RE = /\/{2,}/g;
+const TRAILING_SLASHES_ON_PATH_RE = /\/+$/;
+const WWW_HOSTNAME_PREFIX_RE = /^www\./;
+const LINE_BREAK_SPLIT_RE = /\r?\n/;
+
 export type SocialKind = "x" | "linkedin" | "github" | "web";
 
 function baseHostForProfileField(kind: Exclude<SocialKind, "web">): string {
@@ -60,6 +72,8 @@ function baseHostForProfileField(kind: Exclude<SocialKind, "web">): string {
       return "linkedin.com";
     case "github":
       return "github.com";
+    default:
+      throw new Error(`unexpected profile host kind: ${String(kind)}`);
   }
 }
 
@@ -68,7 +82,7 @@ export function expandProfileFieldInput(raw: string, baseHost: string): string {
   if (!v) {
     return "";
   }
-  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(v) || v.startsWith("//")) {
+  if (PROTOCOL_FULL_URI_START_RE.test(v) || v.startsWith("//")) {
     return v;
   }
   if (v.startsWith("@")) {
@@ -80,15 +94,15 @@ export function expandProfileFieldInput(raw: string, baseHost: string): string {
   const firstLower = firstSegment.toLowerCase();
   const looksLikeHostname =
     firstLower.includes(".") &&
-    /^[a-z0-9.-]+$/i.test(firstLower) &&
+    HOSTNAME_CHARS_ONLY_RE.test(firstLower) &&
     !firstLower.startsWith(".");
 
   if (looksLikeHostname) {
-    return `https://${v.replace(/^\/+/, "")}`;
+    return `https://${v.replace(LEADING_SLASHES_RE, "")}`;
   }
 
-  const host = baseHost.replace(/\/$/, "");
-  const rest = v.replace(/^\/+/, "");
+  const host = baseHost.replace(TRAILING_SLASH_RE, "");
+  const rest = v.replace(LEADING_SLASHES_RE, "");
   const hl = host.toLowerCase();
   const rl = rest.toLowerCase();
   if (rl === hl || rl.startsWith(`${hl}/`)) {
@@ -162,8 +176,8 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
       const handle =
         trimmed
           .slice(1)
-          .split(/[/?#\s]/)[0]
-          ?.replace(/^\/+/, "") ?? "";
+          .split(HANDLE_TERM_BOUNDARY_RE)[0]
+          ?.replace(LEADING_SLASHES_RE, "") ?? "";
       if (!handle) {
         return "";
       }
@@ -176,7 +190,7 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
         trimmed.includes(".")
       )
     ) {
-      const h = trimmed.split(/\s/)[0] ?? "";
+      const h = trimmed.split(FIRST_WHITESPACE_CHUNK_RE)[0] ?? "";
       if (h.length > 0) {
         return `https://x.com/${h}`;
       }
@@ -184,8 +198,10 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
   }
 
   let s = trimmed;
-  if (!/^[a-z][a-z0-9+.-]*:/i.test(s)) {
-    s = s.startsWith("//") ? `https:${s}` : `https://${s.replace(/^\/+/, "")}`;
+  if (!URL_SCHEME_PREFIX_RE.test(s)) {
+    s = s.startsWith("//")
+      ? `https:${s}`
+      : `https://${s.replace(LEADING_SLASHES_RE, "")}`;
   }
 
   let u: URL;
@@ -207,9 +223,9 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
   }
 
   let path = u.pathname || "/";
-  path = path.replace(/\/{2,}/g, "/");
+  path = path.replace(DUPLICATE_SLASHES_RE, "/");
   if (path.length > 1) {
-    path = path.replace(/\/+$/, "");
+    path = path.replace(TRAILING_SLASHES_ON_PATH_RE, "");
   }
 
   const search = kind === "web" && !isProfileHost(host) ? u.search : "";
@@ -238,12 +254,12 @@ export function profileNormalizedToInputSuffix(
     return "";
   }
   let path = u.pathname || "/";
-  path = path.replace(/\/{2,}/g, "/");
+  path = path.replace(DUPLICATE_SLASHES_RE, "/");
   if (path.length > 1) {
-    path = path.replace(/\/+$/, "");
+    path = path.replace(TRAILING_SLASHES_ON_PATH_RE, "");
   }
   const tail = path.startsWith("/") ? path.slice(1) : path;
-  const h = u.hostname.toLowerCase().replace(/^www\./, "");
+  const h = u.hostname.toLowerCase().replace(WWW_HOSTNAME_PREFIX_RE, "");
 
   if (kind === "github" && h.endsWith(".github.io")) {
     return tail ? `${h}/${tail}` : h;
@@ -251,7 +267,7 @@ export function profileNormalizedToInputSuffix(
   if (kind === "linkedin") {
     const tl = tail.toLowerCase();
     if (tl.startsWith("in/")) {
-      return tail.slice(3).replace(/^\/+/, "");
+      return tail.slice(3).replace(LEADING_SLASHES_RE, "");
     }
   }
   return tail;
@@ -263,7 +279,7 @@ export function cleanProfilePasteText(
 ): string {
   const line =
     raw
-      .split(/\r?\n/)
+      .split(LINE_BREAK_SPLIT_RE)
       .map((l) => l.trim())
       .find((l) => l.length > 0) ?? "";
   if (!line) {

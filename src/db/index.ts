@@ -1,6 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import * as schema from "./schema";
+import { ambassadorApplications, hackathonSignups } from "./schema";
+
+const schema = { ambassadorApplications, hackathonSignups };
 
 function requireDatabaseUrl(): string {
   const url = import.meta.env.DATABASE_URL;

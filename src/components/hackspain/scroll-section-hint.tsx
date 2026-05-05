@@ -55,6 +55,7 @@ export function ScrollSectionHint({
             viewBox="0 0 24 24"
             width="28"
           >
+            <title>Indicador de desplazamiento</title>
             <path d="M6 10l6 6 6-6" />
           </svg>
         </motion.span>

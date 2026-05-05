@@ -1,14 +1,16 @@
 import { defineMiddleware } from "astro:middleware";
 import llmsBody from "./data/llms.txt?raw";
-import { SECTION_SLUGS } from "./data/sectionRoutes";
+import { SECTION_SLUGS } from "./data/section-routes";
 
 type SectionSlug = (typeof SECTION_SLUGS)[number];
+
+const TRAILING_SLASH_PATH = /\/$/;
 
 function stripTrailingSlash(pathname: string): string {
   if (pathname.length <= 1) {
     return pathname || "/";
   }
-  const s = pathname.replace(/\/$/, "");
+  const s = pathname.replace(TRAILING_SLASH_PATH, "");
   return s === "" ? "/" : s;
 }
 

@@ -1,4 +1,35 @@
+import type { Ref } from "react";
 import { useEffect, useImperativeHandle, useMemo, useRef } from "react";
+
+function applyChromaKey(
+  d: Uint8ClampedArray,
+  kr: number,
+  kg: number,
+  kb: number,
+  minLuma: number,
+  greenLeadR: number,
+  greenLeadB: number,
+  tol2: number
+) {
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i] ?? 0;
+    const g = d[i + 1] ?? 0;
+    const b = d[i + 2] ?? 0;
+    const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+    if (luma < minLuma) {
+      continue;
+    }
+    if (!(g >= r + greenLeadR && g >= b + greenLeadB)) {
+      continue;
+    }
+    const dr = r - kr;
+    const dg = g - kg;
+    const db = b - kb;
+    if (dr * dr + dg * dg + db * db <= tol2) {
+      d[i + 3] = 0;
+    }
+  }
+}
 
 function useOnceReadyVideo(
   videoRef: { current: HTMLVideoElement | null },
@@ -41,7 +72,7 @@ function useOnceReadyVideo(
       firedRef.current = true;
       onMediaReady();
     });
-  }, [onMediaReady, videoRef.current]);
+  }, [onMediaReady, videoRef]);
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -57,7 +88,7 @@ function hexToRgb(hex: string): [number, number, number] {
   if (Number.isNaN(v) || n.length !== 6) {
     return [0, 255, 0];
   }
-  return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+  return [Math.floor(v / 65_536) % 256, Math.floor(v / 256) % 256, v % 256];
 }
 
 interface Props {
@@ -67,6 +98,7 @@ interface Props {
   keyColor: string;
   minLuma?: number;
   onMediaReady?: () => void;
+  ref?: Ref<HTMLVideoElement | null>;
   src: string;
   tolerance?: number;
 }
@@ -84,6 +116,7 @@ export const ChromaKeyVideo = function ChromaKeyVideo({
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // biome-ignore lint/style/noNonNullAssertion: parent reads ref only after the hidden <video> is mounted, matching videoRef.
   useImperativeHandle(ref, () => videoRef.current!, []);
   useOnceReadyVideo(videoRef, src, onMediaReady);
 
@@ -115,24 +148,7 @@ export const ChromaKeyVideo = function ChromaKeyVideo({
           ctx.drawImage(video, 0, 0, vw, vh);
           const img = ctx.getImageData(0, 0, vw, vh);
           const d = img.data;
-          for (let i = 0; i < d.length; i += 4) {
-            const r = d[i]!;
-            const g = d[i + 1]!;
-            const b = d[i + 2]!;
-            const luma = 0.299 * r + 0.587 * g + 0.114 * b;
-            if (luma < minLuma) {
-              continue;
-            }
-            if (!(g >= r + greenLeadR && g >= b + greenLeadB)) {
-              continue;
-            }
-            const dr = r - kr;
-            const dg = g - kg;
-            const db = b - kb;
-            if (dr * dr + dg * dg + db * db <= tol2) {
-              d[i + 3] = 0;
-            }
-          }
+          applyChromaKey(d, kr, kg, kb, minLuma, greenLeadR, greenLeadB, tol2);
           ctx.putImageData(img, 0, 0);
         }
       }

@@ -19,6 +19,6 @@ export function artboardFor(profile: LayoutProfile): Artboard {
 
 export function horseArtboardFor(
   profile: LayoutProfile
-): typeof HORSE_ARTBOARD {
+): typeof HORSE_ARTBOARD | typeof HORSE_ARTBOARD_COMPACT {
   return profile === "compact" ? HORSE_ARTBOARD_COMPACT : HORSE_ARTBOARD;
 }

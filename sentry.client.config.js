@@ -1,4 +1,8 @@
-import * as Sentry from "@sentry/astro";
+import {
+  browserTracingIntegration,
+  init,
+  replayIntegration,
+} from "@sentry/astro";
 
 const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
 const isDev = import.meta.env.DEV;
@@ -7,7 +11,7 @@ if (dsn) {
   // Replay lazy-loads extra bundles; in Vite dev that often 404s (UUID chunks) and logs
   // "Error loading script", which is unrelated to app code. Keep replay for production only.
   const integrations = [
-    Sentry.browserTracingIntegration({
+    browserTracingIntegration({
       tracePropagationTargets: [
         /^https?:\/\/localhost(:\d+)?/,
         /^https:\/\/(www\.)?hackspain\.com/,
@@ -17,7 +21,7 @@ if (dsn) {
   ];
   if (!isDev) {
     integrations.push(
-      Sentry.replayIntegration({
+      replayIntegration({
         // Default masking hides all text; disable so replays show full UI copy (PII risk — ok for internal debugging).
         maskAllText: false,
         maskAllInputs: false,
@@ -26,7 +30,7 @@ if (dsn) {
     );
   }
 
-  Sentry.init({
+  init({
     dsn,
     // Adds request headers and IP for users, for more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/astro/configuration/options/#sendDefaultPii

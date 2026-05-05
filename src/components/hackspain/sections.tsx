@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   exaLogo,
   falLogo,
@@ -7,10 +8,10 @@ import {
   mozartLogo,
 } from "./assets";
 import { INSTAGRAM_SVG, X_SVG } from "./constants";
-import { InlineSvg } from "./InlineSvg";
-import { P } from "./Panel";
-import { ParticipantsCountUp } from "./ParticipantsCountUp";
-import { ButtonLink } from "./ui/Button";
+import { InlineSvg } from "./inline-svg";
+import { P } from "./panel";
+import { ParticipantsCountUp } from "./participants-count-up";
+import { ButtonLink } from "./ui/button";
 
 const B = "font-bungee";
 const D = "font-sans";
@@ -26,10 +27,11 @@ function sponsorAlt(brand: string, extra?: string) {
 function brLines(s: string) {
   const lines = s.split("\n");
   return lines.map((line, i) => (
-    <span key={i}>
+    // biome-ignore lint/suspicious/noArrayIndexKey: static marketing headings; line order is fixed in source.
+    <Fragment key={`${line}__${i}`}>
       {i > 0 ? <br /> : null}
       {line}
-    </span>
+    </Fragment>
   ));
 }
 
@@ -45,84 +47,94 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
   );
 
   const actions: React.ReactNode[] = [
-    <P bg="bg-hs-paper">
-      <div className="flex flex-wrap items-center justify-center gap-2.5 text-hs-ink sm:gap-3">
+    <Fragment key="footer-social">
+      <P bg="bg-hs-paper">
+        <div className="flex flex-wrap items-center justify-center gap-2.5 text-hs-ink sm:gap-3">
+          <a
+            aria-label="HackSpain en X (@hackspain26)"
+            className="flex h-5 w-5 shrink-0 items-center justify-center"
+            href="https://x.com/hackspain26"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <span
+              className="h-5 w-5"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG strings from ./constants
+              dangerouslySetInnerHTML={{ __html: X_SVG }}
+            />
+          </a>
+          <a
+            aria-label="HackSpain en Instagram (@hackspain26)"
+            className="flex h-5 w-5 shrink-0 items-center justify-center"
+            href="https://www.instagram.com/hackspain26/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <span
+              className="h-5 w-5"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG strings from ./constants
+              dangerouslySetInnerHTML={{ __html: INSTAGRAM_SVG }}
+            />
+          </a>
+          <a
+            className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] underline underline-offset-2`}
+            href="https://x.com/hackspain26"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            @hackspain26
+          </a>
+        </div>
+      </P>
+    </Fragment>,
+    <Fragment key="footer-credits">
+      <P bg="bg-hs-paper">
+        <p
+          className={`${D} text-center font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink`}
+        >
+          Hecho con ♥ por{" "}
+          <a
+            className="underline underline-offset-2"
+            href="https://x.com/mrloldev"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Leo
+          </a>
+          {" y "}
+          <a
+            className="underline underline-offset-2"
+            href="https://x.com/disamdev"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Samu
+          </a>
+        </p>
+      </P>
+    </Fragment>,
+    <Fragment key="footer-github">
+      <P bg="bg-hs-paper">
         <a
-          aria-label="HackSpain en X (@hackspain26)"
-          className="flex h-5 w-5 shrink-0 items-center justify-center"
-          href="https://x.com/hackspain26"
+          className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink underline underline-offset-2`}
+          href="https://github.com/samuelcorsan/hackspain.com"
           rel="noopener noreferrer"
           target="_blank"
         >
-          <span
-            className="h-5 w-5"
-            dangerouslySetInnerHTML={{ __html: X_SVG }}
-          />
+          Ver el código →
         </a>
+      </P>
+    </Fragment>,
+    <Fragment key="footer-email">
+      <P bg="bg-hs-paper">
         <a
-          aria-label="HackSpain en Instagram (@hackspain26)"
-          className="flex h-5 w-5 shrink-0 items-center justify-center"
-          href="https://www.instagram.com/hackspain26/"
-          rel="noopener noreferrer"
-          target="_blank"
+          className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink underline underline-offset-2`}
+          href="mailto:leo@hackspain.com"
         >
-          <span
-            className="h-5 w-5"
-            dangerouslySetInnerHTML={{ __html: INSTAGRAM_SVG }}
-          />
+          leo@hackspain.com
         </a>
-        <a
-          className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] underline underline-offset-2`}
-          href="https://x.com/hackspain26"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          @hackspain26
-        </a>
-      </div>
-    </P>,
-    <P bg="bg-hs-paper">
-      <p
-        className={`${D} text-center font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink`}
-      >
-        Hecho con ♥ por{" "}
-        <a
-          className="underline underline-offset-2"
-          href="https://x.com/mrloldev"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Leo
-        </a>
-        {" y "}
-        <a
-          className="underline underline-offset-2"
-          href="https://x.com/disamdev"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Samu
-        </a>
-      </p>
-    </P>,
-    <P bg="bg-hs-paper">
-      <a
-        className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink underline underline-offset-2`}
-        href="https://github.com/samuelcorsan/hackspain.com"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        Ver el código →
-      </a>
-    </P>,
-    <P bg="bg-hs-paper">
-      <a
-        className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink underline underline-offset-2`}
-        href="mailto:leo@hackspain.com"
-      >
-        leo@hackspain.com
-      </a>
-    </P>,
+      </P>
+    </Fragment>,
   ];
 
   const i = sectionIdx % 4;
@@ -376,7 +388,9 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           <img
             alt={sponsorAlt("Google", gEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain"
+            height={96}
             src={googleLogo.src}
+            width={240}
           />
         </P>
       ),
@@ -385,7 +399,9 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           <img
             alt={sponsorAlt("Mozart AI", mEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            height={96}
             src={mozartLogo.src}
+            width={240}
           />
         </P>
       ),
@@ -394,7 +410,9 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           <img
             alt={sponsorAlt("fal.ai", fEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            height={96}
             src={falLogo.src}
+            width={240}
           />
         </P>
       ),
@@ -403,7 +421,9 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           <img
             alt={sponsorAlt("Exa", eEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            height={96}
             src={exaLogo.src}
+            width={240}
           />
         </P>
       ),
@@ -412,7 +432,9 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           <img
             alt={sponsorAlt("K Fund", kEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            height={96}
             src={kfundLogo.src}
+            width={240}
           />
         </P>
       ),

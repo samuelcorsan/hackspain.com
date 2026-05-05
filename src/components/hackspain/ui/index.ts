@@ -3,7 +3,7 @@ export {
   ButtonLink,
   type ButtonLinkProps,
   type ButtonProps,
-} from "./Button";
+} from "./button";
 export {
   type HsButtonSize,
   type HsButtonVariant,
@@ -11,4 +11,4 @@ export {
   hsButtonClass,
   hsButtonSizes,
   hsButtonVariants,
-} from "./buttonStyles";
+} from "./button-styles";

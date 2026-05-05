@@ -14,8 +14,8 @@ import falPng from "../../assets/sponsors/fal.png";
 import googlePng from "../../assets/sponsors/google.png";
 import kfundPng from "../../assets/sponsors/kfund.png";
 import mozartPng from "../../assets/sponsors/mozart.png";
-import { prepareIllustrationSvg } from "./svg/prepareIllustrationSvg";
-import { prepareLogoSvg } from "./svg/prepareLogoSvg";
+import { prepareIllustrationSvg } from "./svg/prepare-illustration-svg";
+import { prepareLogoSvg } from "./svg/prepare-logo-svg";
 
 export const windmillSvg = prepareIllustrationSvg(windmillRaw);
 export const horseSvg = prepareIllustrationSvg(horseRaw);

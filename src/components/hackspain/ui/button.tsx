@@ -1,10 +1,11 @@
+import type { ComponentPropsWithoutRef, Ref } from "react";
 import {
   type HsButtonSize,
   type HsButtonVariant,
   hsButtonClass,
-} from "./buttonStyles";
+} from "./button-styles";
 
-export type ButtonProps = React.ComponentPropsWithoutRef<"button"> & {
+export type ButtonProps = ComponentPropsWithoutRef<"button"> & {
   variant?: HsButtonVariant;
   size?: HsButtonSize;
 };
@@ -16,7 +17,7 @@ export const Button = function Button({
   type = "button",
   ref,
   ...props
-}: ButtonProps & { ref?: RefObject<HTMLButtonElement | null> }) {
+}: ButtonProps & { ref?: Ref<HTMLButtonElement | null> }) {
   return (
     <button
       className={hsButtonClass(variant, size, className)}
@@ -27,7 +28,7 @@ export const Button = function Button({
   );
 };
 
-export type ButtonLinkProps = React.ComponentPropsWithoutRef<"a"> & {
+export type ButtonLinkProps = ComponentPropsWithoutRef<"a"> & {
   variant?: HsButtonVariant;
   size?: HsButtonSize;
 };
@@ -38,7 +39,7 @@ export const ButtonLink = function ButtonLink({
   className,
   ref,
   ...props
-}: ButtonLinkProps & { ref?: RefObject<HTMLAnchorElement | null> }) {
+}: ButtonLinkProps & { ref?: Ref<HTMLAnchorElement | null> }) {
   return (
     <a
       className={hsButtonClass(variant, size, className)}

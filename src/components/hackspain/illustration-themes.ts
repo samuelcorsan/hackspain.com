@@ -188,8 +188,11 @@ export function illustrationsForSection(
   sectionIndex: number,
   profile: LayoutProfile = "desktop"
 ): IllDef[] {
-  const row =
-    SCHEDULE[Math.max(0, Math.min(SCHEDULE.length - 1, sectionIndex))]!;
+  const rowIndex = Math.max(0, Math.min(SCHEDULE.length - 1, sectionIndex));
+  const row = SCHEDULE[rowIndex];
+  if (row === undefined) {
+    return [];
+  }
   const compact = profile === "compact";
   return SLOT_IDS.map((id, i) => {
     const art = i === 2 ? "horse" : (row[i] ?? null);
