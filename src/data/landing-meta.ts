@@ -6,9 +6,6 @@ export const SOCIAL_SHARE_IMAGE = {
   width: 1873,
   height: 953,
 } as const;
-
-const CONTENT_DATE_MODIFIED = "2026-03-21";
-
 export interface PageSeo {
   description: string;
   ogImageAlt: string;
@@ -167,7 +164,6 @@ export function jsonLdWebPage(sectionIndex: number, pageUrl: string) {
     inLanguage: "es",
     isPartOf: { "@id": `${SITE}/#website` },
     about: { "@id": `${SITE}/#event` },
-    dateModified: CONTENT_DATE_MODIFIED,
     primaryImageOfPage: {
       "@type": "ImageObject",
       url: `${SITE}${SOCIAL_SHARE_IMAGE.path}`,
@@ -191,15 +187,14 @@ export function jsonLdEvent() {
       "hackathon Spain",
     ],
     description:
-      "Hackathon en Madrid, España — HackSpain 2026. 24 horas para jóvenes programadores. Junio 2026.",
+      "Hackathon en Madrid, España — HackSpain 2026. 24 horas para jóvenes programadores. Septiembre 2026.",
     inLanguage: "es",
     keywords:
       "hackathon Madrid, hackathon España, Hack Spain, hack spain, HackSpain, ML, patrocinadores",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     eventStatus: "https://schema.org/EventScheduled",
-    startDate: "2026-06-01",
-    endDate: "2026-06-02",
-    dateModified: CONTENT_DATE_MODIFIED,
+    startDate: "2026-09-01",
+    endDate: "2026-09-02",
     organizer: { "@id": `${SITE}/#organization` },
     location: {
       "@type": "Place",
@@ -232,7 +227,7 @@ export function jsonLdFaq() {
         name: "¿Cuándo es HackSpain 2026 y dónde se celebra?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "En Madrid, España. La edición de 2026 está prevista en junio; las fechas exactas y el lugar definitivo se publican en hackspain.com.",
+          text: "En Madrid, España. La edición de 2026 está prevista en septiembre; las fechas exactas y el lugar definitivo se publican en hackspain.com.",
         },
       },
       {

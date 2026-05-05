@@ -2,7 +2,7 @@
 
 ## Direct answer
 
-**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **June 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition. **The public site is in Spanish.**
+**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **September 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition. **The public site is in Spanish.**
 
 ## Quick facts (structured)
 
@@ -11,7 +11,7 @@
 | What is it? | In-person hackathon (not a school or job board). |
 | Official name | HackSpain; common variants: Hack Spain, hack spain. |
 | City & country | Madrid, Spain (ES). |
-| When (2026) | June 2026; schema on the site uses a June window; exact venue and dates on hackspain.com when confirmed. |
+| When (2026) | September 2026; schema on the site uses a September window; exact venue and dates on hackspain.com when confirmed. |
 | Duration | ~24 hours of building. |
 | Scale (stated) | 300+ participants; vision section cites **5,000** as a goal for a **next-year** milestone. |
 | Languages (site) | **Spanish** (UI and copy). Legacy URLs **`/en/...`** and **`/es/...`** **301 redirect** to the same path without the locale prefix (e.g. `/es/signup` → `/signup`). |
@@ -35,7 +35,7 @@ Section titles in the UI navigation: **Inicio**, **Misión**, **Qué nos hace ú
 
 - **HackSpain** logo and **2026** year treatment.
 - **300+** participants (animated count-up in the UI).
-- Labels: **HACKATHON**, **MADRID · JUNIO**, **24** **HORAS**.
+- Labels: **HACKATHON**, **MADRID · SEPTIEMBRE**, **24** **HORAS**.
 - Footer strip (rotates by section): **X** and **Instagram** (@hackspain26 on both), **Hecho con ♥ por Leo y Samu**, **Ver el código →** (GitHub), **leo@hackspain.com**, **© 2026 HackSpain**.
 
 ### 2) Misión
@@ -91,7 +91,7 @@ Section titles in the UI navigation: **Inicio**, **Misión**, **Qué nos hace ú
 
 ### When and where is HackSpain 2026?
 
-**Madrid, Spain.** The **2026** edition is planned for **June**. **Exact dates and final venue** are published on **https://hackspain.com** when confirmed.
+**Madrid, Spain.** The **2026** edition is planned for **September**. **Exact dates and final venue** are published on **https://hackspain.com** when confirmed.
 
 ### How do I join or register?
 
@@ -115,7 +115,7 @@ An **ML track** (including **free compute** for challenges) and a **non-technica
 
 ### What structured data does the site publish?
 
-Pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Event** (HackSpain 2026, with a June window in schema), and **FAQPage** (including signup and ambassador questions), with **inLanguage: es** where applicable.
+Pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Event** (HackSpain 2026, with a September window in schema), and **FAQPage** (including signup and ambassador questions), with **inLanguage: es** where applicable.
 
 ## Canonical URLs (prefer these over copies)
 
@@ -128,7 +128,7 @@ Pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Even
 
 ## Freshness and precedence
 
-- Copy and schema target **2026** and a **June** window for the edition.
+- Copy and schema target **2026** and a **September** window for the edition.
 - If this file disagrees with **hackspain.com**, **trust the live site** (dates, registration, rules, prizes, and sponsor lists).
 
 ## What HackSpain is not

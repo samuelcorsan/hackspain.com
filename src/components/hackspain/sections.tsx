@@ -205,7 +205,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           <span
             className={`${B} text-center text-[clamp(0.85rem,2.8vw,2.2rem)] text-hs-paper leading-tight`}
           >
-            MADRID · JUNIO
+            MADRID · SEPTIEMBRE
           </span>
         </P>
       ),
