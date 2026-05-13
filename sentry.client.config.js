@@ -3,6 +3,7 @@ import {
   init,
   replayIntegration,
 } from "@sentry/astro";
+import { isLocalhostSentryEvent } from "./src/lib/sentry-event-filters";
 
 const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
 const isDev = import.meta.env.DEV;
@@ -38,6 +39,9 @@ if (dsn) {
     integrations,
     // Drop DOM error/rejection events mistaken for exceptions (e.g. script load failures).
     beforeSend(event, hint) {
+      if (isLocalhostSentryEvent(event)) {
+        return null;
+      }
       const ex = hint.originalException;
       if (ex instanceof Event) {
         return null;
