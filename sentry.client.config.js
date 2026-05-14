@@ -7,7 +7,18 @@ import {
 const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
 const isDev = import.meta.env.DEV;
 
-if (dsn) {
+const publicSentryHosts = new Set(["hackspain.com", "www.hackspain.com"]);
+
+function shouldReportClientErrors() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const { hostname } = window.location;
+  return publicSentryHosts.has(hostname) || hostname.endsWith(".vercel.app");
+}
+
+if (dsn && shouldReportClientErrors()) {
   // Replay lazy-loads extra bundles; in Vite dev that often 404s (UUID chunks) and logs
   // "Error loading script", which is unrelated to app code. Keep replay for production only.
   const integrations = [
