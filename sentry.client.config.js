@@ -3,11 +3,15 @@ import {
   init,
   replayIntegration,
 } from "@sentry/astro";
+import { canInitializeBrowserSentry } from "./src/lib/sentry-client-host";
 
 const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
 const isDev = import.meta.env.DEV;
+const canReportFromHost = canInitializeBrowserSentry(
+  globalThis.location?.hostname
+);
 
-if (dsn) {
+if (dsn && canReportFromHost) {
   // Replay lazy-loads extra bundles; in Vite dev that often 404s (UUID chunks) and logs
   // "Error loading script", which is unrelated to app code. Keep replay for production only.
   const integrations = [
