@@ -21,7 +21,9 @@ describe("isSentryBrowserHostAllowed", () => {
     expect(isSentryBrowserHostAllowed("127.0.0.1")).toBe(false);
     expect(isSentryBrowserHostAllowed("hackspain.local")).toBe(false);
     expect(isSentryBrowserHostAllowed("hackspain.com.evil.test")).toBe(false);
-    expect(isSentryBrowserHostAllowed("preview.vercel.app.evil.test")).toBe(false);
+    expect(isSentryBrowserHostAllowed("preview.vercel.app.evil.test")).toBe(
+      false
+    );
     expect(isSentryBrowserHostAllowed("")).toBe(false);
     expect(isSentryBrowserHostAllowed(null)).toBe(false);
   });
