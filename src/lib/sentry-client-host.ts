@@ -1,7 +1,11 @@
-const HACKSPAIN_PRODUCTION_HOSTS = new Set(["hackspain.com", "www.hackspain.com"]);
+const TRAILING_DOT_RE = /\.$/;
+const HACKSPAIN_PRODUCTION_HOSTS = new Set([
+  "hackspain.com",
+  "www.hackspain.com",
+]);
 
 function normalizeHostname(hostname: string): string {
-  return hostname.trim().toLowerCase().replace(/\.$/, "");
+  return hostname.trim().toLowerCase().replace(TRAILING_DOT_RE, "");
 }
 
 export function isAllowedSentryBrowserHost(hostname: string): boolean {
