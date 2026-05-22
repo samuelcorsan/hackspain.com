@@ -22,19 +22,16 @@ if (dsn) {
   if (!isDev) {
     integrations.push(
       replayIntegration({
-        // Default masking hides all text; disable so replays show full UI copy (PII risk — ok for internal debugging).
-        maskAllText: false,
-        maskAllInputs: false,
-        blockAllMedia: false,
+        maskAllText: true,
+        maskAllInputs: true,
+        blockAllMedia: true,
       })
     );
   }
 
   init({
     dsn,
-    // Adds request headers and IP for users, for more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/astro/configuration/options/#sendDefaultPii
-    sendDefaultPii: true,
+    sendDefaultPii: false,
     integrations,
     // Drop DOM error/rejection events mistaken for exceptions (e.g. script load failures).
     beforeSend(event, hint) {
