@@ -32,7 +32,7 @@
   },
   "name": "",
   "scripts": {
-    "assets:quiver": "bun scripts/quiver-generate-assets.mjs",
+    "assets:quiver": "node scripts/quiver-generate-assets.mjs",
     "assets:quiver:tiles": "node scripts/quiver-generate-tile-illustrations.mjs",
     "assets:quiver:tiles+heroes": "node scripts/quiver-generate-tile-illustrations.mjs --with-heroes",
     "dev": "astro dev",
@@ -49,5 +49,13 @@
   "version": "0.0.1",
   "engines": {
     "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@10.30.2",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "esbuild",
+      "sharp"
+    ]
   }
 }

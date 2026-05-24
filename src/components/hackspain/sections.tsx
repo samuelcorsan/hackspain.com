@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
 import {
   exaLogo,
   falLogo,
@@ -53,7 +54,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
           <a
             aria-label="HackSpain en X (@hackspain26)"
             className="flex h-5 w-5 shrink-0 items-center justify-center"
-            href="https://x.com/hackspain26"
+            href={HACKSPAIN_SOCIAL_URLS.x}
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -66,7 +67,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
           <a
             aria-label="HackSpain en Instagram (@hackspain26)"
             className="flex h-5 w-5 shrink-0 items-center justify-center"
-            href="https://www.instagram.com/hackspain26/"
+            href={HACKSPAIN_SOCIAL_URLS.instagram}
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -78,7 +79,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
           </a>
           <a
             className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] underline underline-offset-2`}
-            href="https://x.com/hackspain26"
+            href={HACKSPAIN_SOCIAL_URLS.x}
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -117,7 +118,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
       <P bg="bg-hs-paper">
         <a
           className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink underline underline-offset-2`}
-          href="https://github.com/samuelcorsan/hackspain.com"
+          href={HACKSPAIN_SOCIAL_URLS.github}
           rel="noopener noreferrer"
           target="_blank"
         >

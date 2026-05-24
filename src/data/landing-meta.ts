@@ -1,5 +1,12 @@
 const SITE = "https://hackspain.com";
 
+/** Official profiles for CTAs (footer, signup end screen, etc.). */
+export const HACKSPAIN_SOCIAL_URLS = {
+  x: "https://x.com/hackspain26",
+  instagram: "https://www.instagram.com/hackspain26/",
+  github: "https://github.com/samuelcorsan/hackspain.com",
+} as const;
+
 /** Open Graph / Twitter / JSON-LD primary share image (`public/banner.png`). */
 export const SOCIAL_SHARE_IMAGE = {
   path: "/banner.png",
@@ -123,9 +130,9 @@ export function jsonLdOrganization() {
     description:
       "Hackathon Madrid y hackathon España — HackSpain. Misión: talento tech joven.",
     sameAs: [
-      "https://x.com/hackspain26",
-      "https://www.instagram.com/hackspain26/",
-      "https://github.com/samuelcorsan/hackspain.com",
+      HACKSPAIN_SOCIAL_URLS.x,
+      HACKSPAIN_SOCIAL_URLS.instagram,
+      HACKSPAIN_SOCIAL_URLS.github,
     ],
     knowsAbout: [
       "hackathon España",

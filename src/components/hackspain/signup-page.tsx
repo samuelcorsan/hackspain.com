@@ -15,6 +15,7 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
+import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
 import {
   HEARD_FROM_OPTIONS,
   HEARD_FROM_SOURCE_IDS,
@@ -22,7 +23,10 @@ import {
   normalizeSocialUrl,
   parseSignupBodyClient,
 } from "../../lib/signup-validation";
+import { signupSocialReminderSvg } from "./assets";
+import { INSTAGRAM_SVG, X_SVG } from "./constants";
 import { FormField, Input, SocialPrefixInput, Textarea } from "./form";
+import { InlineSvg } from "./inline-svg";
 import { MosaicBackground } from "./mosaic-background";
 import { Button, ButtonLink } from "./ui/button";
 import { useLayoutProfile } from "./use-layout-profile";
@@ -199,6 +203,9 @@ const t = {
     "¡Gracias! Hemos recibido tu solicitud. Espera nuestra respuesta por correo; te escribiremos en cuanto podamos.",
   alreadyApplied:
     "Ya enviaste una solicitud desde este navegador. Te contactaremos por correo; usa «Volver a solicitar» solo si necesitas mandar otra.",
+  followSocialsHint:
+    "Síguenos en redes para enterarte de fechas, novedades y todo lo que viene en HackSpain 2026.",
+  followSocialsLabel: "También en redes",
   applyAgain: "Volver a solicitar",
   errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
   errorSocialRequired: "Añade al menos un enlace a perfil o web.",
@@ -540,7 +547,7 @@ export function SignupPage() {
                   src="/happy_quijote.png"
                   width={320}
                 />
-                <div className="flex max-w-lg flex-col items-center gap-6">
+                <div className="flex w-full max-w-lg flex-col items-center gap-8">
                   <p className="font-bold font-sans text-hs-ink text-lg leading-snug sm:text-xl">
                     {status === "alreadyApplied"
                       ? t.alreadyApplied
@@ -563,6 +570,62 @@ export function SignupPage() {
                       {t.applyAgain}
                     </Button>
                   </div>
+                  <section
+                    aria-label={t.followSocialsLabel}
+                    className="flex w-full max-w-lg flex-col items-stretch gap-3 border-[3px] border-hs-ink bg-hs-paper/90 px-4 py-5 sm:flex-row sm:items-center sm:gap-5 sm:px-5"
+                  >
+                    <div className="mx-auto h-24 w-24 shrink-0 sm:mx-0 sm:h-28 sm:w-28">
+                      <InlineSvg
+                        className="h-full w-full"
+                        decorative
+                        svg={signupSocialReminderSvg}
+                      />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col items-center gap-3 text-center sm:items-start sm:text-left">
+                      <p className="font-bungee text-hs-ink text-xs uppercase tracking-wide sm:text-sm">
+                        {t.followSocialsLabel}
+                      </p>
+                      <p className="font-bold font-sans text-hs-ink text-sm leading-snug sm:text-base">
+                        {t.followSocialsHint}
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                        <a
+                          aria-label="HackSpain en X (@hackspain26)"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-hs-ink bg-hs-sand text-hs-ink transition-colors hover:bg-hs-orange/30"
+                          href={HACKSPAIN_SOCIAL_URLS.x}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          <span
+                            className="h-5 w-5"
+                            // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG from ./constants
+                            dangerouslySetInnerHTML={{ __html: X_SVG }}
+                          />
+                        </a>
+                        <a
+                          aria-label="HackSpain en Instagram (@hackspain26)"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-hs-ink bg-hs-sand text-hs-ink transition-colors hover:bg-hs-orange/30"
+                          href={HACKSPAIN_SOCIAL_URLS.instagram}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          <span
+                            className="h-5 w-5"
+                            // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG from ./constants
+                            dangerouslySetInnerHTML={{ __html: INSTAGRAM_SVG }}
+                          />
+                        </a>
+                        <a
+                          className="font-bold font-sans text-hs-ink text-sm underline underline-offset-2 sm:text-base"
+                          href={HACKSPAIN_SOCIAL_URLS.x}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          @hackspain26
+                        </a>
+                      </div>
+                    </div>
+                  </section>
                 </div>
               </div>
             ) : (

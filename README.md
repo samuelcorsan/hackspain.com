@@ -8,12 +8,12 @@ Marketing site for [HackSpain](https://hackspain.com) (Hack Spain 2026 hackathon
 ## Requirements
 
 - [Node.js](https://nodejs.org/) **≥ 22.12**
-- [Bun](https://bun.sh/) (used for install and most scripts)
+- [pnpm](https://pnpm.io/) (used for install and scripts)
 
 ## Setup
 
 ```sh
-bun install
+pnpm install
 cp .env.example .env
 ```
 
@@ -25,13 +25,13 @@ Apply schema to your database when using Drizzle (see [Database](#database)).
 
 | Command | Description |
 | :------ | :---------- |
-| `bun dev` | Dev server (default [localhost:4321](http://localhost:4321)) |
-| `bun build` | Production build to `./dist/` |
-| `bun preview` | Preview the production build locally |
-| `bun astro check` | Astro + TypeScript checks |
-| `bun assets:quiver` | Quiver asset pipeline (`scripts/quiver-generate-assets.mjs`) |
-| `bun assets:quiver:tiles` | Tile illustrations only |
-| `bun assets:quiver:tiles+heroes` | Tiles + hero illustrations |
+| `pnpm dev` | Dev server (default [localhost:4321](http://localhost:4321)) |
+| `pnpm build` | Production build to `./dist/` |
+| `pnpm preview` | Preview the production build locally |
+| `pnpm astro check` | Astro + TypeScript checks |
+| `pnpm assets:quiver` | Quiver asset pipeline (`scripts/quiver-generate-assets.mjs`) |
+| `pnpm assets:quiver:tiles` | Tile illustrations only |
+| `pnpm assets:quiver:tiles+heroes` | Tiles + hero illustrations |
 
 ## Database
 
@@ -39,9 +39,9 @@ Drizzle is configured for PostgreSQL (`drizzle.config.ts`, schema in `src/db/sch
 
 | Command | Description |
 | :------ | :---------- |
-| `bun db:generate` | Generate migrations from schema changes |
-| `bun db:migrate` | Run migrations |
-| `bun db:push` | Push schema (handy in development) |
+| `pnpm db:generate` | Generate migrations from schema changes |
+| `pnpm db:migrate` | Run migrations |
+| `pnpm db:push` | Push schema (handy in development) |
 
 ## Project layout
 
