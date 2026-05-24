@@ -91,11 +91,11 @@ export async function renderSignupConfirmationHtml(
   return { html, text };
 }
 
-const PRE_SIGNUP_ORGANIZERS = ["Leo", "Samu", "Guli"] as const;
+const PRE_SIGNUP_ORGANIZER_NAMES = ["Samu", "Guli", "Leo"] as const;
 
-function pickOrganizer(): string {
-  const i = Math.floor(Math.random() * PRE_SIGNUP_ORGANIZERS.length);
-  return PRE_SIGNUP_ORGANIZERS[i] ?? "Leo";
+function pickOrganizerName(): string {
+  const i = Math.floor(Math.random() * PRE_SIGNUP_ORGANIZER_NAMES.length);
+  return PRE_SIGNUP_ORGANIZER_NAMES[i] ?? PRE_SIGNUP_ORGANIZER_NAMES[0];
 }
 
 export interface PreSignupEmailInput {
@@ -111,23 +111,27 @@ export async function sendPreSignupConfirmationEmail(
     return { ok: false, reason: "smtp_disabled" };
   }
 
-  const organizer = pickOrganizer();
-  const text = `hey ${input.fullName},
-Aquí ${organizer} de HackSpain.
+  const organizerName = pickOrganizerName();
+  const text = `¡Hola ${input.fullName}!
 
-Nos ha llegado tu solicitud de inscripción. Cuando tengamos nuevas noticias te avisaremos. gracias por inscribirte.
+Soy ${organizerName}, del equipo de HackSpain. Solo quería confirmarte que tus datos nos han llegado bien — muchísimas gracias por el interés tan pronto, significa un montón.
 
-Si quieres enterarte de lo que pasa con HackSpain, siguenos en Twitter: https://x.com/hackspain26
+Te iremos escribiendo por aquí con todas las novedades a medida que las tengamos.
 
-un saludo,
-${organizer}`;
+Mientras tanto, te recomendamos seguirnos en Twitter para no perderte nada: https://x.com/hackspain26
+
+Nos vemos pronto!
+${organizerName}`;
 
   try {
     const transporter = getTransporter(cfg);
     const info = await transporter.sendMail({
-      from: { name: cfg.fromName, address: cfg.fromAddress },
+      from: {
+        name: `${organizerName} de HackSpain`,
+        address: cfg.user,
+      },
       to: input.email,
-      subject: "Hemos recibido tu solicitud — HackSpain",
+      subject: "Hemos recibido tu pre-inscripción!",
       text,
       headers: {
         "X-Entity-Ref-ID": `hackspain-pre-signup-${Date.now()}`,

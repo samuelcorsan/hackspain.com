@@ -4,6 +4,7 @@ import react from "@astrojs/react";
 import vercel from "@astrojs/vercel";
 import sentry from "@sentry/astro";
 import { defineConfig } from "astro/config";
+import { workflow } from "workflow/astro";
 
 export default defineConfig({
   site: "https://hackspain.com",
@@ -11,6 +12,7 @@ export default defineConfig({
   adapter: vercel(),
   trailingSlash: "never",
   integrations: [
+    workflow(),
     react(),
     sentry({
       project: "javascript",

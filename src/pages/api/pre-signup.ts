@@ -3,9 +3,10 @@ import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
 import { getDb } from "../../db";
 import { hackathonPreSignups } from "../../db/schema";
+import { start } from "workflow/api";
 import { notifyDiscordSignupApiIssue } from "../../lib/discord-signup-webhook";
-import { sendPreSignupConfirmationEmail } from "../../lib/signup-confirmation-email";
 import { parsePreSignupBody } from "../../lib/signup-validation";
+import { handlePreSignupFollowup } from "../../workflows/pre-signup-followup";
 
 export const prerender = false;
 
@@ -192,32 +193,16 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const emailResult = await sendPreSignupConfirmationEmail({
-      fullName,
-      email,
-    });
-    if (!emailResult.ok && emailResult.reason === "send_failed") {
-      safeSentry(() => {
-        withScope((scope) => {
-          scope.setTag("api", "pre-signup");
-          scope.setTag("outcome", "confirmation_email_failed");
-          scope.setContext("email", { detail: emailResult.detail });
-          captureMessage(
-            "POST /api/pre-signup: confirmation email failed",
-            "warning"
-          );
-        });
-      });
-    }
+    await start(handlePreSignupFollowup, [{ fullName, email }]);
   } catch (e) {
     console.error(
-      "[pre-signup] Confirmation email threw after successful insert:",
+      "[pre-signup] Failed to start followup workflow after successful insert:",
       e
     );
     safeSentry(() => {
       withScope((scope) => {
         scope.setTag("api", "pre-signup");
-        scope.setTag("outcome", "confirmation_email_exception");
+        scope.setTag("outcome", "workflow_start_failed");
         captureException(e);
       });
     });
