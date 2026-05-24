@@ -3,24 +3,13 @@ import type { CellDef } from "./cells";
 /**
  * Compact 3-column grid (1440 x 900, same artboard as desktop).
  *
- * Only cells that carry section content get real positions.
- * Never-populated cells (r1a-d, r2a, r2b, r2e, r2h, r4a, r4e) are
- * zero-sized so they exist in the array but never render visibly.
- *
- * Several cells share the same physical position because they never
- * appear in the same section:
- *   Pos A  (480, 280): year (s0) | r2c (s2,s4,s5)
- *   Pos B  (480, 480): r4b  (s1,s3,s5) | r4c (s2,s4)
- *   Pos C  (960, 480): r4d  (s0,s4) | r1e (s3)
- *   Pos D  (0,   640): r2d  (s4) | r2f (s3)
- *
- * Footer uses 2 half-width cells instead of desktop's 4:
- *   Left  (0,   740): r5a (s0,s2,s4) | r5b (s1,s3,s5)
- *   Right (720, 740): r5c (s0,s2,s4) | r5d (s1,s3,s5)
+ * Cells that never coexist in a single section share a position:
+ *   Pos A (480, 280): year (s0) | r2c (s2,s4,s5)
+ *   Pos B (480, 480): r4b  (s1,s3,s5) | r4c (s2,s4)
+ *   Pos C (960, 480): r4d  (s0,s4) | r1e (s3)
+ *   Pos D (0,   640): r2d  (s4) | r2f (s3)
+ *   Footer halves:   r5a/r5b (left), r5c/r5d (right)
  */
-
-const ZERO: Pick<CellDef, "x" | "y" | "w" | "h"> = { x: 0, y: 0, w: 0, h: 0 };
-
 export const CELLS_COMPACT: CellDef[] = [
   // Row 0: hero — full width
   { id: "hero", x: 0, y: 0, w: 1440, h: 280, delay: 0 },
@@ -47,16 +36,4 @@ export const CELLS_COMPACT: CellDef[] = [
   { id: "r5b", x: 0, y: 740, w: 720, h: 160, delay: 0.05 },
   { id: "r5c", x: 720, y: 740, w: 720, h: 160, delay: 0.07 },
   { id: "r5d", x: 720, y: 740, w: 720, h: 160, delay: 0.09 },
-
-  // Never-populated cells — zero-sized
-  { id: "r1a", ...ZERO, delay: 0.01 },
-  { id: "r1b", ...ZERO, delay: 0.03 },
-  { id: "r1c", ...ZERO, delay: 0.05 },
-  { id: "r1d", ...ZERO, delay: 0.02 },
-  { id: "r2a", ...ZERO, delay: 0.04 },
-  { id: "r2b", ...ZERO, delay: 0.06 },
-  { id: "r2e", ...ZERO, delay: 0.07 },
-  { id: "r2h", ...ZERO, delay: 0.04 },
-  { id: "r4a", ...ZERO, delay: 0.03 },
-  { id: "r4e", ...ZERO, delay: 0.05 },
 ];

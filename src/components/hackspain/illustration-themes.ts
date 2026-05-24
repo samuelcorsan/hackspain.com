@@ -11,7 +11,6 @@ import {
   trophySvg,
   windmillSvg,
 } from "./assets";
-import { TRI_R1A } from "./constants";
 
 const SVG_MAP = {
   windmill: windmillSvg,
@@ -48,17 +47,14 @@ const SCHEDULE: (IllArt | null)[][] = [
   ["windmill", "quixote", "horse", "compass", null, null],
   [null, "community", "horse", null, "spark", "code"],
   [null, "sun", "horse", "trophy", "spark", "code"],
-  ["trophy", "sun", "horse", "compass", "medal", null],
+  ["trophy", "sun", "horse", "compass", null, null],
   ["windmill", "quixote", "horse", "compass", null, null],
 ];
 
 function slot4Geometry(
-  art: IllArt | null
+  _art: IllArt | null
 ): Pick<IllDef, "x" | "y" | "w" | "h" | "clip"> {
-  if (art === "spark" || art === "medal") {
-    return { x: 700, y: 140, w: 180, h: 200 };
-  }
-  return { x: 200, y: 0, w: 280, h: 120, clip: TRI_R1A };
+  return { x: 160, y: -20, w: 360, h: 220 };
 }
 
 function slot5Geometry(
@@ -67,7 +63,7 @@ function slot5Geometry(
   if (art === "code") {
     return { x: 540, y: 180, w: 160, h: 160 };
   }
-  return { x: 160, y: 120, w: 140, h: 220 };
+  return { x: 160, y: 180, w: 160, h: 160 };
 }
 
 function slot4GeometryCompact(
@@ -89,9 +85,6 @@ function slot5GeometryCompact(
 }
 
 function boxFor(slotIndex: number, art: IllArt | null): string {
-  if (slotIndex === 4 && (art === "spark" || art === "medal")) {
-    return "items-stretch justify-stretch p-0 min-h-0 min-w-0";
-  }
   if (slotIndex === 5 && art === "code") {
     return "items-stretch justify-stretch p-0 min-h-0 min-w-0";
   }
@@ -114,9 +107,6 @@ function boxFor(slotIndex: number, art: IllArt | null): string {
 }
 
 function delayFor(slotIndex: number, art: IllArt | null): number {
-  if (slotIndex === 4 && (art === "spark" || art === "medal")) {
-    return 0.07;
-  }
   if (slotIndex === 5 && art === "code") {
     return 0.05;
   }
@@ -139,9 +129,6 @@ function delayFor(slotIndex: number, art: IllArt | null): number {
 }
 
 function imgFor(slotIndex: number, art: IllArt | null): string {
-  if (slotIndex === 4 && (art === "spark" || art === "medal")) {
-    return "";
-  }
   if (slotIndex === 5 && art === "code") {
     return "";
   }
@@ -170,7 +157,7 @@ function imgFor(slotIndex: number, art: IllArt | null): string {
     return "h-full w-auto max-w-[98%]";
   }
   if (slotIndex === 4) {
-    return "h-[88%] w-auto max-w-[95%]";
+    return "h-[98%] w-auto max-w-[100%]";
   }
   return "w-[78%] h-auto max-h-[88%]";
 }
@@ -236,9 +223,9 @@ export function illustrationsForSection(
       w = 200;
       h = 180;
     } else if (i === 1) {
-      x = 1030;
+      x = 920;
       y = 0;
-      w = 200;
+      w = 220;
       h = 180;
     } else if (i === 2) {
       x = 0;
@@ -246,9 +233,9 @@ export function illustrationsForSection(
       w = 200;
       h = 220;
     } else if (i === 3) {
-      x = 1180;
+      x = 1220;
       y = 340;
-      w = 260;
+      w = 220;
       h = 220;
     } else if (i === 4) {
       ({ x, y, w, h, clip } = slot4Geometry(art));
@@ -256,11 +243,7 @@ export function illustrationsForSection(
       ({ x, y, w, h, clip } = slot5Geometry(art));
     }
 
-    const fill =
-      (i === 4 && (art === "spark" || art === "medal")) ||
-      (i === 5 && art === "code")
-        ? ("none" as const)
-        : undefined;
+    const fill = i === 5 && art === "code" ? ("none" as const) : undefined;
 
     return {
       id,

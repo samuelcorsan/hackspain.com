@@ -1,14 +1,17 @@
 import { Fragment } from "react";
 import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
 import {
+  cursorLogo,
   exaLogo,
+  exponentialLogo,
   falLogo,
   googleLogo,
   kfundLogo,
   logoSvg,
-  mozartLogo,
+  onecoworkLogo,
+  upmLogo,
 } from "./assets";
-import { INSTAGRAM_SVG, X_SVG } from "./constants";
+import { GITHUB_SVG, INSTAGRAM_SVG, X_SVG } from "./constants";
 import { InlineSvg } from "./inline-svg";
 import { P } from "./panel";
 import { ParticipantsCountUp } from "./participants-count-up";
@@ -116,14 +119,27 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
     </Fragment>,
     <Fragment key="footer-github">
       <P bg="bg-hs-paper">
-        <a
-          className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink underline underline-offset-2`}
-          href={HACKSPAIN_SOCIAL_URLS.github}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Ver el código →
-        </a>
+        <div className="flex flex-col items-center gap-1 text-center text-hs-ink">
+          <div
+            className={`flex items-center justify-center gap-2 ${D} font-black text-[clamp(0.82rem,1.35vw,1.2rem)]`}
+          >
+            <span
+              aria-hidden
+              className="h-5 w-5 shrink-0"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG strings from ./constants
+              dangerouslySetInnerHTML={{ __html: GITHUB_SVG }}
+            />
+            <span>Esta página web es open source</span>
+          </div>
+          <a
+            className={`${D} font-bold text-[clamp(0.65rem,1vw,0.9rem)] underline underline-offset-2`}
+            href={HACKSPAIN_SOCIAL_URLS.github}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Ver el código →
+          </a>
+        </div>
       </P>
     </Fragment>,
     <Fragment key="footer-email">
@@ -149,7 +165,10 @@ const gEx = "hackathon España Google, hackathon Spain";
 const kEx = "inversión hackathon España";
 const fEx = "IA hackathon Madrid";
 const eEx = "búsqueda hackathon España";
-const mEx = "IA agentes hackathon España";
+const cEx = "editor de código IA hackathon España";
+const uEx = "universidad hackathon Madrid";
+const oEx = "coworking hackathon España";
+const xEx = "fondo growth hackathon España";
 
 export function buildSections(): Record<string, React.ReactNode>[] {
   const signupHref = "/signup";
@@ -194,7 +213,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r4d: (
         <P bg="bg-hs-gold">
           <ParticipantsCountUp
-            ariaLabel="+300 PARTICIPANTES"
+            ariaLabel="+250 PARTICIPANTES"
             className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-ink leading-none`}
           />
           <p className={`mt-1 ${LBL} text-hs-ink`}>PARTICIPANTES</p>
@@ -346,14 +365,14 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           </p>
         </P>
       ),
-      r1e: (
-        <div className="flex h-full w-full flex-col items-center justify-center bg-hs-gold px-1 py-0">
+      r4d: (
+        <P bg="bg-hs-gold">
           <span
-            className={`${B} text-center text-[clamp(0.7rem,1.65vw,0.95rem)] text-hs-ink leading-[1.12]`}
+            className={`${B} text-center text-[clamp(1.4rem,3.2vw,2.6rem)] text-hs-ink leading-[1.05]`}
           >
             {brLines("COMPUTE\nGRATIS")}
           </span>
-        </div>
+        </P>
       ),
       r4b: (
         <P bg="bg-hs-orange">
@@ -365,7 +384,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r2f: (
         <P bg="bg-hs-red">
           <span
-            className={`${B} text-center text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-paper leading-tight`}
+            className={`${B} text-center text-[clamp(1.1rem,2.4vw,2.2rem)] text-hs-paper leading-[1.05]`}
           >
             {brLines("PARA\nTODOS")}
           </span>
@@ -387,10 +406,10 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r2c: (
         <P bg="bg-hs-red">
           <img
-            alt={sponsorAlt("Google", gEx)}
-            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain"
+            alt={sponsorAlt("Exa", eEx)}
+            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
             height={96}
-            src={googleLogo.src}
+            src={exaLogo.src}
             width={240}
           />
         </P>
@@ -398,10 +417,21 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r2g: (
         <P bg="bg-hs-navy">
           <img
-            alt={sponsorAlt("Mozart AI", mEx)}
+            alt={sponsorAlt("K Fund", kEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
             height={96}
-            src={mozartLogo.src}
+            src={kfundLogo.src}
+            width={240}
+          />
+        </P>
+      ),
+      r2f: (
+        <P bg="bg-hs-paper">
+          <img
+            alt={sponsorAlt("UPM — Universidad Politécnica de Madrid", uEx)}
+            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] max-w-[88%] w-auto object-contain"
+            height={96}
+            src={upmLogo.src}
             width={240}
           />
         </P>
@@ -420,10 +450,21 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r3b: (
         <P bg="bg-hs-orange">
           <img
-            alt={sponsorAlt("Exa", eEx)}
+            alt={sponsorAlt("Google", gEx)}
             className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
             height={96}
-            src={exaLogo.src}
+            src={googleLogo.src}
+            width={240}
+          />
+        </P>
+      ),
+      r4b: (
+        <P bg="bg-hs-paper">
+          <img
+            alt={sponsorAlt("OneCoWork", oEx)}
+            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] max-w-[88%] w-auto object-contain"
+            height={96}
+            src={onecoworkLogo.src}
             width={240}
           />
         </P>
@@ -431,24 +472,15 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r4c: (
         <P bg="bg-hs-ink">
           <img
-            alt={sponsorAlt("K Fund", kEx)}
-            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            alt={sponsorAlt("Cursor", cEx)}
+            className="h-[clamp(3rem,10vw,8rem)] max-h-[92%] max-w-[94%] w-auto object-contain brightness-0 invert"
             height={96}
-            src={kfundLogo.src}
+            src={cursorLogo.src}
             width={240}
           />
         </P>
       ),
       r2d: (
-        <P bg="bg-hs-paper">
-          <p
-            className={`${B} text-center text-[clamp(0.6rem,2vw,1.5rem)] text-hs-ink/40 italic leading-snug`}
-          >
-            {brLines("y más\nen camino...")}
-          </p>
-        </P>
-      ),
-      r4d: (
         <P align="start" bg="bg-hs-cream">
           <p className={`${LBL} text-hs-ink/40`}>PREMIOS</p>
           <p
@@ -456,6 +488,17 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           >
             Grandes recompensas para l@s hackers
           </p>
+        </P>
+      ),
+      r4d: (
+        <P bg="bg-hs-paper">
+          <img
+            alt={sponsorAlt("Exponential", xEx)}
+            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] max-w-[88%] w-auto object-contain"
+            height={96}
+            src={exponentialLogo.src}
+            width={240}
+          />
         </P>
       ),
       ...bottomRow(4),
@@ -492,7 +535,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         </P>
       ),
       r3b: (
-        <P bg="bg-hs-red">
+        <P bg="bg-hs-navy">
           <span
             className={`${B} text-center text-[clamp(0.65rem,2.2vw,1.8rem)] text-hs-gold leading-tight`}
           >

@@ -25,9 +25,12 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.12",
     "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^25.9.1",
     "@types/nodemailer": "^8.0.0",
     "drizzle-kit": "^0.31.10",
+    "knip": "^6.14.2",
     "postcss": "^8.5.8",
+    "typescript": "^6.0.3",
     "ultracite": "7.6.2"
   },
   "name": "",
@@ -43,7 +46,8 @@
     "db:push": "drizzle-kit push",
     "astro": "astro",
     "check": "ultracite check",
-    "fix": "ultracite fix"
+    "fix": "ultracite fix",
+    "knip": "knip"
   },
   "type": "module",
   "version": "0.0.1",

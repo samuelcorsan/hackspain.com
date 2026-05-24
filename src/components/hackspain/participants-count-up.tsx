@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const TARGET = 300;
+const TARGET = 250;
 const DURATION_MS = 1600;
 
 function easeOutCubic(t: number) {

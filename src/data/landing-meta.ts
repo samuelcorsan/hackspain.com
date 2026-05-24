@@ -23,7 +23,7 @@ const PAGES: PageSeo[] = [
   {
     title: "HACKSPAIN 2026 — Hack Spain hackathon Madrid | hackathon España",
     description:
-      "Hack Spain / HackSpain 2026: hackathon Madrid, hackathon España y hackathon Spain para jóvenes programadores — 24h, +300 participantes. hack spain, hackspain.com",
+      "Hack Spain / HackSpain 2026: hackathon Madrid, hackathon España y hackathon Spain para jóvenes programadores — 24h, +250 participantes. hack spain, hackspain.com",
     ogImageAlt: "Hack Spain HackSpain — hackathon Madrid y España",
   },
   {
@@ -282,7 +282,7 @@ export function jsonLdFaq() {
         name: "¿Cuántas personas participan?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "La edición comunica más de 300 participantes en 24 horas; la visión a largo plazo menciona una meta de 5.000 en una edición futura. Cifras oficiales en hackspain.com.",
+          text: "La edición comunica más de 250 participantes en 24 horas; la visión a largo plazo menciona una meta de 5.000 en una edición futura. Cifras oficiales en hackspain.com.",
         },
       },
       {
