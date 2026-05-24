@@ -19,6 +19,19 @@ export const hackathonSignups = pgTable("hackathon_signups", {
   heardFrom: text("heard_from"),
 });
 
+export const hackathonPreSignups = pgTable("hackathon_pre_signups", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull().unique(),
+  xUrl: text("x_url"),
+  linkedinUrl: text("linkedin_url"),
+  githubUrl: text("github_url"),
+  webUrl: text("web_url"),
+});
+
 export const ambassadorApplications = pgTable("ambassador_applications", {
   id: uuid("id").defaultRandom().primaryKey(),
   createdAt: timestamp("created_at", { withTimezone: true })

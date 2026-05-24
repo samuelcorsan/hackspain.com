@@ -7,8 +7,7 @@ import {
   withScope,
 } from "@sentry/astro";
 import { initBotId } from "botid/client/core";
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   Controller,
   type SubmitHandler,
@@ -17,22 +16,19 @@ import {
 } from "react-hook-form";
 import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
 import {
-  HEARD_FROM_OPTIONS,
-  HEARD_FROM_SOURCE_IDS,
-  type HeardFromSourceId,
   normalizeSocialUrl,
-  parseSignupBodyClient,
+  parsePreSignupBodyClient,
 } from "../../lib/signup-validation";
-import { FormField, Input, SocialPrefixInput, Textarea } from "../form";
+import { FormField, Input, SocialPrefixInput } from "../form";
 import { MosaicBackground } from "../mosaic/mosaic-background";
 import { useLayoutProfile } from "../mosaic/use-layout-profile";
 import { X_SVG } from "../theme/constants";
 import { Button, ButtonLink } from "../ui/button";
 
-const STORAGE_KEY = "hackspain-signup-draft-v1";
-const STORAGE_APPLIED_KEY = "hackspain-signup-applied-v1";
+const STORAGE_KEY = "hackspain-presignup-draft-v1";
+const STORAGE_APPLIED_KEY = "hackspain-presignup-applied-v1";
 
-const UNICODE_LEFT_ARROW_PREFIX_RE = /^\u2190\s*/;
+const UNICODE_LEFT_ARROW_PREFIX_RE = /^←\s*/;
 const ASCII_LEFT_ARROW_PREFIX_RE = /^←\s*/;
 const LINE_BREAK_SPLIT_RE = /\r?\n/;
 
@@ -54,17 +50,10 @@ function setAppliedFlag() {
 }
 
 interface StoredFields {
-  achievements: string;
-  ambassadorMotivation: string;
-  ambassadorStudyWhere: string;
   email: string;
-  freeTime: string;
   fullName: string;
   githubUrl: string;
-  heardFromOther: string;
-  heardFromSource: HeardFromSourceId | "";
   linkedinUrl: string;
-  wantsAmbassador: boolean;
   webUrl: string;
   xUrl: string;
 }
@@ -76,13 +65,6 @@ const EMPTY_FIELDS: StoredFields = {
   linkedinUrl: "",
   githubUrl: "",
   webUrl: "",
-  achievements: "",
-  freeTime: "",
-  wantsAmbassador: false,
-  ambassadorMotivation: "",
-  ambassadorStudyWhere: "",
-  heardFromSource: "",
-  heardFromOther: "",
 };
 
 function readStoredFields(): StoredFields {
@@ -97,29 +79,6 @@ function readStoredFields(): StoredFields {
     const o = JSON.parse(raw) as Record<string, unknown>;
     const s = (k: keyof StoredFields) =>
       typeof o[k] === "string" ? (o[k] as string) : "";
-    const wantsAmbassador =
-      o.wantsAmbassador === true || o.wantsAmbassador === "true";
-    const ids = HEARD_FROM_SOURCE_IDS as readonly string[];
-    const sourceRaw =
-      typeof o.heardFromSource === "string" ? o.heardFromSource.trim() : "";
-    let heardFromSource: HeardFromSourceId | "" =
-      sourceRaw !== "" && ids.includes(sourceRaw)
-        ? (sourceRaw as HeardFromSourceId)
-        : "";
-    let heardFromOther =
-      typeof o.heardFromOther === "string" ? o.heardFromOther : "";
-    const legacy = typeof o.heardFrom === "string" ? o.heardFrom.trim() : "";
-    if (!heardFromSource && legacy) {
-      if (legacy.startsWith("other:")) {
-        heardFromSource = "other";
-        heardFromOther = legacy.slice(6).trim();
-      } else if (ids.includes(legacy)) {
-        heardFromSource = legacy as HeardFromSourceId;
-      } else {
-        heardFromSource = "other";
-        heardFromOther = legacy;
-      }
-    }
     return {
       fullName: s("fullName"),
       email: s("email"),
@@ -127,13 +86,6 @@ function readStoredFields(): StoredFields {
       linkedinUrl: s("linkedinUrl"),
       githubUrl: s("githubUrl"),
       webUrl: s("webUrl"),
-      achievements: s("achievements"),
-      freeTime: s("freeTime"),
-      wantsAmbassador,
-      ambassadorMotivation: s("ambassadorMotivation"),
-      ambassadorStudyWhere: s("ambassadorStudyWhere"),
-      heardFromSource,
-      heardFromOther,
     };
   } catch {
     return { ...EMPTY_FIELDS };
@@ -164,8 +116,9 @@ const cellBase = "border-b-[3px] border-hs-ink bg-hs-paper p-4";
 const cellLeftSm = `${cellBase} sm:border-r-[3px]`;
 
 const t = {
-  title: "Apúntate al hackathon",
-  subtitle: "Cuéntanos quién eres — te avisamos sobre HackSpain 2026.",
+  title: "Pre-inscripción",
+  subtitle:
+    "Déjanos tus datos básicos — te avisamos para completar la inscripción a HackSpain 2026.",
   backHome: "← Inicio",
   fullName: "Nombre completo",
   email: "Email",
@@ -179,23 +132,12 @@ const t = {
   socialXPlaceholder: "usuario, @usuario o pega un enlace",
   socialLinkedinPlaceholder: "usuario, company/acme o pega un enlace",
   socialGithubPlaceholder: "usuario o usuario/repo — o pega un enlace",
-  achievements: "Logros y hitos",
-  achievementsHint:
-    "Lo que te enorgullece — hackathones, estudios, deporte, voluntariado, arte, trabajo… técnico o no.",
-  freeTime: "Fuera del cole / curro",
-  freeTimeHint:
-    "Hobbies, clubes, asociaciones, side projects, cómo desconectas — lo que te represente.",
-  heardFrom: "¿Cómo nos has conocido?",
-  heardFromOtherPlaceholder: "Cuéntanos cómo nos encontraste…",
-  submit: "Enviar",
+  submit: "Enviar pre-inscripción",
   submitting: "Enviando…",
   applicationReceived:
-    "¡Gracias! Hemos recibido tu solicitud. Espera nuestra respuesta por correo; te escribiremos en cuanto podamos.",
+    "¡Gracias! Hemos recibido tu pre-inscripción. Te avisaremos por correo para completar el registro.",
   alreadyApplied:
-    "Ya enviaste una solicitud desde este navegador. Te contactaremos por correo.",
-  followSocialsHint:
-    "Síguenos en redes para enterarte de fechas, novedades y todo lo que viene en HackSpain 2026.",
-  followSocialsLabel: "También en redes",
+    "Ya enviaste una pre-inscripción desde este navegador. Te contactaremos por correo.",
   errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
   errorSocialRequired: "Añade al menos un enlace a perfil o web.",
   errorInvalidSocialUrl:
@@ -205,15 +147,6 @@ const t = {
     "Ya hay una solicitud con este correo. Si necesitas cambiar algo, escríbenos o usa otro email.",
   errorAccessDenied:
     "No hemos podido verificar la solicitud. Recarga la página e inténtalo de nuevo, o usa un navegador normal con JavaScript activado.",
-  ambassadorCheckboxBefore: "Quiero participar como ",
-  ambassadorCheckboxLink: "embajador/a",
-  ambassadorCheckboxAfter: "",
-  ambassadorWhyLabel: "¿Por qué quieres ser embajador/a?",
-  ambassadorWhyHint:
-    "Unas frases sobre qué te mueve — comunidad, tech, tu campus, llegar a gente nueva…",
-  ambassadorStudyLabel: "¿Dónde estudias?",
-  ambassadorStudyHint:
-    "Universidad, bootcamp, centro u organización — lo que encaje.",
   errorFullName: "Indica tu nombre completo.",
   legalSubmitNoticeBefore: "Al enviar este formulario aceptas nuestra ",
   legalPrivacyLinkLabel: "política de privacidad",
@@ -221,31 +154,15 @@ const t = {
     ", incluida la comunicación de tus datos a patrocinadores oficiales de HackSpain según se indica allí.",
 } as const;
 
-function ambassadorQueryEnabled(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
-  const v = new URLSearchParams(window.location.search).get("ambassador");
-  return v === "1" || v === "true" || v === "yes";
-}
-
-type SignupAttention = null | "heard" | "ambassador";
-
-export function SignupPage() {
+export function PreSignupPage() {
   const profile = useLayoutProfile();
   const homeHref = "/";
-  const ambassadorPageHref = "/ambassador";
   const privacyHref = "/privacy";
 
-  const { register, handleSubmit, control, setValue, watch, reset, formState } =
+  const { register, handleSubmit, control, setValue, reset, formState } =
     useForm<StoredFields>({ defaultValues: { ...EMPTY_FIELDS } });
   const { isSubmitting } = formState;
-  const heardFromSource = watch("heardFromSource");
-  const wantsAmbassador = watch("wantsAmbassador");
 
-  const [attentionTarget, setAttentionTarget] = useState<SignupAttention>(null);
-  const heardFromSectionRef = useRef<HTMLDivElement>(null);
-  const ambassadorSectionRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<FlowStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -269,103 +186,41 @@ export function SignupPage() {
   }, [watched, status]);
 
   useEffect(() => {
-    if (ambassadorQueryEnabled()) {
-      setValue("wantsAmbassador", true, { shouldDirty: true });
-    }
-  }, [setValue]);
-
-  useEffect(() => {
     if (import.meta.env.DEV) {
       return;
     }
     initBotId({
-      protect: [{ path: "/api/signup", method: "POST" }],
+      protect: [{ path: "/api/pre-signup", method: "POST" }],
     });
   }, []);
 
   useEffect(() => {
-    getCurrentScope().setTag("flow", "signup");
+    getCurrentScope().setTag("flow", "pre-signup");
   }, []);
-
-  function pulseAttention(target: "heard" | "ambassador") {
-    setErrorMessage("");
-    setAttentionTarget(null);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setAttentionTarget(target);
-        const el =
-          target === "heard"
-            ? heardFromSectionRef.current
-            : ambassadorSectionRef.current;
-        if (!el || typeof window === "undefined") {
-          return;
-        }
-        const smooth = window.matchMedia(
-          "(prefers-reduced-motion: no-preference)"
-        ).matches;
-        el.scrollIntoView({
-          behavior: smooth ? "smooth" : "auto",
-          block: "center",
-        });
-      });
-    });
-  }
-
-  useEffect(() => {
-    if (!attentionTarget) {
-      return;
-    }
-    const id = window.setTimeout(() => setAttentionTarget(null), 1400);
-    return () => window.clearTimeout(id);
-  }, [attentionTarget]);
 
   const onSubmitForm: SubmitHandler<StoredFields> = async (data) => {
     setErrorMessage("");
 
     addBreadcrumb({
       category: "ui",
-      message: "signup: submit",
+      message: "pre-signup: submit",
       level: "info",
     });
 
-    if (!data.heardFromSource) {
-      addBreadcrumb({
-        category: "signup",
-        message: "no heard from selected",
-        level: "info",
-      });
-      pulseAttention("heard");
-      return;
-    }
     const payload = { ...data };
-    const parsed = parseSignupBodyClient(payload);
+    const parsed = parsePreSignupBodyClient(payload);
     if (!parsed.ok) {
       addBreadcrumb({
-        category: "signup",
+        category: "pre-signup",
         message: "client validation",
         data: { code: parsed.code },
         level: "info",
       });
       if (parsed.code === "generic") {
-        captureMessage("Signup: client validation failed (generic)", "warning");
-      }
-      if (parsed.code === "heard_from") {
-        pulseAttention("heard");
-        return;
-      }
-      if (parsed.code === "heard_from_other") {
-        pulseAttention("heard");
-        requestAnimationFrame(() => {
-          document.getElementById("signup-heard-from-other")?.focus();
-        });
-        return;
-      }
-      if (
-        parsed.code === "ambassador_motivation" ||
-        parsed.code === "ambassador_study_where"
-      ) {
-        pulseAttention("ambassador");
-        return;
+        captureMessage(
+          "Pre-signup: client validation failed (generic)",
+          "warning"
+        );
       }
       if (parsed.code === "social_required") {
         setErrorMessage(t.errorSocialRequired);
@@ -383,12 +238,11 @@ export function SignupPage() {
     }
     try {
       const res = await startSpan(
-        { name: "POST /api/signup", op: "http.client" },
+        { name: "POST /api/pre-signup", op: "http.client" },
         async (span) => {
-          const r = await fetch("/api/signup", {
+          const r = await fetch("/api/pre-signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            // Same shape as `parseSignupBody` on the server (heardFromSource / heardFromOther).
             body: JSON.stringify(payload),
           });
           span.setAttribute("http.status_code", r.status);
@@ -412,7 +266,7 @@ export function SignupPage() {
           type: "http",
           data: { status: res.status, error: resJson.error },
           level: "info",
-          message: "signup duplicate email (expected)",
+          message: "pre-signup duplicate email (expected)",
         });
       } else {
         addBreadcrumb({
@@ -422,18 +276,14 @@ export function SignupPage() {
           level: "error",
         });
         withScope((scope) => {
-          scope.setTag("flow", "signup");
+          scope.setTag("flow", "pre-signup");
           scope.setTag("source", "client");
           scope.setTag("http_status", String(res.status));
           if (resJson.error) {
             scope.setTag("api_error", resJson.error);
           }
-          scope.setContext("form", {
-            wantsAmbassador: data.wantsAmbassador,
-            heardFrom: data.heardFromSource,
-          });
           captureMessage(
-            `Signup: API rejected ${res.status}${resJson.error ? ` (${resJson.error})` : ""}`,
+            `Pre-signup: API rejected ${res.status}${resJson.error ? ` (${resJson.error})` : ""}`,
             "error"
           );
         });
@@ -448,27 +298,8 @@ export function SignupPage() {
         setErrorMessage(t.errorSocialRequired);
       } else if (resJson.error === "invalid_social_url") {
         setErrorMessage(t.errorInvalidSocialUrl);
-      } else if (resJson.error === "ambassador_motivation_required") {
-        setStatus("error");
-        pulseAttention("ambassador");
-        return;
-      } else if (resJson.error === "ambassador_study_where_required") {
-        setStatus("error");
-        pulseAttention("ambassador");
-        return;
       } else if (resJson.error === "fullName_required") {
         setErrorMessage(t.errorFullName);
-      } else if (resJson.error === "heard_from_other_required") {
-        setStatus("error");
-        pulseAttention("heard");
-        requestAnimationFrame(() => {
-          document.getElementById("signup-heard-from-other")?.focus();
-        });
-        return;
-      } else if (resJson.error === "heard_from_required") {
-        setStatus("error");
-        pulseAttention("heard");
-        return;
       } else if (resJson.error === "invalid_email") {
         setErrorMessage(t.errorInvalidEmail);
       } else {
@@ -478,13 +309,13 @@ export function SignupPage() {
     } catch (err) {
       if (err instanceof Error) {
         withScope((scope) => {
-          scope.setTag("flow", "signup");
+          scope.setTag("flow", "pre-signup");
           scope.setTag("source", "client");
           captureException(err);
         });
       } else {
         addBreadcrumb({
-          category: "signup",
+          category: "pre-signup",
           message: "submit: caught non-Error (ignored for issues)",
           data: { kind: Object.prototype.toString.call(err) },
           level: "warning",
@@ -495,9 +326,7 @@ export function SignupPage() {
     }
   };
 
-  const webReg = register("webUrl", {
-    onChange: () => setAttentionTarget(null),
-  });
+  const webReg = register("webUrl");
 
   return (
     <div className="relative z-0 min-h-dvh w-full">
@@ -569,7 +398,7 @@ export function SignupPage() {
                 <div className="grid gap-0 sm:grid-cols-2">
                   <FormField
                     className={cellLeftSm}
-                    id="signup-full-name"
+                    id="pre-signup-full-name"
                     label={t.fullName}
                     required
                   >
@@ -581,7 +410,7 @@ export function SignupPage() {
                   </FormField>
                   <FormField
                     className={cellBase}
-                    id="signup-email"
+                    id="pre-signup-email"
                     label={t.email}
                     required
                   >
@@ -605,7 +434,7 @@ export function SignupPage() {
                 <div className="grid gap-0 sm:grid-cols-2">
                   <FormField
                     className={cellLeftSm}
-                    id="signup-x-url"
+                    id="pre-signup-x-url"
                     label={t.x}
                     labelVariant="sans"
                   >
@@ -627,7 +456,7 @@ export function SignupPage() {
                   </FormField>
                   <FormField
                     className={cellBase}
-                    id="signup-linkedin-url"
+                    id="pre-signup-linkedin-url"
                     label={t.linkedin}
                     labelVariant="sans"
                   >
@@ -649,7 +478,7 @@ export function SignupPage() {
                   </FormField>
                   <FormField
                     className={cellLeftSm}
-                    id="signup-github-url"
+                    id="pre-signup-github-url"
                     label={t.github}
                     labelVariant="sans"
                   >
@@ -671,7 +500,7 @@ export function SignupPage() {
                   </FormField>
                   <FormField
                     className={cellBase}
-                    id="signup-web-url"
+                    id="pre-signup-web-url"
                     label={t.web}
                     labelVariant="sans"
                   >
@@ -715,216 +544,6 @@ export function SignupPage() {
                     />
                   </FormField>
                 </div>
-
-                <FormField
-                  className={cellBase}
-                  hint={t.achievementsHint}
-                  id="signup-achievements"
-                  label={t.achievements}
-                >
-                  <Textarea
-                    className="min-h-[120px] resize-y"
-                    rows={5}
-                    {...register("achievements")}
-                  />
-                </FormField>
-
-                <FormField
-                  className={cellBase}
-                  hint={t.freeTimeHint}
-                  id="signup-free-time"
-                  label={t.freeTime}
-                >
-                  <Textarea
-                    className="min-h-[120px] resize-y"
-                    rows={5}
-                    {...register("freeTime")}
-                  />
-                </FormField>
-
-                <div
-                  className={`${cellBase} relative isolate`}
-                  ref={heardFromSectionRef}
-                >
-                  <FormField
-                    className="min-w-0 border-0 bg-transparent p-0 shadow-none"
-                    id="signup-heard-from"
-                    label={t.heardFrom}
-                    required
-                  >
-                    <fieldset className="min-w-0 border-0 p-0">
-                      <legend className="sr-only">
-                        {t.heardFrom} (obligatorio)
-                      </legend>
-                      <div className="grid grid-cols-2 gap-1.5 md:grid-cols-4 min-[520px]:grid-cols-3">
-                        {HEARD_FROM_OPTIONS.map((opt) => (
-                          <label
-                            className="flex cursor-pointer items-start gap-1.5 rounded-sm border-[3px] border-hs-ink bg-hs-paper px-2 py-1.5 shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow] hover:bg-hs-sand/40 has-[:focus-visible]:border-hs-navy has-[:checked]:bg-hs-gold/35"
-                            htmlFor={`signup-heard-from-${opt.id}`}
-                            key={opt.id}
-                          >
-                            <div className="relative mt-px h-4 w-4 shrink-0">
-                              <input
-                                id={`signup-heard-from-${opt.id}`}
-                                type="radio"
-                                value={opt.id}
-                                {...register("heardFromSource", {
-                                  onChange: (e) => {
-                                    setAttentionTarget(null);
-                                    if (e.target.value !== "other") {
-                                      setValue("heardFromOther", "", {
-                                        shouldDirty: true,
-                                      });
-                                    }
-                                  },
-                                })}
-                                className="peer absolute inset-0 z-10 h-4 w-4 cursor-pointer appearance-none opacity-0"
-                              />
-                              <div
-                                aria-hidden
-                                className="pointer-events-none flex h-4 w-4 items-center justify-center rounded-full border-2 border-hs-ink bg-hs-paper peer-checked:bg-hs-gold [&_span]:opacity-0 [&_span]:transition-opacity peer-checked:[&_span]:opacity-100"
-                              >
-                                <span className="h-1.5 w-1.5 rounded-full bg-hs-ink" />
-                              </div>
-                            </div>
-                            <span className="min-w-0 font-sans font-semibold text-hs-ink text-xs leading-tight sm:text-sm">
-                              {opt.label}
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                      {heardFromSource === "other" ? (
-                        <div className="mt-3">
-                          <Input
-                            aria-required
-                            autoComplete="off"
-                            id="signup-heard-from-other"
-                            placeholder={t.heardFromOtherPlaceholder}
-                            type="text"
-                            {...register("heardFromOther", {
-                              onChange: () => setAttentionTarget(null),
-                            })}
-                          />
-                        </div>
-                      ) : null}
-                    </fieldset>
-                  </FormField>
-                  {attentionTarget === "heard" ? (
-                    <div
-                      aria-hidden
-                      className="hs-signup-field-attention-overlay"
-                    />
-                  ) : null}
-                </div>
-
-                <div className="border-hs-ink border-b-[3px] bg-hs-teal/15 px-4 py-4">
-                  <div className="flex items-start gap-3">
-                    <div className="relative mt-0.5 h-6 w-6 shrink-0">
-                      <input
-                        id="signup-wants-ambassador"
-                        type="checkbox"
-                        {...register("wantsAmbassador", {
-                          onChange: () => setAttentionTarget(null),
-                        })}
-                        className="peer absolute inset-0 z-10 h-6 w-6 cursor-pointer appearance-none opacity-0"
-                      />
-                      <div
-                        aria-hidden
-                        className="pointer-events-none flex h-6 w-6 items-center justify-center rounded-sm border-[3px] border-hs-ink bg-hs-paper shadow-[2px_2px_0_0_var(--color-hs-ink)] transition-[background-color,box-shadow,border-color] duration-200 peer-checked:bg-hs-gold peer-hover:bg-hs-sand/55 peer-focus-visible:border-hs-navy [&_svg]:opacity-0 [&_svg]:transition-opacity [&_svg]:duration-200 [&_svg]:ease-out peer-checked:[&_svg]:opacity-100"
-                      >
-                        <svg
-                          className="text-hs-ink"
-                          fill="none"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          width="14"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <title>Marca de verificación</title>
-                          <path
-                            d="M2.5 7.2 5.6 10.3 11.5 3.8"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2.2"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="min-w-0 font-sans font-semibold text-base text-hs-ink leading-snug sm:text-[1.05rem]">
-                      <label
-                        className="cursor-pointer"
-                        htmlFor="signup-wants-ambassador"
-                      >
-                        {t.ambassadorCheckboxBefore}
-                      </label>
-                      <a
-                        className="font-extrabold text-hs-navy underline decoration-2 underline-offset-2 hover:text-hs-ink"
-                        href={ambassadorPageHref}
-                      >
-                        {t.ambassadorCheckboxLink}
-                      </a>
-                      <label
-                        className="cursor-pointer"
-                        htmlFor="signup-wants-ambassador"
-                      >
-                        {t.ambassadorCheckboxAfter}
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <AnimatePresence initial={false}>
-                  {wantsAmbassador ? (
-                    <motion.div
-                      animate={{ opacity: 1, height: "auto" }}
-                      className="overflow-hidden border-hs-ink border-b-[3px]"
-                      exit={{ opacity: 0, height: 0 }}
-                      initial={{ opacity: 0, height: 0 }}
-                      key="signup-ambassador-fields"
-                      ref={ambassadorSectionRef}
-                      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <div className="relative isolate grid gap-0 bg-hs-paper">
-                        <FormField
-                          className={cellBase}
-                          hint={t.ambassadorWhyHint}
-                          id="signup-ambassador-motivation"
-                          label={t.ambassadorWhyLabel}
-                          required
-                        >
-                          <Textarea
-                            className="min-h-[100px] resize-y"
-                            rows={4}
-                            {...register("ambassadorMotivation", {
-                              onChange: () => setAttentionTarget(null),
-                            })}
-                          />
-                        </FormField>
-                        <FormField
-                          className="bg-hs-paper p-4"
-                          hint={t.ambassadorStudyHint}
-                          id="signup-ambassador-study"
-                          label={t.ambassadorStudyLabel}
-                          required
-                        >
-                          <Input
-                            autoComplete="organization"
-                            {...register("ambassadorStudyWhere", {
-                              onChange: () => setAttentionTarget(null),
-                            })}
-                          />
-                        </FormField>
-                        {attentionTarget === "ambassador" ? (
-                          <div
-                            aria-hidden
-                            className="hs-signup-field-attention-overlay"
-                          />
-                        ) : null}
-                      </div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
 
                 {status === "error" && errorMessage ? (
                   <div

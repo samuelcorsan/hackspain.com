@@ -91,6 +91,56 @@ export async function renderSignupConfirmationHtml(
   return { html, text };
 }
 
+const PRE_SIGNUP_ORGANIZERS = ["Leo", "Samu", "Guli"] as const;
+
+function pickOrganizer(): string {
+  const i = Math.floor(Math.random() * PRE_SIGNUP_ORGANIZERS.length);
+  return PRE_SIGNUP_ORGANIZERS[i] ?? "Leo";
+}
+
+export interface PreSignupEmailInput {
+  email: string;
+  fullName: string;
+}
+
+export async function sendPreSignupConfirmationEmail(
+  input: PreSignupEmailInput
+): Promise<ConfirmationEmailResult> {
+  const cfg = readSmtpConfig();
+  if (!cfg) {
+    return { ok: false, reason: "smtp_disabled" };
+  }
+
+  const organizer = pickOrganizer();
+  const text = `hey ${input.fullName},
+Aquí ${organizer} de HackSpain.
+
+Nos ha llegado tu solicitud de inscripción. Cuando tengamos nuevas noticias te avisaremos. gracias por inscribirte.
+
+Si quieres enterarte de lo que pasa con HackSpain, siguenos en Twitter: https://x.com/hackspain26
+
+un saludo,
+${organizer}`;
+
+  try {
+    const transporter = getTransporter(cfg);
+    const info = await transporter.sendMail({
+      from: { name: cfg.fromName, address: cfg.fromAddress },
+      to: input.email,
+      subject: "Hemos recibido tu solicitud — HackSpain",
+      text,
+      headers: {
+        "X-Entity-Ref-ID": `hackspain-pre-signup-${Date.now()}`,
+      },
+    });
+    return { ok: true, messageId: info.messageId };
+  } catch (e) {
+    const detail =
+      e instanceof Error ? `${e.name}: ${e.message}` : String(e).slice(0, 256);
+    return { ok: false, reason: "send_failed", detail };
+  }
+}
+
 export async function sendSignupConfirmationEmail(
   input: ConfirmationEmailInput
 ): Promise<ConfirmationEmailResult> {

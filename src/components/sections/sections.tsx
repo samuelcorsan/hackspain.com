@@ -171,7 +171,7 @@ const oEx = "coworking hackathon España";
 const xEx = "fondo growth hackathon España";
 
 export function buildSections(): Record<string, React.ReactNode>[] {
-  const signupHref = "/signup";
+  const signupHref = "/pre-signup";
   const ambassadorHref = "/ambassador";
 
   return [

@@ -74,6 +74,18 @@ export function signupSeo(): PageSeo {
   };
 }
 
+export const PRE_SIGNUP_KEYWORDS =
+  "pre-inscripción HackSpain, lista de espera hackathon España, hackathon Madrid 2026, registro previo";
+
+export function preSignupSeo(): PageSeo {
+  return {
+    title: "Pre-inscripción — HACKSPAIN 2026 | hackathon Madrid",
+    description:
+      "Pre-inscripción a HackSpain 2026: deja tus datos básicos y te avisamos para completar el registro al hackathon.",
+    ogImageAlt: "HackSpain 2026 — pre-inscripción al hackathon",
+  };
+}
+
 export const AMBASSADOR_KEYWORDS =
   "embajador HackSpain, campus hackathon España, universidad hackathon Madrid 2026, embajador estudiantil hackathon";
 
@@ -242,7 +254,7 @@ export function jsonLdFaq() {
         name: "¿Cómo me apunto o me registro en HackSpain?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Deja tus datos en hackspain.com/signup (interés / pre-registro). También puedes seguir @hackspain26 en X e Instagram o escribir a leo@hackspain.com.",
+          text: "Deja tus datos en hackspain.com/pre-signup (pre-inscripción). También puedes seguir @hackspain26 en X e Instagram o escribir a leo@hackspain.com.",
         },
       },
       {
@@ -250,7 +262,7 @@ export function jsonLdFaq() {
         name: "¿Cómo puedo ser embajador o embajadora de HackSpain?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Lee el programa en hackspain.com/ambassador. Te apuntas con el mismo formulario de interés: marca la opción de embajador/a o entra en hackspain.com/signup?ambassador=1. Pediremos por qué te interesa el rol y dónde estudias.",
+          text: "Lee el programa en hackspain.com/ambassador. Para apuntarte deja tus datos en hackspain.com/pre-signup y te avisaremos cuando abramos la inscripción completa.",
         },
       },
       {
