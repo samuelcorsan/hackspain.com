@@ -429,7 +429,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper">
           <img
             alt={sponsorAlt("UPM — Universidad Politécnica de Madrid", uEx)}
-            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] max-w-[88%] w-auto object-contain"
+            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] w-auto max-w-[88%] object-contain"
             height={96}
             src={upmLogo.src}
             width={240}
@@ -462,7 +462,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper">
           <img
             alt={sponsorAlt("OneCoWork", oEx)}
-            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] max-w-[88%] w-auto object-contain"
+            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] w-auto max-w-[88%] object-contain"
             height={96}
             src={onecoworkLogo.src}
             width={240}
@@ -473,7 +473,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-ink">
           <img
             alt={sponsorAlt("Cursor", cEx)}
-            className="h-[clamp(3rem,10vw,8rem)] max-h-[92%] max-w-[94%] w-auto object-contain brightness-0 invert"
+            className="h-[clamp(3rem,10vw,8rem)] max-h-[92%] w-auto max-w-[94%] object-contain brightness-0 invert"
             height={96}
             src={cursorLogo.src}
             width={240}
@@ -494,7 +494,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper">
           <img
             alt={sponsorAlt("Exponential", xEx)}
-            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] max-w-[88%] w-auto object-contain"
+            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] w-auto max-w-[88%] object-contain"
             height={96}
             src={exponentialLogo.src}
             width={240}

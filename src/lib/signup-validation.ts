@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SIGNUP_MAX = {
+const SIGNUP_MAX = {
   name: 200,
   email: 320,
   url: 2048,
@@ -77,7 +77,7 @@ function baseHostForProfileField(kind: Exclude<SocialKind, "web">): string {
   }
 }
 
-export function expandProfileFieldInput(raw: string, baseHost: string): string {
+function expandProfileFieldInput(raw: string, baseHost: string): string {
   const v = raw.trim();
   if (!v) {
     return "";
@@ -240,7 +240,7 @@ export function normalizeSocialUrl(input: string, kind: SocialKind): string {
 
 export type ProfileFieldKind = Exclude<SocialKind, "web">;
 
-export function profileNormalizedToInputSuffix(
+function profileNormalizedToInputSuffix(
   norm: string,
   kind: ProfileFieldKind
 ): string {
@@ -293,7 +293,7 @@ export function cleanProfilePasteText(
   return profileNormalizedToInputSuffix(norm, kind);
 }
 
-export function socialField(kind: SocialKind) {
+function socialField(kind: SocialKind) {
   return z
     .string()
     .max(SIGNUP_MAX.url)
@@ -315,7 +315,7 @@ export function socialField(kind: SocialKind) {
     });
 }
 
-export const signupBodySchema = z
+const signupBodySchema = z
   .object({
     fullName: z
       .string()

@@ -4,7 +4,6 @@ import compassRaw from "../../assets/illustration-compass.svg?raw";
 import horseRaw from "../../assets/illustration-horse.svg?raw";
 import medalRaw from "../../assets/illustration-medal.svg?raw";
 import quixoteRaw from "../../assets/illustration-quixote.svg?raw";
-import signupSocialReminderRaw from "../../assets/illustration-signup-social-reminder.svg?raw";
 import sparkRaw from "../../assets/illustration-spark.svg?raw";
 import sunRaw from "../../assets/illustration-sun.svg?raw";
 import trophyRaw from "../../assets/illustration-trophy.svg?raw";
@@ -31,9 +30,6 @@ export const communitySvg = prepareIllustrationSvg(communityRaw);
 export const trophySvg = prepareIllustrationSvg(trophyRaw);
 export const compassSvg = prepareIllustrationSvg(compassRaw);
 export const medalSvg = prepareIllustrationSvg(medalRaw);
-export const signupSocialReminderSvg = prepareIllustrationSvg(
-  signupSocialReminderRaw
-);
 export const logoSvg = prepareLogoSvg(logoRaw);
 export const googleLogo = googlePng;
 

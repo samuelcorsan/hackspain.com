@@ -47,7 +47,7 @@
     "astro": "astro",
     "check": "ultracite check",
     "fix": "ultracite fix",
-    "knip": "knip"
+    "knip": "DATABASE_URL=postgresql://localhost/knip knip"
   },
   "type": "module",
   "version": "0.0.1",

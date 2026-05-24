@@ -7,7 +7,7 @@ export interface Artboard {
 
 export const ARTBOARD_DESKTOP: Artboard = { w: 1440, h: 900 };
 
-export const ARTBOARD_COMPACT: Artboard = { w: 1440, h: 900 };
+const ARTBOARD_COMPACT: Artboard = { w: 1440, h: 900 };
 
 export type LayoutProfile = "desktop" | "compact";
 

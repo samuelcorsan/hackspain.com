@@ -53,14 +53,6 @@ function setAppliedFlag() {
   }
 }
 
-function clearAppliedFlag() {
-  try {
-    localStorage.removeItem(STORAGE_APPLIED_KEY);
-  } catch {
-    /* ignore */
-  }
-}
-
 interface StoredFields {
   achievements: string;
   ambassadorMotivation: string;
@@ -200,11 +192,10 @@ const t = {
   applicationReceived:
     "¡Gracias! Hemos recibido tu solicitud. Espera nuestra respuesta por correo; te escribiremos en cuanto podamos.",
   alreadyApplied:
-    "Ya enviaste una solicitud desde este navegador. Te contactaremos por correo; usa «Volver a solicitar» solo si necesitas mandar otra.",
+    "Ya enviaste una solicitud desde este navegador. Te contactaremos por correo.",
   followSocialsHint:
     "Síguenos en redes para enterarte de fechas, novedades y todo lo que viene en HackSpain 2026.",
   followSocialsLabel: "También en redes",
-  applyAgain: "Volver a solicitar",
   errorGeneric: "Algo ha fallado. Prueba otra vez en un momento.",
   errorSocialRequired: "Añade al menos un enlace a perfil o web.",
   errorInvalidSocialUrl:
@@ -327,15 +318,6 @@ export function SignupPage() {
     const id = window.setTimeout(() => setAttentionTarget(null), 1400);
     return () => window.clearTimeout(id);
   }, [attentionTarget]);
-
-  function applyAgain() {
-    clearAppliedFlag();
-    clearStoredFields();
-    reset(EMPTY_FIELDS);
-    setErrorMessage("");
-    setAttentionTarget(null);
-    setStatus("idle");
-  }
 
   const onSubmitForm: SubmitHandler<StoredFields> = async (data) => {
     setErrorMessage("");

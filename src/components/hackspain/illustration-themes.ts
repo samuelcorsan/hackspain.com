@@ -25,7 +25,7 @@ const SVG_MAP = {
   medal: medalSvg,
 } as const;
 
-export type IllArt = keyof typeof SVG_MAP;
+type IllArt = keyof typeof SVG_MAP;
 
 export interface IllDef {
   box: string;

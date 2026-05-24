@@ -12,9 +12,3 @@ export const HS_PALETTE = {
   navy: "#1e3958",
   ink: "#2a170f",
 } as const;
-
-export type HsPaletteKey = keyof typeof HS_PALETTE;
-
-export function hsCssVar(name: HsPaletteKey): string {
-  return `var(--color-hs-${name})`;
-}

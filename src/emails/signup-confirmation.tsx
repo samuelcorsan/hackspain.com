@@ -34,7 +34,7 @@ export interface SignupConfirmationProps {
   wantsAmbassador?: boolean;
 }
 
-export const previewText = (firstName: string) =>
+const previewText = (firstName: string) =>
   `¡${firstName}, hemos recibido tu solicitud para HackSpain 2026! Madrid · Junio · 24h.`;
 
 function firstNameFrom(fullName: string): string {
@@ -519,5 +519,3 @@ export function SignupConfirmation({
     </Html>
   );
 }
-
-export default SignupConfirmation;

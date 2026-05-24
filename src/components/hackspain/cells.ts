@@ -21,7 +21,7 @@ export interface CellDef {
  *
  * `year` and `r1e` share a slot because no section uses both.
  */
-export const CELLS: CellDef[] = [
+const CELLS: CellDef[] = [
   // Band 1 — y 0-180
   { id: "year", x: 480, y: 0, w: 240, h: 180, delay: 0.02 },
   { id: "r1e", x: 480, y: 0, w: 240, h: 180, delay: 0.015 },

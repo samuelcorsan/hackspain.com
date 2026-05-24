@@ -5,7 +5,7 @@ export const SECTION_SLUGS = [
   "sponsors",
   "vision",
 ] as const;
-export type SectionSlug = (typeof SECTION_SLUGS)[number];
+type SectionSlug = (typeof SECTION_SLUGS)[number];
 
 const TRAILING_SLASH_PATH = /\/$/;
 

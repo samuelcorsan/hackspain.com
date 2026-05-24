@@ -4,7 +4,7 @@ const TRAILING_SLASHES = /\/+$/;
 
 export const SITEMAP_SITE_ORIGIN = "https://hackspain.com";
 
-export function normalizeSitemapPageUrl(href: string): string {
+function normalizeSitemapPageUrl(href: string): string {
   const u = new URL(href);
   if (u.pathname === "/" || u.pathname === "") {
     return u.origin;

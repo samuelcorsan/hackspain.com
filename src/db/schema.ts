@@ -19,9 +19,6 @@ export const hackathonSignups = pgTable("hackathon_signups", {
   heardFrom: text("heard_from"),
 });
 
-export type HackathonSignup = typeof hackathonSignups.$inferSelect;
-export type NewHackathonSignup = typeof hackathonSignups.$inferInsert;
-
 export const ambassadorApplications = pgTable("ambassador_applications", {
   id: uuid("id").defaultRandom().primaryKey(),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -38,7 +35,3 @@ export const ambassadorApplications = pgTable("ambassador_applications", {
   motivation: text("motivation").notNull(),
   outreachPlan: text("outreach_plan").notNull(),
 });
-
-export type AmbassadorApplication = typeof ambassadorApplications.$inferSelect;
-export type NewAmbassadorApplication =
-  typeof ambassadorApplications.$inferInsert;

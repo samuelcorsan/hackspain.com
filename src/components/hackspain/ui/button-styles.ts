@@ -1,13 +1,13 @@
-export const hsButtonBase =
+const hsButtonBase =
   "inline-flex items-center justify-center border-[3px] font-bungee text-sm text-hs-ink transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:border-hs-navy disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:brightness-100";
 
-export const hsButtonVariants = {
+const hsButtonVariants = {
   gold: "border-hs-ink bg-hs-gold",
   teal: "border-hs-ink bg-hs-teal/35",
   goldInverse: "border-hs-paper bg-hs-gold focus-visible:border-hs-gold",
 } as const;
 
-export const hsButtonSizes = {
+const hsButtonSizes = {
   md: "px-6 py-2.5",
   lg: "px-6 py-3 sm:px-8",
   hero: "px-5 py-2.5",
