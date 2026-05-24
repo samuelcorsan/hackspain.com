@@ -1,4 +1,4 @@
-import { HORSE_ARTBOARD, HORSE_ARTBOARD_COMPACT } from "./constants";
+import { HORSE_ARTBOARD, HORSE_ARTBOARD_COMPACT } from "../theme/constants";
 
 export interface Artboard {
   h: number;

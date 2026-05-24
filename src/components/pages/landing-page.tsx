@@ -5,8 +5,15 @@ import {
   seoForSectionIndex,
 } from "../../data/landing-meta";
 import { parsePath, pathRootFromSectionIndex } from "../../data/section-routes";
-import { artboardFor, horseArtboardFor } from "./artboard";
-import { type CellDef, cellsForProfile } from "./cells";
+import { HorseMissionTransition } from "../media/horse-mission-transition";
+import { InlineSvg } from "../media/inline-svg";
+import { artboardFor, horseArtboardFor } from "../mosaic/artboard";
+import { type CellDef, cellsForProfile } from "../mosaic/cells";
+import { MosaicBackground } from "../mosaic/mosaic-background";
+import { useLayoutProfile } from "../mosaic/use-layout-profile";
+import { illustrationsForSection } from "../sections/illustration-themes";
+import { ScrollSectionHint } from "../sections/scroll-section-hint";
+import { buildSections } from "../sections/sections";
 import {
   HORSE_CELL_FAR_RIGHT_X,
   HORSE_CELL_FAR_RIGHT_X_COMPACT,
@@ -26,15 +33,8 @@ import {
   SECTION_UNIQUE_INDEX,
   SPRING,
   slideVariants,
-} from "./constants";
-import { HorseMissionTransition } from "./horse-mission-transition";
-import { illustrationsForSection } from "./illustration-themes";
-import { InlineSvg } from "./inline-svg";
-import { MosaicBackground } from "./mosaic-background";
-import { vp } from "./panel";
-import { ScrollSectionHint } from "./scroll-section-hint";
-import { buildSections } from "./sections";
-import { useLayoutProfile } from "./use-layout-profile";
+} from "../theme/constants";
+import { vp } from "../ui/panel";
 
 const SECTION_NAV = [
   "Inicio",

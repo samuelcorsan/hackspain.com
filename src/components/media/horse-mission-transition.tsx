@@ -12,8 +12,7 @@ import {
   useState,
 } from "react";
 import { flushSync } from "react-dom";
-import type { Artboard } from "./artboard";
-import { ChromaKeyVideo } from "./chroma-key-video";
+import type { Artboard } from "../mosaic/artboard";
 import {
   HORSE_RETURN_DURATION_S,
   HORSE_RETURN_TELEPORT_FADE_IN_S,
@@ -24,8 +23,9 @@ import {
   HORSE_VIDEO_CHROMA_MIN_LUMA,
   HORSE_VIDEO_CHROMA_TOLERANCE,
   HORSE_VIDEO_SRC,
-} from "./constants";
-import { vp } from "./panel";
+} from "../theme/constants";
+import { vp } from "../ui/panel";
+import { ChromaKeyVideo } from "./chroma-key-video";
 
 const OPACITY_IN_S = 0.22;
 const X_DELAY_S = 0.1;

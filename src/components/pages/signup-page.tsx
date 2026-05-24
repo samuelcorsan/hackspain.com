@@ -23,11 +23,11 @@ import {
   normalizeSocialUrl,
   parseSignupBodyClient,
 } from "../../lib/signup-validation";
-import { X_SVG } from "./constants";
-import { FormField, Input, SocialPrefixInput, Textarea } from "./form";
-import { MosaicBackground } from "./mosaic-background";
-import { Button, ButtonLink } from "./ui/button";
-import { useLayoutProfile } from "./use-layout-profile";
+import { FormField, Input, SocialPrefixInput, Textarea } from "../form";
+import { MosaicBackground } from "../mosaic/mosaic-background";
+import { useLayoutProfile } from "../mosaic/use-layout-profile";
+import { X_SVG } from "../theme/constants";
+import { Button, ButtonLink } from "../ui/button";
 
 const STORAGE_KEY = "hackspain-signup-draft-v1";
 const STORAGE_APPLIED_KEY = "hackspain-signup-applied-v1";

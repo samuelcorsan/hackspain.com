@@ -1,5 +1,5 @@
-import type { Artboard } from "./artboard";
-import { ARTBOARD_DESKTOP } from "./artboard";
+import type { Artboard } from "../mosaic/artboard";
+import { ARTBOARD_DESKTOP } from "../mosaic/artboard";
 
 export function vp(
   x: number,

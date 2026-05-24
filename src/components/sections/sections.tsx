@@ -1,5 +1,7 @@
 import { Fragment } from "react";
 import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
+import { InlineSvg } from "../media/inline-svg";
+import { ParticipantsCountUp } from "../media/participants-count-up";
 import {
   cursorLogo,
   exaLogo,
@@ -10,12 +12,10 @@ import {
   logoSvg,
   onecoworkLogo,
   upmLogo,
-} from "./assets";
-import { GITHUB_SVG, INSTAGRAM_SVG, X_SVG } from "./constants";
-import { InlineSvg } from "./inline-svg";
-import { P } from "./panel";
-import { ParticipantsCountUp } from "./participants-count-up";
-import { ButtonLink } from "./ui/button";
+} from "../theme/assets";
+import { GITHUB_SVG, INSTAGRAM_SVG, X_SVG } from "../theme/constants";
+import { ButtonLink } from "../ui/button";
+import { P } from "../ui/panel";
 
 const B = "font-bungee";
 const D = "font-sans";

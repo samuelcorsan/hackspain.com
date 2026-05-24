@@ -1,4 +1,4 @@
-import type { LayoutProfile } from "./artboard";
+import type { LayoutProfile } from "../mosaic/artboard";
 import {
   codeSvg,
   communitySvg,
@@ -10,7 +10,7 @@ import {
   sunSvg,
   trophySvg,
   windmillSvg,
-} from "./assets";
+} from "../theme/assets";
 
 const SVG_MAP = {
   windmill: windmillSvg,

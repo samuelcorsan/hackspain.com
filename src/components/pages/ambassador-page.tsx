@@ -1,6 +1,6 @@
-import { MosaicBackground } from "./mosaic-background";
-import { ButtonLink } from "./ui/button";
-import { useLayoutProfile } from "./use-layout-profile";
+import { MosaicBackground } from "../mosaic/mosaic-background";
+import { useLayoutProfile } from "../mosaic/use-layout-profile";
+import { ButtonLink } from "../ui/button";
 
 const panelBorder = "border-[3px] border-hs-ink bg-hs-ink";
 

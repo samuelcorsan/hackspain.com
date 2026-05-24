@@ -1,6 +1,6 @@
+import { MosaicBackground } from "../mosaic/mosaic-background";
+import { useLayoutProfile } from "../mosaic/use-layout-profile";
 import { formatRichPolicyText } from "./format-rich-policy-text";
-import { MosaicBackground } from "./mosaic-background";
-import { useLayoutProfile } from "./use-layout-profile";
 
 interface PrivacySection {
   id: string;

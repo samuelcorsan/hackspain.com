@@ -47,7 +47,7 @@ Drizzle is configured for PostgreSQL (`drizzle.config.ts`, schema in `src/db/sch
 
 ```text
 src/
-├── components/hackspain/   # React + shared UI for the landing
+├── components/           # React islands (pages/, mosaic/, ui/, …)
 ├── data/                   # SEO copy, routes metadata, llms.txt
 ├── db/                     # Drizzle client and schema
 ├── layouts/                # Astro layouts
