@@ -257,10 +257,11 @@ export function LandingPage({ initialSection = 0 }: Props) {
           return null;
         }
 
+        const mosaicCell = layoutProfile === "compact" ? "" : "hs-mosaic-cell ";
         const cellFrameClass =
           cell.id === "r2c"
-            ? "absolute overflow-visible z-10 @container"
-            : "absolute overflow-hidden @container";
+            ? `${mosaicCell}absolute z-10 overflow-visible @container`
+            : `${mosaicCell}absolute overflow-hidden @container`;
 
         const cellInner = (
           <AnimatePresence custom={dir} initial={false} mode="popLayout">

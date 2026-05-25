@@ -35,7 +35,7 @@ export function P({
   return (
     <div
       className={[
-        "flex h-full w-full flex-col",
+        "flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden",
         a,
         "@[180px]:gap-2 gap-1 @[180px]:p-3 p-1.5",
         bg,

@@ -3,6 +3,21 @@ import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
 import { InlineSvg } from "../media/inline-svg";
 import { ParticipantsCountUp } from "../media/participants-count-up";
 import {
+  MOSAIC_BD,
+  MOSAIC_BTN,
+  MOSAIC_DISPLAY,
+  MOSAIC_FOOTER,
+  MOSAIC_FOOTER_SM,
+  MOSAIC_HEADLINE,
+  MOSAIC_HEADLINE_SM,
+  MOSAIC_HERO,
+  MOSAIC_HERO_LG,
+  MOSAIC_LBL,
+  MOSAIC_LOGO,
+  MOSAIC_LOGO_LG,
+  MOSAIC_LOGO_XL,
+} from "../mosaic/mosaic-typography";
+import {
   communitySvg,
   compassSvg,
   cursorLogo,
@@ -28,8 +43,8 @@ import { P } from "../ui/panel";
 
 const B = "font-bungee";
 const D = "font-sans";
-const LBL = `${D} text-xs font-black tracking-widest uppercase mb-1`;
-const BD = `${D} text-[clamp(0.68rem,2.35vw,1.4rem)] font-bold leading-relaxed`;
+const LBL = `${MOSAIC_LBL} mb-1`;
+const BD = MOSAIC_BD;
 
 const BOTTOM_CELLS = ["r5a", "r5b", "r5c", "r5d"] as const;
 
@@ -90,7 +105,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
             />
           </a>
           <a
-            className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] underline underline-offset-2`}
+            className={`${D} ${MOSAIC_FOOTER} font-bold underline underline-offset-2`}
             href={HACKSPAIN_SOCIAL_URLS.x}
             rel="noopener noreferrer"
             target="_blank"
@@ -103,7 +118,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
     <Fragment key="footer-credits">
       <P bg="bg-hs-paper">
         <p
-          className={`${D} text-center font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink`}
+          className={`${D} ${MOSAIC_FOOTER} text-center font-bold text-hs-ink`}
         >
           Hecho con ♥ por{" "}
           <a
@@ -130,7 +145,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
       <P bg="bg-hs-paper">
         <div className="flex flex-col items-center gap-1 text-center text-hs-ink">
           <div
-            className={`flex items-center justify-center gap-2 ${D} font-black text-[clamp(0.82rem,1.35vw,1.2rem)]`}
+            className={`flex items-center justify-center gap-2 ${D} ${MOSAIC_FOOTER} font-black`}
           >
             <span
               aria-hidden
@@ -141,7 +156,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
             <span>Esta página web es open source</span>
           </div>
           <a
-            className={`${D} font-bold text-[clamp(0.65rem,1vw,0.9rem)] underline underline-offset-2`}
+            className={`${D} ${MOSAIC_FOOTER_SM} font-bold underline underline-offset-2`}
             href={HACKSPAIN_SOCIAL_URLS.github}
             rel="noopener noreferrer"
             target="_blank"
@@ -154,7 +169,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
     <Fragment key="footer-email">
       <P bg="bg-hs-paper">
         <a
-          className={`${D} font-bold text-[clamp(0.7rem,1.1vw,1rem)] text-hs-ink underline underline-offset-2`}
+          className={`${D} ${MOSAIC_FOOTER} font-bold text-hs-ink underline underline-offset-2`}
           href="mailto:leo@hackspain.com"
         >
           leo@hackspain.com
@@ -170,7 +185,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
   return { [actionCell]: actions[i], [copyCell]: copyEl };
 }
 
-// Compact (mobile) typography — larger, since each card is full-width.
+// Compact (mobile) typography — viewport-based, unchanged from original layout.
 const CH = `${B} leading-tight`;
 const CLBL = `${D} text-[clamp(0.7rem,3vw,1rem)] font-black uppercase tracking-widest`;
 const CBD = `${D} text-[clamp(0.95rem,4vw,1.6rem)] font-semibold leading-snug`;
@@ -229,12 +244,12 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       year: (
         <div className="relative h-full w-full">
           <span
-            className={`absolute bottom-[14%] left-[8%] ${B} text-[clamp(1.3rem,5.5vw,4.5rem)] text-hs-ink leading-none`}
+            className={`absolute bottom-[14%] left-[8%] ${MOSAIC_DISPLAY} text-hs-ink`}
           >
             20
           </span>
           <span
-            className={`absolute top-[8%] right-[8%] ${B} text-[clamp(1.3rem,5.5vw,4.5rem)] text-white leading-none drop-shadow-sm`}
+            className={`absolute top-[8%] right-[8%] ${MOSAIC_DISPLAY} text-white drop-shadow-sm`}
           >
             26
           </span>
@@ -244,7 +259,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-gold">
           <ParticipantsCountUp
             ariaLabel="+250 PARTICIPANTES"
-            className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-ink leading-none`}
+            className={`${MOSAIC_DISPLAY} text-hs-ink`}
           />
           <p className={`mt-1 ${LBL} text-hs-ink`}>PARTICIPANTES</p>
         </P>
@@ -252,20 +267,14 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r3a: (
         <P bg="bg-hs-orange">
           <p className={`${LBL} text-hs-paper/60`}>HACKATHON</p>
-          <span
-            className={`${B} text-center text-[clamp(0.85rem,2.8vw,2.2rem)] text-hs-paper leading-tight`}
-          >
+          <span className={`${MOSAIC_HEADLINE} text-center text-hs-paper`}>
             MADRID · SEPTIEMBRE
           </span>
         </P>
       ),
       r2g: (
         <P bg="bg-hs-red">
-          <span
-            className={`${B} text-[clamp(1.3rem,5.5vw,4.5rem)] text-hs-paper leading-none`}
-          >
-            24
-          </span>
+          <span className={`${MOSAIC_DISPLAY} text-hs-paper`}>24</span>
           <p className={`mt-1 ${LBL} text-hs-paper`}>HORAS</p>
         </P>
       ),
@@ -275,9 +284,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       hero: (
         <P bg="bg-hs-navy">
           <p className={`${LBL} text-hs-gold`}>MISIÓN</p>
-          <h2
-            className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-paper leading-tight`}
-          >
+          <h2 className={`text-center ${MOSAIC_HERO} text-hs-paper`}>
             UNIR A
             <br />
             JÓVENES <span className="text-hs-red">TALENTOSOS</span>
@@ -308,9 +315,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       hero: (
         <P bg="bg-hs-sand">
           <p className={`${LBL} text-hs-ink/40`}>HACKSPAIN 2026</p>
-          <h2
-            className={`text-center ${B} text-[clamp(1.4rem,3vw,2.8rem)] text-hs-ink leading-tight`}
-          >
+          <h2 className={`text-center ${MOSAIC_HERO} text-hs-ink`}>
             {brLines("¿QUÉ NOS HACE\nÚNICOS?")}
           </h2>
         </P>
@@ -342,7 +347,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           </p>
           <ButtonLink
             aria-label="Ver programa de embajadores — HackSpain, abrir página"
-            className="!h-auto !border-hs-ink !bg-hs-navy !whitespace-normal !px-1 !py-1 !text-center !text-[clamp(0.48rem,1.05vw+0.3rem,0.78rem)] !font-bungee !normal-case !leading-tight !text-hs-gold !transition-[filter,box-shadow] hover:!brightness-110 focus-visible:!border-hs-paper @[220px]:!px-2 @[220px]:!py-1.5 @[220px]:mt-1 mt-0.5 w-full min-w-0 max-w-full self-stretch shadow-[2px_2px_0_0_var(--color-hs-ink)] focus-visible:shadow-[2px_2px_0_0_var(--color-hs-ink),0_0_0_2px_var(--color-hs-ink)]"
+            className={`!h-auto !border-hs-ink !bg-hs-navy !whitespace-normal !px-1 !py-1 !text-center !font-bungee !normal-case !text-hs-gold ${MOSAIC_BTN} !transition-[filter,box-shadow] hover:!brightness-110 focus-visible:!border-hs-paper @[220px]:!px-2 @[220px]:!py-1.5 @[220px]:mt-1 mt-0.5 w-full min-w-0 max-w-full self-stretch shadow-[2px_2px_0_0_var(--color-hs-ink)] focus-visible:shadow-[2px_2px_0_0_var(--color-hs-ink),0_0_0_2px_var(--color-hs-ink)]`}
             href={ambassadorHref}
             size="compact"
             variant="gold"
@@ -372,9 +377,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       hero: (
         <P bg="bg-hs-teal">
           <p className={`${LBL} text-white/60`}>HACKSPAIN 2026</p>
-          <h2
-            className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-white leading-tight`}
-          >
+          <h2 className={`text-center ${MOSAIC_HERO_LG} text-white`}>
             {brLines("TRACKS\nORIGINALES")}
           </h2>
         </P>
@@ -397,9 +400,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       ),
       r4d: (
         <P bg="bg-hs-gold">
-          <span
-            className={`${B} text-center text-[clamp(1.4rem,3.2vw,2.6rem)] text-hs-ink leading-[1.05]`}
-          >
+          <span className={`${MOSAIC_HEADLINE} text-center text-hs-ink`}>
             {brLines("COMPUTE\nGRATIS")}
           </span>
         </P>
@@ -413,9 +414,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       ),
       r2f: (
         <P bg="bg-hs-red">
-          <span
-            className={`${B} text-center text-[clamp(1.1rem,2.4vw,2.2rem)] text-hs-paper leading-[1.05]`}
-          >
+          <span className={`${MOSAIC_HEADLINE} text-center text-hs-paper`}>
             {brLines("PARA\nTODOS")}
           </span>
         </P>
@@ -426,9 +425,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       hero: (
         <P bg="bg-hs-gold">
           <p className={`${LBL} text-hs-ink/50`}>HACKSPAIN 2026</p>
-          <h2
-            className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-ink leading-tight`}
-          >
+          <h2 className={`text-center ${MOSAIC_HERO_LG} text-hs-ink`}>
             {brLines("APOYADOS POR\nLOS MEJORES")}
           </h2>
         </P>
@@ -437,7 +434,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-red">
           <img
             alt={sponsorAlt("Exa", eEx)}
-            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
             height={96}
             src={exaLogo.src}
             width={240}
@@ -448,7 +445,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-navy">
           <img
             alt={sponsorAlt("K Fund", kEx)}
-            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
             height={96}
             src={kfundLogo.src}
             width={240}
@@ -459,7 +456,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper">
           <img
             alt={sponsorAlt("UPM — Universidad Politécnica de Madrid", uEx)}
-            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] w-auto max-w-[88%] object-contain"
+            className={`${MOSAIC_LOGO_LG} object-contain`}
             height={96}
             src={upmLogo.src}
             width={240}
@@ -470,7 +467,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-teal">
           <img
             alt={sponsorAlt("fal.ai", fEx)}
-            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
             height={96}
             src={falLogo.src}
             width={240}
@@ -481,7 +478,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-orange">
           <img
             alt={sponsorAlt("Google", gEx)}
-            className="h-[clamp(1rem,4vw,3rem)] w-auto object-contain brightness-0 invert"
+            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
             height={96}
             src={googleLogo.src}
             width={240}
@@ -492,7 +489,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper">
           <img
             alt={sponsorAlt("OneCoWork", oEx)}
-            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] w-auto max-w-[88%] object-contain"
+            className={`${MOSAIC_LOGO_LG} object-contain`}
             height={96}
             src={onecoworkLogo.src}
             width={240}
@@ -503,7 +500,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-ink">
           <img
             alt={sponsorAlt("Cursor", cEx)}
-            className="h-[clamp(3rem,10vw,8rem)] max-h-[92%] w-auto max-w-[94%] object-contain brightness-0 invert"
+            className={`${MOSAIC_LOGO_XL} object-contain brightness-0 invert`}
             height={96}
             src={cursorLogo.src}
             width={240}
@@ -513,9 +510,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r2d: (
         <P align="start" bg="bg-hs-cream">
           <p className={`${LBL} text-hs-ink/40`}>PREMIOS</p>
-          <p
-            className={`${B} text-[clamp(0.75rem,1.25vw,1.125rem)] text-hs-ink leading-tight`}
-          >
+          <p className={`${MOSAIC_HEADLINE_SM} text-hs-ink`}>
             Grandes recompensas para l@s hackers
           </p>
         </P>
@@ -524,7 +519,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper">
           <img
             alt={sponsorAlt("Exponential", xEx)}
-            className="h-[clamp(2rem,7vw,5.5rem)] max-h-[80%] w-auto max-w-[88%] object-contain"
+            className={`${MOSAIC_LOGO_LG} object-contain`}
             height={96}
             src={exponentialLogo.src}
             width={240}
@@ -537,9 +532,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       hero: (
         <P bg="bg-hs-red">
           <p className={`${LBL} text-hs-gold`}>VISIÓN A LARGO PLAZO</p>
-          <h2
-            className={`text-center ${B} text-[clamp(1.6rem,3.5vw,3rem)] text-hs-paper leading-tight`}
-          >
+          <h2 className={`text-center ${MOSAIC_HERO_LG} text-hs-paper`}>
             DE MADRID
             <br />
             <span className="text-hs-gold">AL MUNDO</span>
@@ -548,11 +541,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       ),
       r2c: (
         <P bg="bg-hs-orange">
-          <span
-            className={`${B} text-[clamp(1.2rem,4.5vw,3.6rem)] text-hs-paper leading-none`}
-          >
-            5.000
-          </span>
+          <span className={`${MOSAIC_DISPLAY} text-hs-paper`}>5.000</span>
           <p className={`mt-1 ${LBL} text-hs-paper`}>META EL PRÓXIMO AÑO</p>
         </P>
       ),
@@ -566,9 +555,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       ),
       r3b: (
         <P bg="bg-hs-navy">
-          <span
-            className={`${B} text-center text-[clamp(0.65rem,2.2vw,1.8rem)] text-hs-gold leading-tight`}
-          >
+          <span className={`${MOSAIC_HEADLINE_SM} text-center text-hs-gold`}>
             EL MAYOR HACKATHON DE EUROPA
           </span>
         </P>
@@ -853,7 +840,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-gold" className={CARD}>
           <p className={`${CLBL} text-hs-ink/50`}>HACKSPAIN 2026</p>
           <h2
-            className={`text-center ${CH} text-[clamp(1.9rem,8.5vw,3.2rem)] text-hs-ink`}
+            className={`text-center ${CH} text-[clamp(1.8rem,8vw,3.2rem)] text-hs-ink`}
           >
             APOYADOS POR LOS MEJORES
           </h2>
@@ -894,7 +881,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-red" className={CARD}>
           <p className={`${CLBL} text-hs-gold`}>VISIÓN A LARGO PLAZO</p>
           <h2
-            className={`text-center ${CH} text-[clamp(2rem,9vw,3.4rem)] text-hs-paper`}
+            className={`text-center ${CH} text-[clamp(1.6rem,7vw,3rem)] text-hs-paper`}
           >
             DE MADRID <span className="text-hs-gold">AL MUNDO</span>
           </h2>
