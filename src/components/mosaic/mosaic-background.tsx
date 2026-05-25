@@ -146,19 +146,14 @@ function MosaicBackgroundDesktop({
   );
 }
 
+// Portrait layout (1440 x 2560): hero, two big content cards, footer.
+// Boundaries mirror CELLS_COMPACT so the ink stroke grid frames each card.
+// Tiles are paper so empty slots stay clean; content cards paint their own bg.
 const COMPACT_TILES: readonly Rect[] = [
-  [0, 0, 1440, 280, PAPER],
-  [0, 280, 480, 200, ORANGE],
-  [480, 280, 480, 200, GOLD],
-  [960, 280, 480, 200, PAPER],
-  [0, 480, 480, 160, TEAL],
-  [480, 480, 480, 160, PAPER],
-  [960, 480, 480, 160, PAPER],
-  [0, 640, 480, 100, PAPER],
-  [480, 640, 480, 100, ORANGE],
-  [960, 640, 480, 100, TEAL],
-  [0, 740, 720, 160, PAPER],
-  [720, 740, 720, 160, PAPER],
+  [0, 0, 1440, 720, PAPER],
+  [0, 720, 1440, 680, PAPER],
+  [0, 1400, 1440, 680, PAPER],
+  [0, 2080, 1440, 480, PAPER],
 ];
 
 function MosaicBackgroundCompact({
@@ -173,10 +168,10 @@ function MosaicBackgroundCompact({
       aria-hidden={ariaHidden}
       className={className}
       preserveAspectRatio="none"
-      viewBox="0 0 1440 900"
+      viewBox="0 0 1440 2560"
     >
       <title>Mosaic background</title>
-      {!strokeOnly && <rect fill={PAPER} height="900" width="1440" />}
+      {!strokeOnly && <rect fill={PAPER} height="2560" width="1440" />}
       {COMPACT_TILES.map(([x, y, w, h, fill]) => (
         <rect
           fill={f(fill)}

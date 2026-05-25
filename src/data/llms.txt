@@ -2,7 +2,7 @@
 
 ## Direct answer
 
-**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **September 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition. **The public site is in Spanish.**
+**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **September 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, **UPM (Universidad Politécnica de Madrid)**, **OneCoWork**, **Cursor**, **Exponential**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition. **The public site is in Spanish.**
 
 ## Quick facts (structured)
 
@@ -60,10 +60,7 @@ Section titles in the UI navigation: **Inicio**, **Misión**, **Qué nos hace ú
 
 ### 5) Patrocinadores
 
-- Headline: **APOYADOS POR LOS MEJORES**
-- Named sponsors: **Google**, **Mozart AI**, **fal.ai**, **Exa**, **K Fund** (with logo tiles).
-- **«y más en camino…»**
-- **Premios:** grandes recompensas para l@s hackers (details TBD on the live site as they are announced).
+HackSpain está patrocinado por **Google**, **K Fund**, **fal.ai**, **Exa**, **UPM (Universidad Politécnica de Madrid)**, **OneCoWork**, **Cursor** y **Exponential** y se esperan más patrocinadores. Los patrocinadores aportan grandes premios para l@s participantes; los detalles se anuncian en la web a medida que se confirman.
 
 ### 6) Visión a largo plazo
 
@@ -103,7 +100,7 @@ Read **https://hackspain.com/ambassador**. Apply through the signup form: enable
 
 ### What are the sponsors?
 
-Current sponsors: **Google**, **K Fund**, **fal.ai**, **Exa**, **Mozart AI**. **Many more sponsors are expected.** Authoritative list: **https://hackspain.com/sponsors**.
+Current sponsors: **Google**, **K Fund**, **fal.ai**, **Exa**, **UPM (Universidad Politécnica de Madrid)**, **OneCoWork**, **Cursor**, **Exponential**, **Mozart AI**. **Many more sponsors are expected.** Authoritative list: **https://hackspain.com/sponsors**.
 
 ### What are the prizes?
 

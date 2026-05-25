@@ -70,18 +70,18 @@ function slot4GeometryCompact(
   art: IllArt | null
 ): Pick<IllDef, "x" | "y" | "w" | "h" | "clip"> {
   if (art === "spark" || art === "medal") {
-    return { x: 940, y: 260, w: 500, h: 240 };
+    return { x: 940, y: 620, w: 520, h: 320 };
   }
-  return { x: -20, y: 260, w: 500, h: 240 };
+  return { x: -20, y: 620, w: 520, h: 320 };
 }
 
 function slot5GeometryCompact(
   art: IllArt | null
 ): Pick<IllDef, "x" | "y" | "w" | "h" | "clip"> {
   if (art === "code") {
-    return { x: 940, y: 460, w: 500, h: 200 };
+    return { x: 940, y: 960, w: 520, h: 300 };
   }
-  return { x: -20, y: 460, w: 500, h: 200 };
+  return { x: -20, y: 960, w: 520, h: 300 };
 }
 
 function boxFor(slotIndex: number, art: IllArt | null): string {
@@ -192,26 +192,27 @@ export function illustrationsForSection(
     let clip: string | undefined;
 
     if (compact) {
+      // Side accents drawn over the two middle cards so the themed art shows.
       if (i === 0) {
-        x = -40;
-        y = -10;
-        w = 500;
+        x = -60;
+        y = 760;
+        w = 340;
         h = 300;
       } else if (i === 1) {
-        x = 980;
-        y = -10;
-        w = 500;
+        x = 1160;
+        y = 760;
+        w = 340;
         h = 300;
       } else if (i === 2) {
-        x = -20;
-        y = -10;
-        w = 400;
+        x = -50;
+        y = 1740;
+        w = 340;
         h = 300;
       } else if (i === 3) {
-        x = 960;
-        y = 260;
-        w = 500;
-        h = 340;
+        x = 1160;
+        y = 1740;
+        w = 340;
+        h = 300;
       } else if (i === 4) {
         ({ x, y, w, h, clip } = slot4GeometryCompact(art));
       } else {

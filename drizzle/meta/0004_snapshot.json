@@ -90,9 +90,7 @@
         "ambassador_applications_email_unique": {
           "name": "ambassador_applications_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -161,9 +159,7 @@
         "hackathon_pre_signups_email_unique": {
           "name": "hackathon_pre_signups_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -269,9 +265,7 @@
         "hackathon_signups_email_unique": {
           "name": "hackathon_signups_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},

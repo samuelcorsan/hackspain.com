@@ -1,9 +1,9 @@
 import { captureException, captureMessage, withScope } from "@sentry/astro";
 import type { APIRoute } from "astro";
 import { checkBotId } from "botid/server";
+import { start } from "workflow/api";
 import { getDb } from "../../db";
 import { hackathonPreSignups } from "../../db/schema";
-import { start } from "workflow/api";
 import { notifyDiscordSignupApiIssue } from "../../lib/discord-signup-webhook";
 import { parsePreSignupBody } from "../../lib/signup-validation";
 import { handlePreSignupFollowup } from "../../workflows/pre-signup-followup";

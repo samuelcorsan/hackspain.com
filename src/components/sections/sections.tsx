@@ -3,15 +3,24 @@ import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
 import { InlineSvg } from "../media/inline-svg";
 import { ParticipantsCountUp } from "../media/participants-count-up";
 import {
+  communitySvg,
+  compassSvg,
   cursorLogo,
   exaLogo,
   exponentialLogo,
   falLogo,
   googleLogo,
+  horseSvg,
   kfundLogo,
   logoSvg,
+  medalSvg,
   onecoworkLogo,
+  quixoteSvg,
+  sparkSvg,
+  sunSvg,
+  trophySvg,
   upmLogo,
+  windmillSvg,
 } from "../theme/assets";
 import { GITHUB_SVG, INSTAGRAM_SVG, X_SVG } from "../theme/constants";
 import { ButtonLink } from "../ui/button";
@@ -159,6 +168,27 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
   const copyCell = BOTTOM_CELLS[(i + 2) % 4];
 
   return { [actionCell]: actions[i], [copyCell]: copyEl };
+}
+
+// Compact (mobile) typography — larger, since each card is full-width.
+const CH = `${B} leading-tight`;
+const CLBL = `${D} text-[clamp(0.7rem,3vw,1rem)] font-black uppercase tracking-widest`;
+const CBD = `${D} text-[clamp(0.95rem,4vw,1.6rem)] font-semibold leading-snug`;
+const CARD = "!gap-3 !p-5";
+// Card variant that hosts a faint decorative illustration behind the text.
+const CARDART = `${CARD} relative isolate overflow-hidden`;
+
+function cardArt(svg: string, corner: "tl" | "br") {
+  return (
+    <span
+      aria-hidden
+      className={`pointer-events-none absolute -z-10 aspect-square h-[55%] opacity-50 ${
+        corner === "tl" ? "top-2 left-2" : "right-2 bottom-2"
+      }`}
+    >
+      <InlineSvg className="h-full w-full" decorative svg={svg} />
+    </span>
+  );
 }
 
 const gEx = "hackathon España Google, hackathon Spain";
@@ -551,6 +581,358 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         </P>
       ),
       ...bottomRow(5),
+    },
+  ];
+}
+
+function compactFooter(centered = false): React.ReactNode {
+  return (
+    <P
+      align={centered ? "center" : "start"}
+      bg="bg-hs-paper"
+      className={`${CARD} !items-center ${centered ? "" : "!pt-6"}`}
+    >
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-hs-ink">
+        <a
+          aria-label="HackSpain en X (@hackspain26)"
+          className="flex h-6 w-6 shrink-0 items-center justify-center"
+          href={HACKSPAIN_SOCIAL_URLS.x}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            className="h-6 w-6"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG strings from ./constants
+            dangerouslySetInnerHTML={{ __html: X_SVG }}
+          />
+        </a>
+        <a
+          aria-label="HackSpain en Instagram (@hackspain26)"
+          className="flex h-6 w-6 shrink-0 items-center justify-center"
+          href={HACKSPAIN_SOCIAL_URLS.instagram}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            className="h-6 w-6"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG strings from ./constants
+            dangerouslySetInnerHTML={{ __html: INSTAGRAM_SVG }}
+          />
+        </a>
+        <a
+          className={`${D} font-bold text-base underline underline-offset-2`}
+          href={HACKSPAIN_SOCIAL_URLS.x}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          @hackspain26
+        </a>
+      </div>
+      <p className={`${D} text-center font-bold text-hs-ink text-sm`}>
+        Hecho con ♥ por{" "}
+        <a
+          className="underline underline-offset-2"
+          href="https://x.com/mrloldev"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Leo
+        </a>
+        {" y "}
+        <a
+          className="underline underline-offset-2"
+          href="https://x.com/disamdev"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Samu
+        </a>
+        <span className="text-hs-ink/40"> · © 2026 HackSpain</span>
+      </p>
+    </P>
+  );
+}
+
+/**
+ * Mobile layout — each section is a hero plus two big content cards and a
+ * footer, merging the desktop section's scattered tiles into a few readable
+ * cards. Keyed by the compact cell ids: `hero`, `b1`, `b2`, `foot`.
+ */
+export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
+  const signupHref = "/pre-signup";
+  const ambassadorHref = "/ambassador";
+  const foot = compactFooter();
+  const footCentered = compactFooter(true);
+
+  const sponsorImg = (
+    brand: string,
+    extra: string,
+    logo: { src: string },
+    invert = true
+  ) => (
+    <img
+      alt={sponsorAlt(brand, extra)}
+      className={`h-[clamp(1.8rem,8vw,3.4rem)] w-auto max-w-[85%] object-contain ${invert ? "brightness-0 invert" : ""}`}
+      height={96}
+      src={logo.src}
+      width={240}
+    />
+  );
+
+  return [
+    {
+      hero: (
+        <P bg="bg-hs-paper" className={CARD}>
+          <div className="flex w-full max-w-[420px] flex-col items-center gap-4">
+            <InlineSvg
+              className="h-auto w-full"
+              label="HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026"
+              svg={logoSvg}
+            />
+            <ButtonLink
+              aria-label="Solicitar plaza en HackSpain — abrir formulario"
+              className="!px-5 !py-2.5 !text-[clamp(0.85rem,3vw,1.1rem)] shrink-0"
+              href={signupHref}
+              size="compact"
+              variant="gold"
+            >
+              Apúntate
+            </ButtonLink>
+          </div>
+        </P>
+      ),
+      b1: (
+        <P align="start" bg="bg-hs-orange" className={CARDART}>
+          {cardArt(windmillSvg, "br")}
+          <p className={`${CLBL} text-hs-paper/70`}>HACKATHON</p>
+          <span
+            className={`${CH} text-[clamp(1.4rem,6.5vw,2.6rem)] text-hs-paper`}
+          >
+            MADRID · SEPTIEMBRE 2026
+          </span>
+          <p className={`${CBD} text-hs-paper/90`}>
+            24 horas intensas con l@s mejores jóvenes coders de España.
+          </p>
+        </P>
+      ),
+      b2: (
+        <P bg="bg-hs-gold" className={CARDART}>
+          {cardArt(sunSvg, "br")}
+          <ParticipantsCountUp
+            ariaLabel="+250 PARTICIPANTES"
+            className={`${CH} text-[clamp(2.2rem,11vw,4.5rem)] text-hs-ink`}
+          />
+          <p className={`${CLBL} text-hs-ink`}>PARTICIPANTES</p>
+        </P>
+      ),
+      foot,
+    },
+    {
+      hero: (
+        <P bg="bg-hs-navy" className={CARD}>
+          <p className={`${CLBL} text-hs-gold`}>MISIÓN</p>
+          <h2
+            className={`text-center ${CH} text-[clamp(1.6rem,7vw,3rem)] text-hs-paper`}
+          >
+            UNIR A JÓVENES <span className="text-hs-red">TALENTOSOS</span>{" "}
+            CODERS ESPAÑOLES
+          </h2>
+        </P>
+      ),
+      b1: (
+        <P align="start" bg="bg-hs-paper" className={CARDART}>
+          {cardArt(quixoteSvg, "br")}
+          <p className={`${CLBL} text-hs-ink/40`}>MISIÓN</p>
+          <p className={`${CBD} text-hs-ink`}>
+            Posicionar a España como líder europeo en talento tech joven.
+          </p>
+        </P>
+      ),
+      b2: (
+        <P bg="bg-hs-teal" className={CARDART}>
+          {cardArt(horseSvg, "br")}
+          <p className={`${CBD} text-center text-white`}>
+            24 horas intensas construyendo con l@s mejores jóvenes programadores
+            de España.
+          </p>
+        </P>
+      ),
+      foot,
+    },
+    {
+      hero: (
+        <P bg="bg-hs-sand" className={CARD}>
+          <p className={`${CLBL} text-hs-ink/40`}>HACKSPAIN 2026</p>
+          <h2
+            className={`text-center ${CH} text-[clamp(1.8rem,8vw,3.2rem)] text-hs-ink`}
+          >
+            ¿QUÉ NOS HACE ÚNICOS?
+          </h2>
+        </P>
+      ),
+      b1: (
+        <P align="start" bg="bg-hs-ink" className={CARDART}>
+          {cardArt(communitySvg, "br")}
+          <p className={`${CBD} text-hs-paper`}>
+            Estamos totalmente impulsados por la misión.
+          </p>
+          <div>
+            <p className={`${CLBL} text-hs-gold`}>FOCO EN MEDIOS</p>
+            <p className={`${CBD} text-hs-paper/90`}>
+              Ampliar nuestra presencia en redes y medios con historias reales
+              de l@s hackers.
+            </p>
+          </div>
+        </P>
+      ),
+      b2: (
+        <P align="start" bg="bg-hs-gold" className={CARDART}>
+          {cardArt(sparkSvg, "br")}
+          <p className={`${CLBL} text-hs-ink/60`}>EMBAJADORES</p>
+          <p className={`${CBD} text-hs-ink`}>
+            Universidades y centros educativos por toda España.
+          </p>
+          <ButtonLink
+            aria-label="Ver programa de embajadores — HackSpain, abrir página"
+            className="!border-hs-ink !bg-hs-navy !text-hs-gold mt-1 self-start"
+            href={ambassadorHref}
+            size="compact"
+            variant="gold"
+          >
+            Ver programa
+          </ButtonLink>
+        </P>
+      ),
+      foot,
+    },
+    {
+      hero: (
+        <P bg="bg-hs-teal" className={CARD}>
+          <p className={`${CLBL} text-white/60`}>HACKSPAIN 2026</p>
+          <h2
+            className={`text-center ${CH} text-[clamp(2rem,9vw,3.4rem)] text-white`}
+          >
+            TRACKS ORIGINALES
+          </h2>
+        </P>
+      ),
+      b1: (
+        <P align="start" bg="bg-hs-ink" className={CARDART}>
+          {cardArt(compassSvg, "br")}
+          <div>
+            <p className={`${CLBL} text-hs-gold`}>TRACK ML</p>
+            <p className={`${CBD} text-hs-paper`}>
+              Retos de ML con cómputo gratuito.
+            </p>
+          </div>
+          <div>
+            <p className={`${CLBL} text-hs-gold`}>TRACK NO TÉCNICO</p>
+            <p className={`${CBD} text-hs-paper/90`}>
+              Enseñamos a perfiles no técnicos a crear software de calidad.
+            </p>
+          </div>
+        </P>
+      ),
+      b2: (
+        <P bg="bg-hs-orange" className={CARDART}>
+          {cardArt(trophySvg, "br")}
+          <span
+            className={`${CH} text-center text-[clamp(1.6rem,7vw,2.8rem)] text-hs-paper`}
+          >
+            COMPUTE GRATIS · PARA TODOS
+          </span>
+          <p className={`${CBD} text-center text-hs-paper/90`}>
+            Pensado para todos los niveles, de principiantes a expertos.
+          </p>
+        </P>
+      ),
+      foot,
+    },
+    {
+      hero: (
+        <P bg="bg-hs-gold" className={CARD}>
+          <p className={`${CLBL} text-hs-ink/50`}>HACKSPAIN 2026</p>
+          <h2
+            className={`text-center ${CH} text-[clamp(1.9rem,8.5vw,3.2rem)] text-hs-ink`}
+          >
+            APOYADOS POR LOS MEJORES
+          </h2>
+        </P>
+      ),
+      b1: (
+        <P bg="bg-hs-ink" className={CARD}>
+          <div className="grid w-full grid-cols-2 place-items-center gap-x-6 gap-y-6">
+            {sponsorImg("Google", gEx, googleLogo)}
+            {sponsorImg("Cursor", cEx, cursorLogo)}
+            {sponsorImg("fal.ai", fEx, falLogo)}
+            {sponsorImg("Exa", eEx, exaLogo)}
+            {sponsorImg("K Fund", kEx, kfundLogo)}
+            {sponsorImg("Exponential", xEx, exponentialLogo)}
+            {sponsorImg(
+              "UPM — Universidad Politécnica de Madrid",
+              uEx,
+              upmLogo,
+              false
+            )}
+            {sponsorImg("OneCoWork", oEx, onecoworkLogo)}
+          </div>
+        </P>
+      ),
+      b2: (
+        <P align="start" bg="bg-hs-cream" className={CARDART}>
+          {cardArt(medalSvg, "br")}
+          <p className={`${CLBL} text-hs-ink/40`}>PREMIOS</p>
+          <p className={`${CH} text-[clamp(1.3rem,5.5vw,2.2rem)] text-hs-ink`}>
+            Grandes recompensas para l@s hackers
+          </p>
+        </P>
+      ),
+      foot,
+    },
+    {
+      hero: (
+        <P bg="bg-hs-red" className={CARD}>
+          <p className={`${CLBL} text-hs-gold`}>VISIÓN A LARGO PLAZO</p>
+          <h2
+            className={`text-center ${CH} text-[clamp(2rem,9vw,3.4rem)] text-hs-paper`}
+          >
+            DE MADRID <span className="text-hs-gold">AL MUNDO</span>
+          </h2>
+        </P>
+      ),
+      b1: (
+        <P align="start" bg="bg-hs-ink" className={CARDART}>
+          {cardArt(trophySvg, "br")}
+          <p className={`${CBD} text-hs-paper`}>
+            HackSpain no es un evento puntual. Es la base de un movimiento que
+            posiciona a España como líder tech en Europa.
+          </p>
+          <div className="flex items-baseline gap-2">
+            <span
+              className={`${CH} text-[clamp(1.8rem,8vw,3rem)] text-hs-gold`}
+            >
+              5.000
+            </span>
+            <span className={`${CLBL} text-hs-paper/70`}>
+              META EL PRÓXIMO AÑO
+            </span>
+          </div>
+        </P>
+      ),
+      b2: (
+        <P bg="bg-hs-navy" className={CARDART}>
+          {cardArt(windmillSvg, "br")}
+          <span
+            className={`text-center ${CH} text-[clamp(1.3rem,5.5vw,2.2rem)] text-hs-gold`}
+          >
+            EL MAYOR HACKATHON DE EUROPA
+          </span>
+          <p className={`${CBD} text-center text-hs-paper/90`}>
+            El mayor movimiento de hackathones del sur de Europa.
+          </p>
+        </P>
+      ),
+      foot: footCentered,
     },
   ];
 }

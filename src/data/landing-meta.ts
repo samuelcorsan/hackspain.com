@@ -47,7 +47,7 @@ const PAGES: PageSeo[] = [
   {
     title: "Patrocinadores — HACKSPAIN 2026 | Google hackathon España",
     description:
-      "Patrocinadores: Google, K Fund, fal.ai, Exa, Mozart AI — premios para participantes. hackathon España.",
+      "Patrocinadores: Google, K Fund, fal.ai, Exa, UPM, OneCoWork, Cursor, Exponential, Mozart AI — premios para participantes. hackathon España.",
     ogImageAlt: "HackSpain 2026 patrocinadores — hackathon España",
   },
   {
@@ -118,7 +118,7 @@ const KEYWORDS_BY_SECTION = [
   "misión hackathon, coders españoles, hackathon jóvenes España",
   "hackathon único España, comunidad hackathon Madrid",
   "track ML hackathon, hackathon sin código, talleres código España",
-  "patrocinadores hackathon, Google hackathon España, K Fund, fal.ai, Exa, Mozart AI",
+  "patrocinadores hackathon, Google hackathon España, K Fund, fal.ai, Exa, UPM, OneCoWork, Cursor, Exponential, Mozart AI",
   "visión hackathon Europa, talento tech España",
 ];
 
@@ -270,7 +270,7 @@ export function jsonLdFaq() {
         name: "¿Cuáles son los patrocinadores de HackSpain / Hack Spain?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Los patrocinadores actuales son Google, K Fund, fal.ai, Exa y Mozart AI. Se esperan muchos más; la lista completa y actualizada siempre estará en hackspain.com/sponsors.",
+          text: "Los patrocinadores actuales son Google, K Fund, fal.ai, Exa, UPM, OneCoWork, Cursor, Exponential y Mozart AI. Se esperan muchos más; la lista completa y actualizada siempre estará en hackspain.com/sponsors.",
         },
       },
       {
