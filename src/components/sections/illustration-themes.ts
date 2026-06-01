@@ -43,12 +43,10 @@ export interface IllDef {
 }
 
 const SCHEDULE: (IllArt | null)[][] = [
-  ["windmill", "sun", "horse", "quixote", null, null],
-  ["windmill", "quixote", "horse", "compass", null, null],
-  [null, "community", "horse", null, "spark", "code"],
-  [null, "sun", "horse", "trophy", "spark", "code"],
-  ["trophy", "sun", "horse", "compass", null, null],
-  ["windmill", "quixote", "horse", "compass", null, null],
+  ["windmill", "sun", "horse", "quixote", null, null], // Inicio
+  ["sun", "quixote", "windmill", "compass", null, null], // Misión
+  ["spark", "code", null, "trophy", null, null], // Tracks
+  ["trophy", "windmill", "horse", "quixote", null, null], // Apúntate
 ];
 
 function slot4Geometry(
@@ -94,6 +92,9 @@ function boxFor(slotIndex: number, art: IllArt | null): string {
   if (slotIndex === 5) {
     return "items-end justify-center pb-2";
   }
+  if (slotIndex === 0 && art === "windmill") {
+    return "items-center justify-center";
+  }
   if (slotIndex === 0) {
     return "items-end justify-center";
   }
@@ -101,7 +102,7 @@ function boxFor(slotIndex: number, art: IllArt | null): string {
     return "items-center justify-center p-3";
   }
   if (slotIndex === 2) {
-    return "items-end justify-center";
+    return "items-center justify-center";
   }
   return "items-end justify-center";
 }
@@ -144,6 +145,9 @@ function imgFor(slotIndex: number, art: IllArt | null): string {
   if (slotIndex === 3 && art === "quixote") {
     return "h-full w-auto max-w-[100%] max-h-full object-contain object-bottom";
   }
+  if (slotIndex === 0 && art === "windmill") {
+    return "h-[84%] w-auto max-w-[90%]";
+  }
   if (slotIndex === 0) {
     return "h-[94%] w-auto";
   }
@@ -182,7 +186,7 @@ export function illustrationsForSection(
   }
   const compact = profile === "compact";
   return SLOT_IDS.map((id, i) => {
-    const art = i === 2 ? "horse" : (row[i] ?? null);
+    const art = row[i] ?? null;
     const svg = art ? SVG_MAP[art] : null;
 
     let x: number;
@@ -219,25 +223,29 @@ export function illustrationsForSection(
         ({ x, y, w, h, clip } = slot5GeometryCompact(art));
       }
     } else if (i === 0) {
-      x = 0;
+      // Windmill — cell 2 of the top row (200-390), centered.
+      x = 200;
       y = 0;
-      w = 200;
+      w = 190;
       h = 180;
     } else if (i === 1) {
-      x = 920;
+      // Sun — cell 6 of the top row (1050-1240), centered (mirrors windmill).
+      x = 1050;
       y = 0;
-      w = 220;
+      w = 190;
       h = 180;
     } else if (i === 2) {
+      // Horse — centered vertically in the content band (400-650).
       x = 0;
-      y = 340;
+      y = 425;
       w = 200;
-      h = 220;
+      h = 200;
     } else if (i === 3) {
+      // Quixote/compass/trophy — centered vertically in the content band.
       x = 1220;
-      y = 340;
+      y = 425;
       w = 220;
-      h = 220;
+      h = 200;
     } else if (i === 4) {
       ({ x, y, w, h, clip } = slot4Geometry(art));
     } else {

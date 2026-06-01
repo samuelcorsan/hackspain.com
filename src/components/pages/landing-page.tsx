@@ -11,7 +11,7 @@ import { cellsForProfile } from "../mosaic/cells";
 import { MosaicBackground } from "../mosaic/mosaic-background";
 import { useLayoutProfile } from "../mosaic/use-layout-profile";
 import { illustrationsForSection } from "../sections/illustration-themes";
-import { ScrollSectionHint } from "../sections/scroll-section-hint";
+import { PartnerLogoCell, usePartnerRotation } from "../sections/partner-logos";
 import { buildSections, buildSectionsCompact } from "../sections/sections";
 import { INK, NUM_SECTIONS, SPRING, slideVariants } from "../theme/constants";
 import { vp } from "../ui/panel";
@@ -19,10 +19,8 @@ import { vp } from "../ui/panel";
 const SECTION_NAV = [
   "Inicio",
   "Misión",
-  "Qué nos hace únicos",
   "Tracks originales",
-  "Patrocinadores",
-  "Visión",
+  "Apúntate",
 ] as const;
 
 const REGION_ARIA =
@@ -72,18 +70,23 @@ export function LandingPage({ initialSection = 0 }: Props) {
 
   const layoutProfile = useLayoutProfile();
 
-  const artboard = useMemo(() => artboardFor(layoutProfile), [layoutProfile]);
-  const cells = useMemo(() => cellsForProfile(layoutProfile), [layoutProfile]);
+  // profile is non-null after the early return below.
+  const profile = (layoutProfile ?? "desktop") as NonNullable<
+    typeof layoutProfile
+  >;
+
+  const artboard = useMemo(() => artboardFor(profile), [profile]);
+  const cells = useMemo(() => cellsForProfile(profile), [profile]);
 
   const sections = useMemo(
-    () =>
-      layoutProfile === "compact" ? buildSectionsCompact() : buildSections(),
-    [layoutProfile]
+    () => (profile === "compact" ? buildSectionsCompact() : buildSections()),
+    [profile]
   );
   const ills = useMemo(
-    () => illustrationsForSection(section, layoutProfile),
-    [section, layoutProfile]
+    () => illustrationsForSection(section, profile),
+    [section, profile]
   );
+  const partners = usePartnerRotation();
 
   useEffect(() => {
     applySeoToDocument(initialSection);
@@ -141,11 +144,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
     [section, goToSection]
   );
 
-  const isCompact = layoutProfile === "compact";
-
-  const onScrollHintNext = useCallback(() => {
-    advance(1);
-  }, [advance]);
+  const isCompact = profile === "compact";
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
@@ -200,7 +199,48 @@ export function LandingPage({ initialSection = 0 }: Props) {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  const current = sections[section] ?? {};
+  // All hooks are above this line. Show a plain ink screen while the viewport
+  // size is being determined — avoids showing the desktop layout on mobile.
+  if (layoutProfile === null) {
+    return (
+      <div
+        className="fixed inset-0 flex items-center justify-center"
+        style={{ background: INK }}
+      >
+        <div className="flex items-end gap-1 font-bungee text-4xl text-hs-gold leading-none">
+          <span>LOADING</span>
+          <span style={{ animation: "hs-blink 1.2s ease-in-out 0ms infinite" }}>
+            .
+          </span>
+          <span
+            style={{ animation: "hs-blink 1.2s ease-in-out 400ms infinite" }}
+          >
+            .
+          </span>
+          <span
+            style={{ animation: "hs-blink 1.2s ease-in-out 800ms infinite" }}
+          >
+            .
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  const baseCurrent = sections[section] ?? {};
+  // Partner logos fill any empty open-row cells (o1..o5) on every desktop section.
+  // Cells already defined by the section are preserved.
+  const current =
+    profile === "compact"
+      ? baseCurrent
+      : {
+          o1: <PartnerLogoCell partner={partners[0]} />,
+          o2: <PartnerLogoCell partner={partners[1]} />,
+          o3: <PartnerLogoCell partner={partners[2]} />,
+          o4: <PartnerLogoCell partner={partners[3]} />,
+          o5: <PartnerLogoCell partner={partners[4]} />,
+          ...baseCurrent,
+        };
   const liveLabel = SECTION_NAV[section] ?? SECTION_NAV[0];
 
   const tileMotionClass = "absolute inset-0";
@@ -209,7 +249,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
     ill.svg ? (
       <div
         aria-hidden
-        className="pointer-events-none absolute overflow-hidden"
+        className="pointer-events-none absolute z-10 overflow-hidden"
         key={ill.id}
         style={{
           ...vp(ill.x, ill.y, ill.w, ill.h, artboard),
@@ -272,7 +312,9 @@ export function LandingPage({ initialSection = 0 }: Props) {
                 custom={dir}
                 exit="exit"
                 initial="enter"
-                key={`${cell.id}-${section}`}
+                key={
+                  cell.id.startsWith("o") ? cell.id : `${cell.id}-${section}`
+                }
                 transition={
                   reducedMotion
                     ? { type: "tween", duration: 0.2, delay: cell.delay * 0.3 }
@@ -319,14 +361,6 @@ export function LandingPage({ initialSection = 0 }: Props) {
         {liveLabel}
       </p>
       <div className="absolute inset-0 overflow-hidden">{stageContent}</div>
-
-      <ScrollSectionHint
-        label="Scroll"
-        nextSectionAria="Ir a la siguiente sección"
-        onNext={onScrollHintNext}
-        reducedMotion={reducedMotion}
-        visible={section < NUM_SECTIONS - 1}
-      />
     </section>
   );
 }

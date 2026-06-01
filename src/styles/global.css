@@ -75,7 +75,7 @@ body {
   .hs-mosaic-lbl {
     flex-shrink: 0;
     font-family: var(--font-sans);
-    font-size: clamp(0.6rem, 3.2cqw, 0.75rem);
+    font-size: clamp(0.65rem, 3.6cqw, 0.85rem);
     font-weight: 900;
     line-height: 1.2;
     text-transform: uppercase;
@@ -89,7 +89,7 @@ body {
     max-width: 100%;
     min-height: 0;
     font-family: var(--font-sans);
-    font-size: clamp(0.65rem, min(11.5cqw, 6.5cqh), 1.4rem);
+    font-size: clamp(0.7rem, min(12cqw, 7cqh), 1.55rem);
     font-weight: 700;
     line-height: 1.35;
     text-wrap: pretty;
@@ -175,4 +175,27 @@ body {
 /* After Tailwind `@container` (inline-size) so typography can use cqw + cqh. */
 .hs-mosaic-cell {
   container-type: size;
+}
+
+@keyframes hs-blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes hs-logo-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hs-logo-reel {
+  animation: hs-logo-scroll 14s linear infinite;
 }

@@ -25,7 +25,7 @@ export function AmbassadorPage() {
     <div className="relative z-0 min-h-dvh w-full">
       <MosaicBackground
         className="pointer-events-none fixed inset-0 -z-10 h-full min-h-dvh w-full"
-        variant={profile}
+        variant={profile ?? "desktop"}
       />
       <div className="relative z-0 mx-auto max-w-5xl px-3 pb-6 sm:px-4 sm:pb-10">
         <section

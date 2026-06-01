@@ -20,8 +20,6 @@ import {
   parsePreSignupBodyClient,
 } from "../../lib/signup-validation";
 import { FormField, Input, SocialPrefixInput } from "../form";
-import { MosaicBackground } from "../mosaic/mosaic-background";
-import { useLayoutProfile } from "../mosaic/use-layout-profile";
 import { X_SVG } from "../theme/constants";
 import { Button, ButtonLink } from "../ui/button";
 
@@ -155,7 +153,6 @@ const t = {
 } as const;
 
 export function PreSignupPage() {
-  const profile = useLayoutProfile();
   const homeHref = "/";
   const privacyHref = "/privacy";
 
@@ -329,11 +326,7 @@ export function PreSignupPage() {
   const webReg = register("webUrl");
 
   return (
-    <div className="relative z-0 min-h-dvh w-full">
-      <MosaicBackground
-        className="pointer-events-none fixed inset-0 -z-10 hidden h-full min-h-dvh w-full sm:block"
-        variant={profile}
-      />
+    <div className="w-full">
       <div className="relative z-0 mx-auto max-w-6xl px-0 pb-0 sm:px-4 sm:pb-10">
         <div className="grid grid-cols-1 gap-0 border-hs-ink bg-hs-ink sm:border-[3px]">
           <div className="border-hs-ink border-b-[3px] bg-hs-orange px-4 py-5">
