@@ -334,7 +334,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       hero: (
         <P bg="bg-hs-navy">
           <p className={`${LBL} text-hs-gold`}>MISIÓN</p>
-          <h2 className={`text-center ${MOSAIC_HEADLINE} text-hs-paper`}>
+          <h2 className={`text-center ${MOSAIC_HERO_LG} text-hs-paper`}>
             ESPAÑA TIENE <span className="text-hs-red">TALENTO.</span>
             <br />
             NOSOTROS VAMOS A <span className="text-hs-red">JUNTARLO.</span>
@@ -345,13 +345,17 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r4b: <P bg="bg-hs-teal" />,
       r4c: (
         <P bg="bg-hs-paper" className="!justify-evenly !px-10 !py-8">
-          <p className={`${BD} text-center text-hs-ink`}>
+          <p
+            className={`${BD} text-center text-[clamp(0.8rem,min(12.5cqw,7.5cqh),1.75rem)] text-hs-ink`}
+          >
             36 horas. 250 de los mejores{" "}
             <span className="text-hs-red">builders</span> menores de 30.
             HackSpain 2026 es el punto de encuentro de los jóvenes que van a
             posicionar a España como líder de talento tech joven.
           </p>
-          <p className={`${BD} text-center text-hs-ink/60`}>
+          <p
+            className={`${BD} text-center text-[clamp(0.75rem,min(11cqw,6.5cqh),1.55rem)] text-hs-ink/60`}
+          >
             Con los mejores fondos, startups y figuras del ecosistema español.
           </p>
         </P>
@@ -674,7 +678,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-navy" className={CARD}>
           <p className={`${CLBL} text-hs-gold`}>MISIÓN</p>
           <h2
-            className={`text-center ${CH} text-[clamp(1.6rem,7vw,3rem)] text-hs-paper`}
+            className={`text-center ${CH} text-[clamp(1.9rem,8.5vw,3.6rem)] text-hs-paper`}
           >
             ESPAÑA TIENE <span className="text-hs-red">TALENTO.</span>
             <br />
@@ -684,7 +688,9 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
       ),
       b1: (
         <P bg="bg-hs-paper" className={CARD}>
-          <p className={`${CBD} text-center text-hs-ink`}>
+          <p
+            className={`${CBD} text-center text-[clamp(1.05rem,4.8vw,1.9rem)] text-hs-ink`}
+          >
             36 horas. 250 de los mejores{" "}
             <span className="text-hs-red">builders</span> menores de 30.
             HackSpain 2026 es el punto de encuentro de los jóvenes que van a
@@ -695,7 +701,9 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
       b2: (
         <P bg="bg-hs-teal" className={CARDART}>
           {cardArt(horseSvg, "br")}
-          <p className={`${CBD} text-center text-white`}>
+          <p
+            className={`${CBD} text-center text-[clamp(1.05rem,4.8vw,1.9rem)] text-white`}
+          >
             Con los mejores fondos, startups y figuras del ecosistema español.
           </p>
         </P>

@@ -18,10 +18,29 @@ interface Partner {
   src: string;
 }
 
-/** Shared logo height. */
-const LOGO_SIZE = "h-[16cqh]";
-/** Cursor's mark is squarer than the wordmarks, so it needs more height. */
-const CURSOR_SIZE = "h-[22cqh]";
+/** Shared logo height (container query units inside mosaic cells). */
+const LOGO_SIZE = "h-[26cqh]";
+/** Squarer or wider marks need more height than wordmarks. */
+const LARGE_LOGO_SIZE = "h-[44cqh]";
+
+const LARGE_GRID_HEIGHT = "h-[clamp(2.1rem,10.5vw,4rem)]";
+const DEFAULT_GRID_HEIGHT = "h-[clamp(1.75rem,9vw,3.25rem)]";
+const LARGE_REEL_HEIGHT = "h-[clamp(1.4rem,6.75vw,2.35rem)]";
+const DEFAULT_REEL_HEIGHT = "h-[clamp(1.1rem,5.5vw,1.85rem)]";
+
+const LARGE_PARTNER_SRC = new Set([cursorLogo.src, onecoworkLogo.src]);
+
+function isLargePartner(partner: Partner): boolean {
+  return LARGE_PARTNER_SRC.has(partner.src);
+}
+
+function gridLogoHeight(partner: Partner): string {
+  return isLargePartner(partner) ? LARGE_GRID_HEIGHT : DEFAULT_GRID_HEIGHT;
+}
+
+function reelLogoHeight(partner: Partner): string {
+  return isLargePartner(partner) ? LARGE_REEL_HEIGHT : DEFAULT_REEL_HEIGHT;
+}
 
 function toPartner(
   logo: { src: string },
@@ -37,9 +56,9 @@ const PARTNERS: Partner[] = [
   toPartner(exaLogo, "Exa — partner de HackSpain"),
   toPartner(falLogo, "fal.ai — partner de HackSpain"),
   toPartner(kfundLogo, "K Fund — partner de HackSpain"),
-  toPartner(cursorLogo, "Cursor — partner de HackSpain", CURSOR_SIZE),
+  toPartner(cursorLogo, "Cursor — partner de HackSpain", LARGE_LOGO_SIZE),
   toPartner(mozartLogo, "Mozart AI — partner de HackSpain"),
-  toPartner(onecoworkLogo, "OneCoWork — partner de HackSpain"),
+  toPartner(onecoworkLogo, "OneCoWork — partner de HackSpain", LARGE_LOGO_SIZE),
 ];
 
 /** Number of open-row cells (o1..o5) the logos rotate through. */
@@ -105,7 +124,7 @@ export function PartnerLogoGrid() {
           <motion.span
             animate={{ opacity: 1 }}
             aria-label={p.alt}
-            className="block h-[clamp(1.4rem,7vw,2.4rem)] w-full bg-hs-ink/60"
+            className={`block w-full bg-hs-ink/60 ${gridLogoHeight(p)}`}
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             role="img"
@@ -137,7 +156,7 @@ export function PartnerLogoReel() {
   const logoRow = PARTNERS.map((p) => (
     <span
       aria-label={p.alt}
-      className="mx-4 block h-[clamp(0.9rem,4.5vw,1.4rem)] w-[clamp(3rem,14vw,5rem)] shrink-0 bg-hs-ink/60"
+      className={`mx-4 block w-[clamp(3.5rem,16vw,6rem)] shrink-0 bg-hs-ink/60 ${reelLogoHeight(p)}`}
       key={p.src}
       role="img"
       style={{

@@ -229,7 +229,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
 
   const baseCurrent = sections[section] ?? {};
   // Partner logos fill any empty open-row cells (o1..o5) on every desktop section.
-  // Cells already defined by the section (e.g. sponsors PREMIOS) are preserved.
+  // Cells already defined by the section are preserved.
   const current =
     profile === "compact"
       ? baseCurrent
