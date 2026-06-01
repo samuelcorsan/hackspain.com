@@ -11,6 +11,7 @@ import { cellsForProfile } from "../mosaic/cells";
 import { MosaicBackground } from "../mosaic/mosaic-background";
 import { useLayoutProfile } from "../mosaic/use-layout-profile";
 import { illustrationsForSection } from "../sections/illustration-themes";
+import { PartnerLogoCell, usePartnerRotation } from "../sections/partner-logos";
 import { buildSections, buildSectionsCompact } from "../sections/sections";
 import { INK, NUM_SECTIONS, SPRING, slideVariants } from "../theme/constants";
 import { vp } from "../ui/panel";
@@ -81,6 +82,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
     () => illustrationsForSection(section, layoutProfile),
     [section, layoutProfile]
   );
+  const partners = usePartnerRotation();
 
   useEffect(() => {
     applySeoToDocument(initialSection);
@@ -193,7 +195,19 @@ export function LandingPage({ initialSection = 0 }: Props) {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  const current = sections[section] ?? {};
+  const baseCurrent = sections[section] ?? {};
+  // Partner logos rotate through the open row (o1..o5) on the desktop homepage.
+  const current =
+    section === 0 && layoutProfile !== "compact"
+      ? {
+          ...baseCurrent,
+          o1: <PartnerLogoCell partner={partners[0]} />,
+          o2: <PartnerLogoCell partner={partners[1]} />,
+          o3: <PartnerLogoCell partner={partners[2]} />,
+          o4: <PartnerLogoCell partner={partners[3]} />,
+          o5: <PartnerLogoCell partner={partners[4]} />,
+        }
+      : baseCurrent;
   const liveLabel = SECTION_NAV[section] ?? SECTION_NAV[0];
 
   const tileMotionClass = "absolute inset-0";
@@ -202,7 +216,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
     ill.svg ? (
       <div
         aria-hidden
-        className="pointer-events-none absolute overflow-hidden"
+        className="pointer-events-none absolute z-10 overflow-hidden"
         key={ill.id}
         style={{
           ...vp(ill.x, ill.y, ill.w, ill.h, artboard),

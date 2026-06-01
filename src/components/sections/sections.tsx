@@ -285,6 +285,31 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         </P>
       ),
       ...bottomRow(0),
+      r5d: (
+        <P bg="bg-hs-paper">
+          <div className="flex items-center justify-center gap-2 text-hs-ink/45">
+            <span
+              className={`${D} ${MOSAIC_FOOTER_SM} mb-px font-bold leading-none`}
+            >
+              Powered by
+            </span>
+            <a
+              aria-label="Exponential — patrocinador HackSpain"
+              href="https://goexponential.org"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img
+                alt="Exponential"
+                className="h-[clamp(1rem,52cqh,2.4rem)] w-auto object-contain opacity-60 brightness-0"
+                height={96}
+                src={exponentialLogo.src}
+                width={240}
+              />
+            </a>
+          </div>
+        </P>
+      ),
     },
     {
       hero: (

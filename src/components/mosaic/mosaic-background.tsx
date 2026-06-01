@@ -34,7 +34,6 @@ export function MosaicBackground({
 const PAPER = "var(--color-hs-paper)";
 const INK = "var(--color-hs-ink)";
 const ORANGE = "var(--color-hs-orange)";
-const GOLD = "var(--color-hs-gold)";
 const TEAL = "var(--color-hs-teal)";
 
 // Desktop Mondrian — strict horizontal bands, clean tiling.
@@ -57,14 +56,14 @@ const DESKTOP_RECTS: readonly Rect[] = [
   [200, 180, 280, 220, PAPER], // r3a
   [480, 180, 480, 220, PAPER], // hero
   [960, 180, 260, 220, PAPER], // r3b
-  [1220, 180, 220, 220, TEAL],
+  [1220, 180, 220, 220, PAPER],
 
   // Band 3 (content row) — y 400-650 : symmetric, centered main cell
-  [0, 400, 220, 250, PAPER],
-  [220, 400, 220, 250, PAPER], // r4b
+  [0, 400, 220, 250, ORANGE], // horse cell (diagonal overlay below)
+  [220, 400, 220, 250, TEAL], // r4b
   [440, 400, 560, 250, PAPER], // r4c (centered main)
   [1000, 400, 220, 250, PAPER], // r4d
-  [1220, 400, 220, 250, GOLD],
+  [1220, 400, 220, 250, PAPER], // quixote cell
 
   // Band 4 (open row) — y 650-830 : 5 equal cells (288 wide)
   [0, 650, 288, 180, PAPER], // o1
@@ -88,8 +87,8 @@ const DESKTOP_TRIS: readonly Tri[] = [
   ["1240,0 1440,180 1240,180", TEAL],
   // Hero band right: orange wedge in teal corner
   ["1220,180 1440,400 1220,400", ORANGE],
-  // Band 3 right: orange wedge in gold corner
-  ["1220,400 1440,650 1220,650", ORANGE],
+  // Band 3 left: paper diagonal over orange horse cell
+  ["0,400 220,400 0,650", PAPER],
 ];
 
 function MosaicBackgroundDesktop({
@@ -129,7 +128,7 @@ function MosaicBackgroundDesktop({
           key={`t-${points}`}
           points={points}
           stroke={INK}
-          strokeLinejoin="miter"
+          strokeLinejoin="bevel"
           strokeWidth={sw}
         />
       ))}
