@@ -1,4 +1,4 @@
-export const SECTION_SLUGS = ["mission", "tracks"] as const;
+export const SECTION_SLUGS = ["mission", "tracks", "apuntate"] as const;
 type SectionSlug = (typeof SECTION_SLUGS)[number];
 
 const TRAILING_SLASH_PATH = /\/$/;

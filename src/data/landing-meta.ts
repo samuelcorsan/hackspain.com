@@ -38,6 +38,12 @@ const PAGES: PageSeo[] = [
       "Tracks de ML con compute gratis y track no técnico. Hackathon España para todo tipo de builders. Madrid 2026.",
     ogImageAlt: "HackSpain 2026 — tracks, hackathon España",
   },
+  {
+    title: "Apúntate — HACKSPAIN 2026 | hackathon Madrid",
+    description:
+      "Pre-inscripción abierta para HackSpain 2026: hackathon Madrid, hackathon España. Apúntate ya.",
+    ogImageAlt: "HackSpain 2026 — apúntate, hackathon España",
+  },
 ];
 
 export function seoForSectionIndex(i: number): PageSeo {
@@ -99,6 +105,7 @@ const KEYWORDS_BY_SECTION = [
   "",
   "misión hackathon, coders españoles, hackathon jóvenes España",
   "track ML hackathon, hackathon sin código, talleres código España",
+  "apuntarse hackathon, pre-inscripción hackathon España, registro hackathon Madrid",
 ];
 
 export function keywordsForSectionIndex(i: number): string {

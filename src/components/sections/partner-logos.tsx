@@ -59,15 +59,15 @@ interface RotationState {
  * partition PARTNERS, so the same logo can never appear twice at once. Fully
  * deterministic — no randomness, repeats on a fixed cycle.
  */
-export function usePartnerRotation(): Partner[] {
+export function usePartnerRotation(count = PARTNER_CELL_COUNT): Partner[] {
   const [state, setState] = useState<RotationState>(() => ({
     nextCell: 0,
-    onScreen: PARTNERS.slice(0, PARTNER_CELL_COUNT),
-    queue: PARTNERS.slice(PARTNER_CELL_COUNT),
+    onScreen: PARTNERS.slice(0, count),
+    queue: PARTNERS.slice(count),
   }));
 
   useEffect(() => {
-    if (PARTNERS.length <= PARTNER_CELL_COUNT) {
+    if (PARTNERS.length <= count) {
       return;
     }
     const id = setInterval(() => {
@@ -83,16 +83,48 @@ export function usePartnerRotation(): Partner[] {
           ? [...s.queue.slice(1), outgoing]
           : s.queue.slice(1);
         return {
-          nextCell: (s.nextCell + 1) % PARTNER_CELL_COUNT,
+          nextCell: (s.nextCell + 1) % count,
           onScreen,
           queue,
         };
       });
     }, SWAP_INTERVAL_MS);
     return () => clearInterval(id);
-  }, []);
+  }, [count]);
 
   return state.onScreen;
+}
+
+/** 2×3 grid of partner logos with round-robin rotation, for mobile sections. */
+export function PartnerLogoGrid() {
+  const partners = usePartnerRotation(6);
+  return (
+    <div className="grid w-full grid-cols-2 gap-6 px-4">
+      {partners.map((p) => (
+        <AnimatePresence initial={false} key={p.src} mode="wait">
+          <motion.span
+            animate={{ opacity: 1 }}
+            aria-label={p.alt}
+            className="block h-[clamp(1.4rem,7vw,2.4rem)] w-full bg-hs-ink/60"
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            role="img"
+            style={{
+              maskImage: `url(${p.src})`,
+              maskPosition: "center",
+              maskRepeat: "no-repeat",
+              maskSize: "contain",
+              WebkitMaskImage: `url(${p.src})`,
+              WebkitMaskPosition: "center",
+              WebkitMaskRepeat: "no-repeat",
+              WebkitMaskSize: "contain",
+            }}
+            transition={{ duration: 0.3 }}
+          />
+        </AnimatePresence>
+      ))}
+    </div>
+  );
 }
 
 /**

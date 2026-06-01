@@ -119,7 +119,7 @@ export function PrivacyPage() {
     <div className="relative z-0 min-h-dvh w-full">
       <MosaicBackground
         className="pointer-events-none fixed inset-0 -z-10 h-full min-h-dvh w-full"
-        variant={profile}
+        variant={profile ?? "desktop"}
       />
       <div className="relative z-0 mx-auto max-w-3xl px-3 pb-10 sm:px-4">
         <article className="border-[3px] border-hs-ink bg-hs-ink">

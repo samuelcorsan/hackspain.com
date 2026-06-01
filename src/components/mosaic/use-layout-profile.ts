@@ -2,18 +2,10 @@ import { useSyncExternalStore } from "react";
 import { COMPACT_MEDIA_QUERY, type LayoutProfile } from "./artboard";
 
 function getSnapshot(): LayoutProfile {
-  if (typeof window === "undefined") {
-    return "desktop";
-  }
   return window.matchMedia(COMPACT_MEDIA_QUERY).matches ? "compact" : "desktop";
 }
 
 function subscribe(onChange: () => void): () => void {
-  if (typeof window === "undefined") {
-    return () => {
-      /* no-op: matchMedia / resize are unavailable during SSR */
-    };
-  }
   const mq = window.matchMedia(COMPACT_MEDIA_QUERY);
   mq.addEventListener("change", onChange);
   window.addEventListener("resize", onChange);
@@ -23,6 +15,12 @@ function subscribe(onChange: () => void): () => void {
   };
 }
 
-export function useLayoutProfile(): LayoutProfile {
-  return useSyncExternalStore(subscribe, getSnapshot, () => "desktop");
+/**
+ * Returns null during SSR and the initial hydration pass so that the
+ * landing page renders nothing until the real viewport size is known.
+ * This prevents mobile users on slow connections from seeing the
+ * desktop layout while JS is still loading.
+ */
+export function useLayoutProfile(): LayoutProfile | null {
+  return useSyncExternalStore(subscribe, getSnapshot, () => null);
 }

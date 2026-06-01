@@ -16,7 +16,12 @@ import { buildSections, buildSectionsCompact } from "../sections/sections";
 import { INK, NUM_SECTIONS, SPRING, slideVariants } from "../theme/constants";
 import { vp } from "../ui/panel";
 
-const SECTION_NAV = ["Inicio", "Misión", "Tracks originales"] as const;
+const SECTION_NAV = [
+  "Inicio",
+  "Misión",
+  "Tracks originales",
+  "Apúntate",
+] as const;
 
 const REGION_ARIA =
   "HackSpain 2026 — cambia de sección con la rueda del ratón, deslizamiento o flechas";
@@ -65,17 +70,21 @@ export function LandingPage({ initialSection = 0 }: Props) {
 
   const layoutProfile = useLayoutProfile();
 
-  const artboard = useMemo(() => artboardFor(layoutProfile), [layoutProfile]);
-  const cells = useMemo(() => cellsForProfile(layoutProfile), [layoutProfile]);
+  // profile is non-null after the early return below.
+  const profile = (layoutProfile ?? "desktop") as NonNullable<
+    typeof layoutProfile
+  >;
+
+  const artboard = useMemo(() => artboardFor(profile), [profile]);
+  const cells = useMemo(() => cellsForProfile(profile), [profile]);
 
   const sections = useMemo(
-    () =>
-      layoutProfile === "compact" ? buildSectionsCompact() : buildSections(),
-    [layoutProfile]
+    () => (profile === "compact" ? buildSectionsCompact() : buildSections()),
+    [profile]
   );
   const ills = useMemo(
-    () => illustrationsForSection(section, layoutProfile),
-    [section, layoutProfile]
+    () => illustrationsForSection(section, profile),
+    [section, profile]
   );
   const partners = usePartnerRotation();
 
@@ -135,7 +144,7 @@ export function LandingPage({ initialSection = 0 }: Props) {
     [section, goToSection]
   );
 
-  const isCompact = layoutProfile === "compact";
+  const isCompact = profile === "compact";
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
@@ -190,11 +199,39 @@ export function LandingPage({ initialSection = 0 }: Props) {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
+  // All hooks are above this line. Show a plain ink screen while the viewport
+  // size is being determined — avoids showing the desktop layout on mobile.
+  if (layoutProfile === null) {
+    return (
+      <div
+        className="fixed inset-0 flex items-center justify-center"
+        style={{ background: INK }}
+      >
+        <div className="flex items-end gap-1 font-bungee text-4xl text-hs-gold leading-none">
+          <span>LOADING</span>
+          <span style={{ animation: "hs-blink 1.2s ease-in-out 0ms infinite" }}>
+            .
+          </span>
+          <span
+            style={{ animation: "hs-blink 1.2s ease-in-out 400ms infinite" }}
+          >
+            .
+          </span>
+          <span
+            style={{ animation: "hs-blink 1.2s ease-in-out 800ms infinite" }}
+          >
+            .
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   const baseCurrent = sections[section] ?? {};
   // Partner logos fill any empty open-row cells (o1..o5) on every desktop section.
   // Cells already defined by the section (e.g. sponsors PREMIOS) are preserved.
   const current =
-    layoutProfile === "compact"
+    profile === "compact"
       ? baseCurrent
       : {
           o1: <PartnerLogoCell partner={partners[0]} />,

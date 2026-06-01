@@ -43,9 +43,10 @@ export interface IllDef {
 }
 
 const SCHEDULE: (IllArt | null)[][] = [
-  ["windmill", "sun", "horse", "quixote", null, null],
-  ["windmill", "quixote", "horse", "compass", null, null],
-  ["spark", "code", "horse", "trophy", null, null],
+  ["windmill", "sun", "horse", "quixote", null, null], // Inicio
+  ["sun", "quixote", "windmill", "compass", null, null], // Misión
+  ["spark", "code", null, "trophy", null, null], // Tracks
+  ["trophy", "windmill", "horse", "quixote", null, null], // Apúntate
 ];
 
 function slot4Geometry(
@@ -185,7 +186,7 @@ export function illustrationsForSection(
   }
   const compact = profile === "compact";
   return SLOT_IDS.map((id, i) => {
-    const art = i === 2 ? "horse" : (row[i] ?? null);
+    const art = row[i] ?? null;
     const svg = art ? SVG_MAP[art] : null;
 
     let x: number;

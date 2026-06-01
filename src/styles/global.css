@@ -177,6 +177,16 @@ body {
   container-type: size;
 }
 
+@keyframes hs-blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @keyframes hs-logo-scroll {
   from {
     transform: translateX(0);

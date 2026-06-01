@@ -503,7 +503,7 @@ export function SignupPage() {
     <div className="relative z-0 min-h-dvh w-full">
       <MosaicBackground
         className="pointer-events-none fixed inset-0 -z-10 hidden h-full min-h-dvh w-full sm:block"
-        variant={profile}
+        variant={profile ?? "desktop"}
       />
       <div className="relative z-0 mx-auto max-w-6xl px-0 pb-0 sm:px-4 sm:pb-10">
         <div className="grid grid-cols-1 gap-0 border-hs-ink bg-hs-ink sm:border-[3px]">

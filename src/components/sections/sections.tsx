@@ -15,14 +15,13 @@ import {
   exponentialLogo,
   horseSvg,
   logoSvg,
-  trophySvg,
   upmLogo,
   windmillSvg,
 } from "../theme/assets";
 import { GITHUB_SVG, INSTAGRAM_SVG, X_SVG } from "../theme/constants";
 import { Button, ButtonLink } from "../ui/button";
 import { P } from "../ui/panel";
-import { PartnerLogoReel } from "./partner-logos";
+import { PartnerLogoGrid, PartnerLogoReel } from "./partner-logos";
 
 const B = "font-bungee";
 const D = "font-sans";
@@ -386,6 +385,31 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       r1c: <P bg="bg-hs-paper" />,
       ...bottomRow(2),
     },
+    {
+      hero: (
+        <P bg="bg-hs-navy">
+          <p className={`${LBL} text-hs-gold`}>HACKSPAIN 2026</p>
+          <h2 className={`text-center ${MOSAIC_HERO_LG} text-hs-paper`}>
+            PRE INSCRIPCIÓN
+            <br />
+            <span className="text-hs-gold">ABIERTA</span>
+          </h2>
+        </P>
+      ),
+      r4c: (
+        <P bg="bg-hs-paper" className="!justify-evenly !px-10 !py-8">
+          <ButtonLink
+            aria-label="Apúntate ya a HackSpain 2026"
+            href="/pre-signup"
+            size="compact"
+            variant="gold"
+          >
+            Apúntate ya
+          </ButtonLink>
+        </P>
+      ),
+      ...bottomRow(3),
+    },
   ];
 }
 
@@ -677,15 +701,15 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         </P>
       ),
       ...orn(
-        "bg-hs-navy",
+        "bg-hs-orange",
         "bg-hs-paper",
         "bg-hs-gold",
+        "bg-hs-red",
         "bg-hs-paper",
-        "bg-hs-navy",
         true,
         false
       ),
-      // flip1=true, flip5=false → orn1 br, orn5 br (both point down-right)
+      // flip1=true, flip5=false → orn1 br, orn5 br
       foot,
     },
     {
@@ -713,20 +737,62 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         </P>
       ),
       b2: (
-        <P bg="bg-hs-teal" className={CARDART}>
-          {cardArt(trophySvg, "br")}
+        <P bg="bg-hs-paper" className={`${CARD} !justify-center`}>
+          <PartnerLogoGrid />
         </P>
       ),
       ...orn(
-        "bg-hs-teal",
+        "bg-hs-gold",
         "bg-hs-paper",
         "bg-hs-orange",
+        "bg-hs-red",
         "bg-hs-paper",
-        "bg-hs-teal",
         false,
         true
       ),
-      // flip1=false, flip5=true → orn1 tl, orn5 tl (both point up-left)
+      // flip1=false, flip5=true → orn1 tl, orn5 tl
+      foot,
+    },
+    {
+      hero: (
+        <P bg="bg-hs-navy" className={CARD}>
+          <p className={`${CLBL} text-hs-gold`}>HACKSPAIN 2026</p>
+          <h2
+            className={`text-center ${CH} text-[clamp(2rem,9vw,3.4rem)] text-hs-paper`}
+          >
+            PRE INSCRIPCIÓN <span className="text-hs-gold">ABIERTA</span>
+          </h2>
+        </P>
+      ),
+      b1: (
+        <P bg="bg-hs-paper" className={`${CARD} !justify-center`}>
+          <ButtonLink
+            aria-label="Apúntate ya a HackSpain 2026"
+            className="!px-8 !py-4 !text-[clamp(1rem,4vw,1.4rem)]"
+            href="/pre-signup"
+            size="compact"
+            variant="gold"
+          >
+            Apúntate ya
+          </ButtonLink>
+        </P>
+      ),
+      b2: (
+        <P bg="bg-hs-paper" className={CARD}>
+          <InlineSvg
+            className="h-auto w-full max-w-[380px]"
+            label="HackSpain — hackathon Madrid, hackathon España y Spain 2026"
+            svg={logoSvg}
+          />
+        </P>
+      ),
+      ...orn(
+        "bg-hs-red",
+        "bg-hs-paper",
+        "bg-hs-orange",
+        "bg-hs-teal",
+        "bg-hs-paper"
+      ),
       foot,
     },
   ];
