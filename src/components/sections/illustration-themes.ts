@@ -45,8 +45,7 @@ export interface IllDef {
 const SCHEDULE: (IllArt | null)[][] = [
   ["windmill", "sun", "horse", "quixote", null, null],
   ["windmill", "quixote", "horse", "compass", null, null],
-  [null, "sun", "horse", "trophy", "spark", "code"],
-  ["trophy", "sun", "horse", "compass", null, null],
+  ["spark", "code", "horse", "trophy", null, null],
 ];
 
 function slot4Geometry(

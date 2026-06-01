@@ -29,7 +29,7 @@
 
 ## Landing sections (Spanish copy as shown on the site)
 
-Section titles in the UI navigation: **Inicio**, **Misión**, **Tracks originales**, **Patrocinadores**.
+Section titles in the UI navigation: **Inicio**, **Misión**, **Tracks originales**.
 
 ### 1) Inicio / hero
 
@@ -46,13 +46,8 @@ Section titles in the UI navigation: **Inicio**, **Misión**, **Tracks originale
 
 ### 3) Tracks originales
 
-- **Track ML:** retos de ML con recursos de cómputo gratuitos (UI highlights **COMPUTE GRATIS**).
-- **Track no técnico:** enseñar a perfiles no técnicos a crear software de calidad.
-- **Pensado para todos los niveles** — de principiantes a expertos; **PARA TODOS**.
-
-### 4) Patrocinadores
-
-HackSpain está patrocinado por **Google**, **K Fund**, **fal.ai**, **Exa**, **UPM (Universidad Politécnica de Madrid)**, **OneCoWork**, **Cursor** y **Exponential** y se esperan más patrocinadores. Los patrocinadores aportan grandes premios para l@s participantes; los detalles se anuncian en la web a medida que se confirman.
+- **5 tracks, 1 gran premio.** Retos de las mejores startups de España con compute gratis.
+- Coming soon — details to be announced.
 
 ## Signup / registration / interest
 
@@ -101,7 +96,7 @@ Pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Even
 
 ## Canonical URLs (prefer these over copies)
 
-- Indexable sections: https://hackspain.com/ · https://hackspain.com/mission · /tracks · /sponsors
+- Indexable sections: https://hackspain.com/ · https://hackspain.com/mission · /tracks
 - Signup: https://hackspain.com/signup
 - Ambassador: https://hackspain.com/ambassador
 - Privacy: https://hackspain.com/privacy

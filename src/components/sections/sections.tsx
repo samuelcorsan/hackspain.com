@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
 import { InlineSvg } from "../media/inline-svg";
 import { ParticipantsCountUp } from "../media/participants-count-up";
@@ -8,32 +8,19 @@ import {
   MOSAIC_FOOTER,
   MOSAIC_FOOTER_SM,
   MOSAIC_HEADLINE,
-  MOSAIC_HEADLINE_SM,
-  MOSAIC_HERO,
   MOSAIC_HERO_LG,
   MOSAIC_LBL,
-  MOSAIC_LOGO,
-  MOSAIC_LOGO_LG,
-  MOSAIC_LOGO_XL,
 } from "../mosaic/mosaic-typography";
 import {
-  compassSvg,
-  cursorLogo,
-  exaLogo,
   exponentialLogo,
-  falLogo,
-  googleLogo,
   horseSvg,
-  kfundLogo,
   logoSvg,
-  medalSvg,
-  onecoworkLogo,
   trophySvg,
   upmLogo,
   windmillSvg,
 } from "../theme/assets";
 import { GITHUB_SVG, INSTAGRAM_SVG, X_SVG } from "../theme/constants";
-import { ButtonLink } from "../ui/button";
+import { Button, ButtonLink } from "../ui/button";
 import { P } from "../ui/panel";
 import { PartnerLogoReel } from "./partner-logos";
 
@@ -43,21 +30,6 @@ const LBL = `${MOSAIC_LBL} mb-1`;
 const BD = MOSAIC_BD;
 
 const BOTTOM_CELLS = ["r5a", "r5b", "r5c", "r5d"] as const;
-
-function sponsorAlt(brand: string, extra?: string) {
-  return `${brand} — patrocinador HackSpain, hackathon Madrid y hackathon España 2026${extra ? `. ${extra}` : ""}`;
-}
-
-function brLines(s: string) {
-  const lines = s.split("\n");
-  return lines.map((line, i) => (
-    // biome-ignore lint/suspicious/noArrayIndexKey: static marketing headings; line order is fixed in source.
-    <Fragment key={`${line}__${i}`}>
-      {i > 0 ? <br /> : null}
-      {line}
-    </Fragment>
-  ));
-}
 
 function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
   const copyEl = (
@@ -202,14 +174,49 @@ function cardArt(svg: string, corner: "tl" | "br") {
   );
 }
 
-const gEx = "hackathon España Google, hackathon Spain";
-const kEx = "inversión hackathon España";
-const fEx = "IA hackathon Madrid";
-const eEx = "búsqueda hackathon España";
-const cEx = "editor de código IA hackathon España";
-const uEx = "universidad hackathon Madrid";
-const oEx = "coworking hackathon España";
-const xEx = "fondo growth hackathon España";
+function TracksInfoModal() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button
+        aria-label="Más información sobre los tracks de HackSpain"
+        className="shrink-0"
+        onClick={() => setOpen(true)}
+        size="compact"
+        variant="gold"
+      >
+        More Info
+      </Button>
+
+      {open && (
+        <div
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-hs-ink/95 p-6"
+          role="dialog"
+        >
+          <button
+            aria-label="Cerrar"
+            className="absolute top-6 right-8 font-bungee text-4xl text-hs-paper/60 hover:text-hs-paper"
+            onClick={() => setOpen(false)}
+            type="button"
+          >
+            ×
+          </button>
+          <div className="flex max-w-xl flex-col items-center gap-8 text-center">
+            <span className="font-bungee text-[clamp(2.5rem,8vw,5rem)] text-hs-gold leading-none">
+              COMING SOON
+            </span>
+            <p className="font-sans font-semibold text-[clamp(1rem,2.5vw,1.5rem)] text-hs-paper leading-snug">
+              Pronto podrás ver las startups con track, y el jurado del gran
+              premio.
+            </p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 export function buildSections(): Record<string, React.ReactNode>[] {
   const signupHref = "/pre-signup";
@@ -286,7 +293,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       ...bottomRow(0),
       r5d: (
         <P bg="bg-hs-paper">
-          <div className="flex items-center justify-center gap-2 text-hs-ink/45">
+          <div className="flex items-center justify-center gap-3 text-hs-ink/45">
             <span
               className={`${D} ${MOSAIC_FOOTER_SM} mb-px font-bold leading-none`}
             >
@@ -306,6 +313,20 @@ export function buildSections(): Record<string, React.ReactNode>[] {
                 width={240}
               />
             </a>
+            <a
+              aria-label="UPM — Universidad Politécnica de Madrid"
+              href="https://www.upm.es"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img
+                alt="UPM"
+                className="h-[clamp(1rem,52cqh,2.4rem)] w-auto object-contain opacity-60"
+                height={96}
+                src={upmLogo.src}
+                width={240}
+              />
+            </a>
           </div>
         </P>
       ),
@@ -314,21 +335,14 @@ export function buildSections(): Record<string, React.ReactNode>[] {
       hero: (
         <P bg="bg-hs-navy">
           <p className={`${LBL} text-hs-gold`}>MISIÓN</p>
-          <h2 className={`text-center ${MOSAIC_HERO} text-hs-paper`}>
+          <h2 className={`text-center ${MOSAIC_HEADLINE} text-hs-paper`}>
             ESPAÑA TIENE <span className="text-hs-red">TALENTO.</span>
             <br />
             NOSOTROS VAMOS A <span className="text-hs-red">JUNTARLO.</span>
           </h2>
         </P>
       ),
-      r3b: (
-        <P align="start" bg="bg-hs-paper">
-          <p className={`${LBL} text-hs-ink/40`}>MISIÓN</p>
-          <p className={`${BD} text-hs-ink`}>
-            Posicionar a España como líder europeo en talento tech joven.
-          </p>
-        </P>
-      ),
+      r3b: <P bg="bg-hs-paper" />,
       r4b: <P bg="bg-hs-teal" />,
       r4c: (
         <P bg="bg-hs-paper" className="!justify-evenly !px-10 !py-8">
@@ -350,155 +364,27 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-teal">
           <p className={`${LBL} text-white/60`}>HACKSPAIN 2026</p>
           <h2 className={`text-center ${MOSAIC_HERO_LG} text-white`}>
-            {brLines("TRACKS\nORIGINALES")}
+            5 TRACKS,
+            <br />1 <span className="text-hs-gold">GRAN</span> PREMIO
           </h2>
+          <p className={`${LBL} text-white/60`}>Compute gratis para todos</p>
         </P>
       ),
-      r3a: (
-        <P align="start" bg="bg-hs-ink">
-          <p className={`${LBL} text-hs-gold`}>TRACK ML</p>
-          <p className={`${BD} text-hs-paper`}>
-            Retos de ML con recursos de cómputo gratuitos
-          </p>
-        </P>
-      ),
-      r3b: (
-        <P align="start" bg="bg-hs-navy">
-          <p className={`${LBL} text-hs-gold`}>TRACK NO TÉCNICO</p>
-          <p className={`${BD} text-hs-paper`}>
-            Enseñamos a perfiles no técnicos a crear software de calidad.
-          </p>
-        </P>
-      ),
+      r3a: <P bg="bg-hs-paper" />,
+      r3b: <P bg="bg-hs-paper" />,
       r4c: (
-        <P bg="bg-hs-gold">
-          <span className={`${MOSAIC_HEADLINE} text-center text-hs-ink`}>
-            {brLines("COMPUTE\nGRATIS")}
-          </span>
-        </P>
-      ),
-      r4b: (
-        <P bg="bg-hs-orange">
-          <p className={`${BD} text-center text-hs-paper`}>
-            Pensado para todos los niveles — de principiantes a expertos.
+        <P bg="bg-hs-paper" className="!justify-evenly !px-10 !py-8">
+          <p className={`${BD} text-center text-hs-ink`}>
+            Retos de las mejores startups de España, y un{" "}
+            <span className="text-hs-red">gran premio</span> con un jurado
+            estrella.
           </p>
+          <TracksInfoModal />
         </P>
       ),
-      r1c: (
-        <P bg="bg-hs-red">
-          <span className={`${MOSAIC_HEADLINE} text-center text-hs-paper`}>
-            PARA TODOS
-          </span>
-        </P>
-      ),
+      r4b: <P bg="bg-hs-paper" />,
+      r1c: <P bg="bg-hs-paper" />,
       ...bottomRow(2),
-    },
-    {
-      hero: (
-        <P bg="bg-hs-gold">
-          <p className={`${LBL} text-hs-ink/50`}>HACKSPAIN 2026</p>
-          <h2 className={`text-center ${MOSAIC_HERO_LG} text-hs-ink`}>
-            {brLines("APOYADOS POR\nLOS MEJORES")}
-          </h2>
-        </P>
-      ),
-      r1b: (
-        <P bg="bg-hs-red">
-          <img
-            alt={sponsorAlt("Exa", eEx)}
-            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
-            height={96}
-            src={exaLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      r1d: (
-        <P bg="bg-hs-navy">
-          <img
-            alt={sponsorAlt("K Fund", kEx)}
-            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
-            height={96}
-            src={kfundLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      r1c: (
-        <P bg="bg-hs-paper">
-          <img
-            alt={sponsorAlt("UPM — Universidad Politécnica de Madrid", uEx)}
-            className={`${MOSAIC_LOGO_LG} object-contain`}
-            height={96}
-            src={upmLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      r3a: (
-        <P bg="bg-hs-teal">
-          <img
-            alt={sponsorAlt("fal.ai", fEx)}
-            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
-            height={96}
-            src={falLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      r3b: (
-        <P bg="bg-hs-orange">
-          <img
-            alt={sponsorAlt("Google", gEx)}
-            className={`${MOSAIC_LOGO} object-contain brightness-0 invert`}
-            height={96}
-            src={googleLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      r4b: (
-        <P bg="bg-hs-paper">
-          <img
-            alt={sponsorAlt("OneCoWork", oEx)}
-            className={`${MOSAIC_LOGO_LG} object-contain`}
-            height={96}
-            src={onecoworkLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      r4c: (
-        <P bg="bg-hs-ink">
-          <img
-            alt={sponsorAlt("Cursor", cEx)}
-            className={`${MOSAIC_LOGO_XL} object-contain brightness-0 invert`}
-            height={96}
-            src={cursorLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      r4d: (
-        <P bg="bg-hs-paper">
-          <img
-            alt={sponsorAlt("Exponential", xEx)}
-            className={`${MOSAIC_LOGO_LG} object-contain`}
-            height={96}
-            src={exponentialLogo.src}
-            width={240}
-          />
-        </P>
-      ),
-      o3: (
-        <P bg="bg-hs-cream">
-          <p className={`${LBL} text-hs-ink/40`}>PREMIOS</p>
-          <p className={`${MOSAIC_HEADLINE_SM} text-center text-hs-ink`}>
-            Grandes recompensas para l@s hackers
-          </p>
-        </P>
-      ),
-      ...bottomRow(3),
     },
   ];
 }
@@ -649,22 +535,6 @@ function orn(
 export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
   const signupHref = "/pre-signup";
   const foot = compactFooter();
-  const footCentered = compactFooter(true);
-
-  const sponsorImg = (
-    brand: string,
-    extra: string,
-    logo: { src: string },
-    invert = true
-  ) => (
-    <img
-      alt={sponsorAlt(brand, extra)}
-      className={`h-[clamp(1.8rem,8vw,3.4rem)] w-auto max-w-[85%] object-contain ${invert ? "brightness-0 invert" : ""}`}
-      height={96}
-      src={logo.src}
-      width={240}
-    />
-  );
 
   return [
     {
@@ -825,38 +695,26 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           <h2
             className={`text-center ${CH} text-[clamp(2rem,9vw,3.4rem)] text-white`}
           >
-            TRACKS ORIGINALES
+            5 TRACKS, <span className="text-hs-gold">1 GRAN</span> PREMIO
           </h2>
+          <p className={`${CLBL} text-white/60`}>
+            Compute gratis · 5 tracks · Un gran premio
+          </p>
         </P>
       ),
       b1: (
-        <P align="start" bg="bg-hs-ink" className={CARDART}>
-          {cardArt(compassSvg, "br")}
-          <div>
-            <p className={`${CLBL} text-hs-gold`}>TRACK ML</p>
-            <p className={`${CBD} text-hs-paper`}>
-              Retos de ML con cómputo gratuito.
-            </p>
-          </div>
-          <div>
-            <p className={`${CLBL} text-hs-gold`}>TRACK NO TÉCNICO</p>
-            <p className={`${CBD} text-hs-paper/90`}>
-              Enseñamos a perfiles no técnicos a crear software de calidad.
-            </p>
-          </div>
+        <P bg="bg-hs-paper" className={`${CARD} !justify-evenly`}>
+          <p className={`${CBD} text-center text-hs-ink`}>
+            Retos de las mejores startups de España, y un{" "}
+            <span className="text-hs-red">gran premio</span> con un jurado
+            estrella.
+          </p>
+          <TracksInfoModal />
         </P>
       ),
       b2: (
-        <P bg="bg-hs-orange" className={CARDART}>
+        <P bg="bg-hs-teal" className={CARDART}>
           {cardArt(trophySvg, "br")}
-          <span
-            className={`${CH} text-center text-[clamp(1.6rem,7vw,2.8rem)] text-hs-paper`}
-          >
-            COMPUTE GRATIS · PARA TODOS
-          </span>
-          <p className={`${CBD} text-center text-hs-paper/90`}>
-            Pensado para todos los niveles, de principiantes a expertos.
-          </p>
         </P>
       ),
       ...orn(
@@ -870,57 +728,6 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
       ),
       // flip1=false, flip5=true → orn1 tl, orn5 tl (both point up-left)
       foot,
-    },
-    {
-      hero: (
-        <P bg="bg-hs-gold" className={CARD}>
-          <p className={`${CLBL} text-hs-ink/50`}>HACKSPAIN 2026</p>
-          <h2
-            className={`text-center ${CH} text-[clamp(1.8rem,8vw,3.2rem)] text-hs-ink`}
-          >
-            APOYADOS POR LOS MEJORES
-          </h2>
-        </P>
-      ),
-      b1: (
-        <P bg="bg-hs-ink" className={CARD}>
-          <div className="grid w-full grid-cols-2 place-items-center gap-x-6 gap-y-6">
-            {sponsorImg("Google", gEx, googleLogo)}
-            {sponsorImg("Cursor", cEx, cursorLogo)}
-            {sponsorImg("fal.ai", fEx, falLogo)}
-            {sponsorImg("Exa", eEx, exaLogo)}
-            {sponsorImg("K Fund", kEx, kfundLogo)}
-            {sponsorImg("Exponential", xEx, exponentialLogo)}
-            {sponsorImg(
-              "UPM — Universidad Politécnica de Madrid",
-              uEx,
-              upmLogo,
-              false
-            )}
-            {sponsorImg("OneCoWork", oEx, onecoworkLogo)}
-          </div>
-        </P>
-      ),
-      b2: (
-        <P align="start" bg="bg-hs-cream" className={CARDART}>
-          {cardArt(medalSvg, "br")}
-          <p className={`${CLBL} text-hs-ink/40`}>PREMIOS</p>
-          <p className={`${CH} text-[clamp(1.3rem,5.5vw,2.2rem)] text-hs-ink`}>
-            Grandes recompensas para l@s hackers
-          </p>
-        </P>
-      ),
-      ...orn(
-        "bg-hs-gold",
-        "bg-hs-paper",
-        "bg-hs-orange",
-        "bg-hs-paper",
-        "bg-hs-gold",
-        true,
-        true
-      ),
-      // flip1=true, flip5=true → orn1 br, orn5 tl (both point inward)
-      foot: footCentered,
     },
   ];
 }

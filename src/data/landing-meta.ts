@@ -38,12 +38,6 @@ const PAGES: PageSeo[] = [
       "Tracks de ML con compute gratis y track no técnico. Hackathon España para todo tipo de builders. Madrid 2026.",
     ogImageAlt: "HackSpain 2026 — tracks, hackathon España",
   },
-  {
-    title: "Patrocinadores — HACKSPAIN 2026 | Google hackathon España",
-    description:
-      "Patrocinadores: Google, K Fund, fal.ai, Exa, UPM, OneCoWork, Cursor, Exponential, Mozart AI — premios para participantes. hackathon España.",
-    ogImageAlt: "HackSpain 2026 patrocinadores — hackathon España",
-  },
 ];
 
 export function seoForSectionIndex(i: number): PageSeo {
@@ -105,7 +99,6 @@ const KEYWORDS_BY_SECTION = [
   "",
   "misión hackathon, coders españoles, hackathon jóvenes España",
   "track ML hackathon, hackathon sin código, talleres código España",
-  "patrocinadores hackathon, Google hackathon España, K Fund, fal.ai, Exa, UPM, OneCoWork, Cursor, Exponential, Mozart AI",
 ];
 
 export function keywordsForSectionIndex(i: number): string {

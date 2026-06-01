@@ -16,12 +16,7 @@ import { buildSections, buildSectionsCompact } from "../sections/sections";
 import { INK, NUM_SECTIONS, SPRING, slideVariants } from "../theme/constants";
 import { vp } from "../ui/panel";
 
-const SECTION_NAV = [
-  "Inicio",
-  "Misión",
-  "Tracks originales",
-  "Patrocinadores",
-] as const;
+const SECTION_NAV = ["Inicio", "Misión", "Tracks originales"] as const;
 
 const REGION_ARIA =
   "HackSpain 2026 — cambia de sección con la rueda del ratón, deslizamiento o flechas";
@@ -196,18 +191,19 @@ export function LandingPage({ initialSection = 0 }: Props) {
   }, []);
 
   const baseCurrent = sections[section] ?? {};
-  // Partner logos rotate through the open row (o1..o5) on the desktop homepage.
+  // Partner logos fill any empty open-row cells (o1..o5) on every desktop section.
+  // Cells already defined by the section (e.g. sponsors PREMIOS) are preserved.
   const current =
-    section === 0 && layoutProfile !== "compact"
-      ? {
-          ...baseCurrent,
+    layoutProfile === "compact"
+      ? baseCurrent
+      : {
           o1: <PartnerLogoCell partner={partners[0]} />,
           o2: <PartnerLogoCell partner={partners[1]} />,
           o3: <PartnerLogoCell partner={partners[2]} />,
           o4: <PartnerLogoCell partner={partners[3]} />,
           o5: <PartnerLogoCell partner={partners[4]} />,
-        }
-      : baseCurrent;
+          ...baseCurrent,
+        };
   const liveLabel = SECTION_NAV[section] ?? SECTION_NAV[0];
 
   const tileMotionClass = "absolute inset-0";
@@ -279,7 +275,9 @@ export function LandingPage({ initialSection = 0 }: Props) {
                 custom={dir}
                 exit="exit"
                 initial="enter"
-                key={`${cell.id}-${section}`}
+                key={
+                  cell.id.startsWith("o") ? cell.id : `${cell.id}-${section}`
+                }
                 transition={
                   reducedMotion
                     ? { type: "tween", duration: 0.2, delay: cell.delay * 0.3 }
