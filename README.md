@@ -17,8 +17,6 @@ Public marketing site for [HackSpain](https://hackspain.com) — Hack Spain 2026
 | **Bot protection** | [BotID](https://botid.vercel.app/) on signup endpoints |
 | **Tooling** | TypeScript, [Ultracite](https://www.ultracite.dev/) / Biome (`pnpm check`, `pnpm fix`), [Knip](https://knip.dev/) |
 
-Illustration assets can be regenerated with the Quiver pipeline (`pnpm assets:quiver` and related scripts under `scripts/`).
-
 ## Requirements
 
 - [Node.js](https://nodejs.org/) **≥ 22.12**
@@ -50,9 +48,6 @@ Development server: [http://localhost:4321](http://localhost:4321).
 | `pnpm check` | Lint and format (Ultracite / Biome) |
 | `pnpm fix` | Auto-fix lint and format issues |
 | `pnpm knip` | Find unused exports, dependencies, and files |
-| `pnpm assets:quiver` | Full Quiver asset pipeline |
-| `pnpm assets:quiver:tiles` | Tile illustrations only |
-| `pnpm assets:quiver:tiles+heroes` | Tiles and hero illustrations |
 
 ## Database
 
