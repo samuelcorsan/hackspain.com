@@ -140,11 +140,20 @@ function MosaicBackgroundDesktop({
 // Boundaries mirror CELLS_COMPACT so the ink stroke grid frames each card.
 // Tiles are paper so empty slots stay clean; content cards paint their own bg.
 const COMPACT_TILES: readonly Rect[] = [
-  [0, 0, 1440, 720, PAPER],
-  [0, 720, 1440, 680, PAPER],
-  [0, 1400, 1440, 680, PAPER],
-  [0, 2080, 1440, 480, PAPER],
+  [0, 0, 1440, 580, PAPER],
+  [0, 580, 1440, 640, PAPER],
+  // Ornament strip — all PAPER; colours/diagonals come from React cells per section
+  [0, 1220, 288, 200, PAPER], // orn1
+  [288, 1220, 288, 200, PAPER], // orn2
+  [576, 1220, 288, 200, PAPER], // orn3
+  [864, 1220, 288, 200, PAPER], // orn4
+  [1152, 1220, 288, 200, PAPER], // orn5
+  [0, 1420, 1440, 660, PAPER],
+  [0, 2080, 1440, 240, PAPER],
 ];
+
+// No static triangles for the compact ornament strip — handled by React cells.
+const COMPACT_TRIS: readonly Tri[] = [];
 
 function MosaicBackgroundCompact({
   className,
@@ -158,10 +167,10 @@ function MosaicBackgroundCompact({
       aria-hidden={ariaHidden}
       className={className}
       preserveAspectRatio="none"
-      viewBox="0 0 1440 2560"
+      viewBox="0 0 1440 2320"
     >
       <title>Mosaic background</title>
-      {!strokeOnly && <rect fill={PAPER} height="2560" width="1440" />}
+      {!strokeOnly && <rect fill={PAPER} height="2320" width="1440" />}
       {COMPACT_TILES.map(([x, y, w, h, fill]) => (
         <rect
           fill={f(fill)}
@@ -172,6 +181,16 @@ function MosaicBackgroundCompact({
           width={w}
           x={x}
           y={y}
+        />
+      ))}
+      {COMPACT_TRIS.map(([points, fill]) => (
+        <polygon
+          fill={f(fill)}
+          key={`ct-${points}`}
+          points={points}
+          stroke={INK}
+          strokeLinejoin="bevel"
+          strokeWidth={sw}
         />
       ))}
     </svg>

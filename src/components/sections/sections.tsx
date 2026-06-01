@@ -29,7 +29,6 @@ import {
   medalSvg,
   onecoworkLogo,
   quixoteSvg,
-  sunSvg,
   trophySvg,
   upmLogo,
   windmillSvg,
@@ -37,6 +36,7 @@ import {
 import { GITHUB_SVG, INSTAGRAM_SVG, X_SVG } from "../theme/constants";
 import { ButtonLink } from "../ui/button";
 import { P } from "../ui/panel";
+import { PartnerLogoReel } from "./partner-logos";
 
 const B = "font-bungee";
 const D = "font-sans";
@@ -569,6 +569,76 @@ function compactFooter(centered = false): React.ReactNode {
 }
 
 /**
+ * Diagonal ornament cell — coloured bg + triangular clip overlay + ink stroke.
+ * "tl": coloured upper-left wedge, white lower-right.
+ * "br": white upper-left, coloured lower-right wedge (mirror).
+ * The SVG overlay replicates the background grid's diagonal stroke.
+ */
+function OrnDiag({
+  bg,
+  tri,
+  corner,
+}: {
+  bg: string;
+  tri: string;
+  corner: "tl" | "br";
+}) {
+  const clip =
+    corner === "tl"
+      ? "polygon(0% 0%, 100% 0%, 0% 100%)"
+      : "polygon(100% 0%, 100% 100%, 0% 100%)";
+  return (
+    <div className={`relative h-full w-full overflow-hidden ${bg}`}>
+      <div className={`absolute inset-0 ${tri}`} style={{ clipPath: clip }} />
+      {/* Ink diagonal stroke matching the background grid lines */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        preserveAspectRatio="none"
+        viewBox="0 0 288 200"
+      >
+        <title>{"diagonal"}</title>
+        <line
+          stroke="var(--color-hs-ink)"
+          strokeWidth="4"
+          x1="288"
+          x2="0"
+          y1="0"
+          y2="200"
+        />
+      </svg>
+    </div>
+  );
+}
+
+/** Solid-colour ornament cell. */
+function OrnSolid({ bg }: { bg: string }) {
+  return <div className={`h-full w-full ${bg}`} />;
+}
+
+/**
+ * Build the five ornament cells. orn2/orn4 are always paper.
+ * flip1/flip5 independently swap each diagonal corner (tl↔br).
+ */
+function orn(
+  orn1Bg: string,
+  orn1Tri: string,
+  centerBg: string,
+  orn5Bg: string,
+  orn5Tri: string,
+  flip1 = false,
+  flip5 = false
+): Record<string, React.ReactNode> {
+  return {
+    orn1: <OrnDiag bg={orn1Bg} corner={flip1 ? "br" : "tl"} tri={orn1Tri} />,
+    orn2: <OrnSolid bg="bg-hs-paper" />,
+    orn3: <OrnSolid bg={centerBg} />,
+    orn4: <OrnSolid bg="bg-hs-paper" />,
+    orn5: <OrnDiag bg={orn5Bg} corner={flip5 ? "tl" : "br"} tri={orn5Tri} />,
+  };
+}
+
+/**
  * Mobile layout — each section is a hero plus two big content cards and a
  * footer, merging the desktop section's scattered tiles into a few readable
  * cards. Keyed by the compact cell ids: `hero`, `b1`, `b2`, `foot`.
@@ -597,49 +667,110 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
     {
       hero: (
         <P bg="bg-hs-paper" className={CARD}>
-          <div className="flex w-full max-w-[420px] flex-col items-center gap-4">
+          <div className="flex w-full max-w-[320px] flex-col items-center gap-2">
             <InlineSvg
               className="h-auto w-full"
               label="HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026"
               svg={logoSvg}
             />
-            <ButtonLink
-              aria-label="Solicitar plaza en HackSpain — abrir formulario"
-              className="!px-5 !py-2.5 !text-[clamp(0.85rem,3vw,1.1rem)] shrink-0"
-              href={signupHref}
-              size="compact"
-              variant="gold"
+            <span
+              className={`${CH} text-center text-[clamp(1.2rem,6vw,2.2rem)] text-hs-ink`}
             >
-              Apúntate
-            </ButtonLink>
+              MADRID '26
+            </span>
+            <a
+              aria-label="Ubicación: UPM - ETSIT en Google Maps"
+              className={`flex items-center gap-1.5 ${D} font-bold text-[clamp(0.75rem,3vw,1rem)] text-hs-ink underline underline-offset-2`}
+              href="https://maps.app.goo.gl/4zVAyQjw1NSirnvE7"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <svg
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z" />
+              </svg>
+              UPM - ETSIT
+            </a>
           </div>
         </P>
       ),
       b1: (
-        <P align="start" bg="bg-hs-orange" className={CARDART}>
+        <P bg="bg-hs-orange" className={CARDART}>
           {cardArt(windmillSvg, "br")}
-          <p className={`${CLBL} text-hs-paper/70`}>HACKATHON</p>
+          <p className={`${CLBL} text-hs-paper/70`}>Weekend Hackathon</p>
           <span
-            className={`${CH} text-[clamp(1.4rem,6.5vw,2.6rem)] text-hs-paper`}
+            className={`${CH} text-center text-[clamp(1.4rem,6.5vw,2.6rem)] text-hs-paper`}
           >
-            MADRID · SEPTIEMBRE 2026
+            18 al 20 de Septiembre
           </span>
-          <p className={`${CBD} text-hs-paper/90`}>
-            24 horas intensas con l@s mejores jóvenes coders de España.
-          </p>
+          <div className="mt-2 flex flex-col items-center gap-0">
+            <ParticipantsCountUp
+              ariaLabel="250 PARTICIPANTES"
+              className={`${CH} text-[clamp(2rem,10vw,4rem)] text-hs-paper`}
+            />
+            <p className={`${CLBL} text-hs-paper/70`}>PARTICIPANTES</p>
+          </div>
         </P>
       ),
       b2: (
-        <P bg="bg-hs-gold" className={CARDART}>
-          {cardArt(sunSvg, "br")}
-          <ParticipantsCountUp
-            ariaLabel="250 PARTICIPANTES"
-            className={`${CH} text-[clamp(2.2rem,11vw,4.5rem)] text-hs-ink`}
-          />
-          <p className={`${CLBL} text-hs-ink`}>PARTICIPANTES</p>
+        <P bg="bg-hs-paper" className={`${CARD} !justify-evenly`}>
+          <p
+            className={`${CH} text-center text-[clamp(1.1rem,5.5vw,2rem)] text-hs-ink`}
+          >
+            El hackathon para unir a los mejores{" "}
+            <span className="text-hs-red">builders</span> jóvenes de España.
+          </p>
+          <ButtonLink
+            aria-label="Solicitar plaza en HackSpain — abrir formulario"
+            className="!px-5 !py-2.5 !text-[clamp(0.85rem,3vw,1.1rem)] shrink-0"
+            href={signupHref}
+            size="compact"
+            variant="gold"
+          >
+            Apúntate
+          </ButtonLink>
         </P>
       ),
-      foot,
+      ...orn(
+        "bg-hs-teal",
+        "bg-hs-paper",
+        "bg-hs-red",
+        "bg-hs-gold",
+        "bg-hs-paper"
+      ),
+      // flip1=false, flip5=false → orn1 tl, orn5 br
+      foot: (
+        <P
+          align="center"
+          bg="bg-hs-paper"
+          className="!justify-evenly !px-0 !py-2"
+        >
+          <PartnerLogoReel />
+          <div className="flex items-center justify-center gap-2 text-hs-ink/45">
+            <span className={`${D} mb-px font-bold text-xs leading-none`}>
+              Powered by
+            </span>
+            <a
+              aria-label="Exponential"
+              href="https://goexponential.org"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img
+                alt="Exponential"
+                className="h-[clamp(0.8rem,3.5vw,1.4rem)] w-auto object-contain opacity-60 brightness-0"
+                height={96}
+                src={exponentialLogo.src}
+                width={240}
+              />
+            </a>
+          </div>
+        </P>
+      ),
     },
     {
       hero: (
@@ -671,6 +802,16 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           </p>
         </P>
       ),
+      ...orn(
+        "bg-hs-navy",
+        "bg-hs-paper",
+        "bg-hs-gold",
+        "bg-hs-paper",
+        "bg-hs-navy",
+        true,
+        false
+      ),
+      // flip1=true, flip5=false → orn1 br, orn5 br (both point down-right)
       foot,
     },
     {
@@ -714,6 +855,16 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           </p>
         </P>
       ),
+      ...orn(
+        "bg-hs-teal",
+        "bg-hs-paper",
+        "bg-hs-orange",
+        "bg-hs-paper",
+        "bg-hs-teal",
+        false,
+        true
+      ),
+      // flip1=false, flip5=true → orn1 tl, orn5 tl (both point up-left)
       foot,
     },
     {
@@ -755,6 +906,16 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           </p>
         </P>
       ),
+      ...orn(
+        "bg-hs-gold",
+        "bg-hs-paper",
+        "bg-hs-orange",
+        "bg-hs-paper",
+        "bg-hs-gold",
+        true,
+        true
+      ),
+      // flip1=true, flip5=true → orn1 br, orn5 tl (both point inward)
       foot: footCentered,
     },
   ];

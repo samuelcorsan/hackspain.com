@@ -176,3 +176,16 @@ body {
 .hs-mosaic-cell {
   container-type: size;
 }
+
+@keyframes hs-logo-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hs-logo-reel {
+  animation: hs-logo-scroll 14s linear infinite;
+}

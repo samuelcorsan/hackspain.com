@@ -95,6 +95,43 @@ export function usePartnerRotation(): Partner[] {
   return state.onScreen;
 }
 
+/**
+ * Infinite scrolling logo reel for mobile. Renders all logos twice in a flat
+ * flex row and uses a CSS translate animation to scroll left continuously —
+ * when the first copy exits the left edge, the second copy is already in place,
+ * creating a seamless loop. No JS state needed.
+ */
+export function PartnerLogoReel() {
+  const logoRow = PARTNERS.map((p) => (
+    <span
+      aria-label={p.alt}
+      className="mx-4 block h-[clamp(0.9rem,4.5vw,1.4rem)] w-[clamp(3rem,14vw,5rem)] shrink-0 bg-hs-ink/60"
+      key={p.src}
+      role="img"
+      style={{
+        maskImage: `url(${p.src})`,
+        maskPosition: "center",
+        maskRepeat: "no-repeat",
+        maskSize: "contain",
+        WebkitMaskImage: `url(${p.src})`,
+        WebkitMaskPosition: "center",
+        WebkitMaskRepeat: "no-repeat",
+        WebkitMaskSize: "contain",
+      }}
+    />
+  ));
+
+  return (
+    <div aria-hidden className="w-full overflow-hidden">
+      <div className="hs-logo-reel flex items-center">
+        {logoRow}
+        {/* Duplicate for seamless loop */}
+        {logoRow}
+      </div>
+    </div>
+  );
+}
+
 export function PartnerLogoCell({ partner }: { partner: Partner }) {
   // The logos are white silhouettes; mask + bg tints them to the warm brand
   // ink (instead of harsh pure black) and keeps the tint color easy to change.
