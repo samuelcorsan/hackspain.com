@@ -28,37 +28,44 @@ const DEFAULT_GRID_HEIGHT = "h-[clamp(1.75rem,9vw,3.25rem)]";
 const LARGE_REEL_HEIGHT = "h-[clamp(1.4rem,6.75vw,2.35rem)]";
 const DEFAULT_REEL_HEIGHT = "h-[clamp(1.1rem,5.5vw,1.85rem)]";
 
+// Cursor and OneCoWork marks are squarer/wider than wordmarks; the mobile grid
+// and footer reel pick taller clamps for these srcs (desktop uses LARGE_LOGO_SIZE
+// on each Partner.size in the mosaic open-row cells).
 const LARGE_PARTNER_SRC = new Set([cursorLogo.src, onecoworkLogo.src]);
-
-function isLargePartner(partner: Partner): boolean {
-  return LARGE_PARTNER_SRC.has(partner.src);
-}
-
-function gridLogoHeight(partner: Partner): string {
-  return isLargePartner(partner) ? LARGE_GRID_HEIGHT : DEFAULT_GRID_HEIGHT;
-}
-
-function reelLogoHeight(partner: Partner): string {
-  return isLargePartner(partner) ? LARGE_REEL_HEIGHT : DEFAULT_REEL_HEIGHT;
-}
-
-function toPartner(
-  logo: { src: string },
-  alt: string,
-  size: string = LOGO_SIZE
-): Partner {
-  return { alt, size, src: logo.src };
-}
 
 /** The list order doubles as the rotation order. */
 const PARTNERS: Partner[] = [
-  toPartner(googleLogo, "Google — partner de HackSpain"),
-  toPartner(exaLogo, "Exa — partner de HackSpain"),
-  toPartner(falLogo, "fal.ai — partner de HackSpain"),
-  toPartner(kfundLogo, "K Fund — partner de HackSpain"),
-  toPartner(cursorLogo, "Cursor — partner de HackSpain", LARGE_LOGO_SIZE),
-  toPartner(mozartLogo, "Mozart AI — partner de HackSpain"),
-  toPartner(onecoworkLogo, "OneCoWork — partner de HackSpain", LARGE_LOGO_SIZE),
+  {
+    alt: "Google — partner de HackSpain",
+    size: LOGO_SIZE,
+    src: googleLogo.src,
+  },
+  { alt: "Exa — partner de HackSpain", size: LOGO_SIZE, src: exaLogo.src },
+  {
+    alt: "fal.ai — partner de HackSpain",
+    size: LOGO_SIZE,
+    src: falLogo.src,
+  },
+  {
+    alt: "K Fund — partner de HackSpain",
+    size: LOGO_SIZE,
+    src: kfundLogo.src,
+  },
+  {
+    alt: "Cursor — partner de HackSpain",
+    size: LARGE_LOGO_SIZE,
+    src: cursorLogo.src,
+  },
+  {
+    alt: "Mozart AI — partner de HackSpain",
+    size: LOGO_SIZE,
+    src: mozartLogo.src,
+  },
+  {
+    alt: "OneCoWork — partner de HackSpain",
+    size: LARGE_LOGO_SIZE,
+    src: onecoworkLogo.src,
+  },
 ];
 
 /** Number of open-row cells (o1..o5) the logos rotate through. */
@@ -124,7 +131,11 @@ export function PartnerLogoGrid() {
           <motion.span
             animate={{ opacity: 1 }}
             aria-label={p.alt}
-            className={`block w-full bg-hs-ink/60 ${gridLogoHeight(p)}`}
+            className={`block w-full bg-hs-ink/60 ${
+              LARGE_PARTNER_SRC.has(p.src)
+                ? LARGE_GRID_HEIGHT
+                : DEFAULT_GRID_HEIGHT
+            }`}
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             role="img"
@@ -156,7 +167,9 @@ export function PartnerLogoReel() {
   const logoRow = PARTNERS.map((p) => (
     <span
       aria-label={p.alt}
-      className={`mx-4 block w-[clamp(3.5rem,16vw,6rem)] shrink-0 bg-hs-ink/60 ${reelLogoHeight(p)}`}
+      className={`mx-4 block w-[clamp(3.5rem,16vw,6rem)] shrink-0 bg-hs-ink/60 ${
+        LARGE_PARTNER_SRC.has(p.src) ? LARGE_REEL_HEIGHT : DEFAULT_REEL_HEIGHT
+      }`}
       key={p.src}
       role="img"
       style={{
