@@ -11,7 +11,6 @@ import { cellsForProfile } from "../mosaic/cells";
 import { MosaicBackground } from "../mosaic/mosaic-background";
 import { useLayoutProfile } from "../mosaic/use-layout-profile";
 import { illustrationsForSection } from "../sections/illustration-themes";
-import { ScrollSectionHint } from "../sections/scroll-section-hint";
 import { buildSections, buildSectionsCompact } from "../sections/sections";
 import { INK, NUM_SECTIONS, SPRING, slideVariants } from "../theme/constants";
 import { vp } from "../ui/panel";
@@ -19,10 +18,8 @@ import { vp } from "../ui/panel";
 const SECTION_NAV = [
   "Inicio",
   "Misión",
-  "Qué nos hace únicos",
   "Tracks originales",
   "Patrocinadores",
-  "Visión",
 ] as const;
 
 const REGION_ARIA =
@@ -142,10 +139,6 @@ export function LandingPage({ initialSection = 0 }: Props) {
   );
 
   const isCompact = layoutProfile === "compact";
-
-  const onScrollHintNext = useCallback(() => {
-    advance(1);
-  }, [advance]);
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
@@ -319,14 +312,6 @@ export function LandingPage({ initialSection = 0 }: Props) {
         {liveLabel}
       </p>
       <div className="absolute inset-0 overflow-hidden">{stageContent}</div>
-
-      <ScrollSectionHint
-        label="Scroll"
-        nextSectionAria="Ir a la siguiente sección"
-        onNext={onScrollHintNext}
-        reducedMotion={reducedMotion}
-        visible={section < NUM_SECTIONS - 1}
-      />
     </section>
   );
 }

@@ -43,62 +43,53 @@ type Rect = readonly [x: number, y: number, w: number, h: number, fill: string];
 type Tri = readonly [points: string, fill: string];
 
 const DESKTOP_RECTS: readonly Rect[] = [
-  // Band 1 — y 0-180
+  // Band 1 (top row) — y 0-180 : 7 cells, narrow centered main cell
   [0, 0, 200, 180, PAPER],
-  [200, 0, 280, 180, PAPER],
-  [480, 0, 240, 180, PAPER], // year slot (gold triangle overlay below)
-  [720, 0, 200, 180, PAPER],
-  [920, 0, 220, 180, PAPER],
-  [1140, 0, 160, 180, TEAL],
-  [1300, 0, 140, 180, PAPER],
+  [200, 0, 190, 180, PAPER], // r1b
+  [390, 0, 190, 180, PAPER],
+  [580, 0, 280, 180, PAPER], // r1c (narrow centered main)
+  [860, 0, 190, 180, PAPER],
+  [1050, 0, 190, 180, PAPER], // r1d
+  [1240, 0, 200, 180, ORANGE],
 
-  // Band 2 — y 180-340
-  [0, 180, 160, 160, TEAL],
-  [160, 180, 160, 160, ORANGE],
-  [320, 180, 220, 160, PAPER], // r2c
-  [540, 180, 160, 160, PAPER], // r2d
-  [700, 180, 180, 160, PAPER],
-  [880, 180, 160, 160, TEAL], // r2f
-  [1040, 180, 200, 160, GOLD], // r2g
-  [1240, 180, 200, 160, ORANGE],
+  // Band 2 (hero) — y 180-400
+  [0, 180, 200, 220, PAPER],
+  [200, 180, 280, 220, PAPER], // r3a
+  [480, 180, 480, 220, PAPER], // hero
+  [960, 180, 260, 220, PAPER], // r3b
+  [1220, 180, 220, 220, TEAL],
 
-  // Band 3 (hero) — y 340-560
-  [0, 340, 200, 220, ORANGE],
-  [200, 340, 280, 220, PAPER], // r3a
-  [480, 340, 480, 220, PAPER], // hero
-  [960, 340, 260, 220, PAPER], // r3b
-  [1220, 340, 220, 220, TEAL],
+  // Band 3 (content row) — y 400-650 : symmetric, centered main cell
+  [0, 400, 220, 250, PAPER],
+  [220, 400, 220, 250, PAPER], // r4b
+  [440, 400, 560, 250, PAPER], // r4c (centered main)
+  [1000, 400, 220, 250, PAPER], // r4d
+  [1220, 400, 220, 250, GOLD],
 
-  // Band 4 — y 560-740
-  [0, 560, 220, 180, PAPER],
-  [220, 560, 260, 180, PAPER], // r4b
-  [480, 560, 480, 180, PAPER], // r4c
-  [960, 560, 260, 180, PAPER], // r4d
-  [1220, 560, 220, 180, GOLD],
+  // Band 4 (open row) — y 650-830 : 5 equal cells (288 wide)
+  [0, 650, 288, 180, PAPER], // o1
+  [288, 650, 288, 180, PAPER], // o2
+  [576, 650, 288, 180, PAPER], // o3
+  [864, 650, 288, 180, PAPER], // o4
+  [1152, 650, 288, 180, PAPER], // o5
 
-  // Band 5 (footer) — y 740-900
-  [0, 740, 360, 160, PAPER], // r5a
-  [360, 740, 360, 160, PAPER], // r5b
-  [720, 740, 360, 160, TEAL], // r5c
-  [1080, 740, 360, 160, PAPER], // r5d
+  // Band 5 (footer) — y 830-900
+  [0, 830, 360, 70, PAPER], // r5a
+  [360, 830, 360, 70, PAPER], // r5b
+  [720, 830, 360, 70, TEAL], // r5c
+  [1080, 830, 360, 70, PAPER], // r5d
 ];
 
 // Decorative triangles layered over tiles for Mondrian asymmetry.
 const DESKTOP_TRIS: readonly Tri[] = [
-  // Top-left orange wedge
-  ["0,0 100,0 0,180", ORANGE],
-  // Year split: gold triangle top-right of year tile (480-720, 0-180)
-  ["480,0 720,0 720,180", GOLD],
-  // Top-right orange corner
-  ["1300,180 1440,180 1440,0", ORANGE],
-  // Band 2 accent: gold wedge in orange tile (160-320, 180-340)
-  ["160,180 320,340 160,340", GOLD],
-  // Band 2 right accent: teal wedge in orange tile
-  ["1240,180 1440,340 1240,340", TEAL],
-  // Band 3 right: orange wedge in teal corner
-  ["1220,340 1440,560 1220,560", ORANGE],
-  // Band 4 right: orange wedge in gold corner
-  ["1220,560 1440,740 1220,740", ORANGE],
+  // Top-left orange diagonal (corner-to-corner, like the other corners)
+  ["0,0 200,0 0,180", ORANGE],
+  // Top-right teal wedge in orange corner tile
+  ["1240,0 1440,180 1240,180", TEAL],
+  // Hero band right: orange wedge in teal corner
+  ["1220,180 1440,400 1220,400", ORANGE],
+  // Band 3 right: orange wedge in gold corner
+  ["1220,400 1440,650 1220,650", ORANGE],
 ];
 
 function MosaicBackgroundDesktop({

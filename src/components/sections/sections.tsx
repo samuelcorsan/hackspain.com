@@ -4,7 +4,6 @@ import { InlineSvg } from "../media/inline-svg";
 import { ParticipantsCountUp } from "../media/participants-count-up";
 import {
   MOSAIC_BD,
-  MOSAIC_BTN,
   MOSAIC_DISPLAY,
   MOSAIC_FOOTER,
   MOSAIC_FOOTER_SM,
@@ -18,7 +17,6 @@ import {
   MOSAIC_LOGO_XL,
 } from "../mosaic/mosaic-typography";
 import {
-  communitySvg,
   compassSvg,
   cursorLogo,
   exaLogo,
@@ -31,7 +29,6 @@ import {
   medalSvg,
   onecoworkLogo,
   quixoteSvg,
-  sparkSvg,
   sunSvg,
   trophySvg,
   upmLogo,
@@ -217,65 +214,74 @@ const xEx = "fondo growth hackathon España";
 
 export function buildSections(): Record<string, React.ReactNode>[] {
   const signupHref = "/pre-signup";
-  const ambassadorHref = "/ambassador";
 
   return [
     {
       hero: (
         <P bg="bg-hs-paper">
-          <div className="flex w-full max-w-[380px] flex-col items-center @[220px]:gap-3 gap-2">
-            <InlineSvg
-              className="h-auto w-full"
-              label="HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026"
-              svg={logoSvg}
-            />
-            <ButtonLink
-              aria-label="Solicitar plaza en HackSpain — abrir formulario"
-              className="shrink-0"
-              href={signupHref}
-              size="compact"
-              variant="gold"
-            >
-              Apúntate
-            </ButtonLink>
-          </div>
+          <InlineSvg
+            className="h-auto w-full max-w-[380px]"
+            label="HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026"
+            svg={logoSvg}
+          />
         </P>
       ),
-      year: (
-        <div className="relative h-full w-full">
-          <span
-            className={`absolute bottom-[14%] left-[8%] ${MOSAIC_DISPLAY} text-hs-ink`}
-          >
-            20
+      r3a: (
+        <P bg="bg-hs-orange">
+          <p className={`${LBL} text-hs-paper/60`}>Weekend Hackathon</p>
+          <span className={`${MOSAIC_HEADLINE} text-center text-hs-paper`}>
+            18 al 20 de Septiembre
           </span>
-          <span
-            className={`absolute top-[8%] right-[8%] ${MOSAIC_DISPLAY} text-white drop-shadow-sm`}
-          >
-            26
-          </span>
-        </div>
+        </P>
       ),
-      r4d: (
+      r3b: (
         <P bg="bg-hs-gold">
           <ParticipantsCountUp
-            ariaLabel="+250 PARTICIPANTES"
+            ariaLabel="250 PARTICIPANTES"
             className={`${MOSAIC_DISPLAY} text-hs-ink`}
           />
           <p className={`mt-1 ${LBL} text-hs-ink`}>PARTICIPANTES</p>
         </P>
       ),
-      r3a: (
-        <P bg="bg-hs-orange">
-          <p className={`${LBL} text-hs-paper/60`}>HACKATHON</p>
-          <span className={`${MOSAIC_HEADLINE} text-center text-hs-paper`}>
-            MADRID · SEPTIEMBRE
+      r1c: (
+        <P bg="bg-hs-paper">
+          <span className="text-center font-bungee text-[min(13cqw,19cqh)] text-hs-ink leading-tight">
+            MADRID '26
           </span>
+          <a
+            aria-label="Ubicación: UPM - ETSIT en Google Maps"
+            className={`flex items-center justify-center gap-1.5 ${D} ${MOSAIC_FOOTER_SM} font-bold text-hs-ink underline underline-offset-2`}
+            href="https://maps.app.goo.gl/4zVAyQjw1NSirnvE7"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <svg
+              aria-hidden="true"
+              className="h-4 w-4 shrink-0"
+              fill="currentColor"
+              viewBox="0 0 256 256"
+            >
+              <path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z" />
+            </svg>
+            <span>UPM - ETSIT</span>
+          </a>
         </P>
       ),
-      r2g: (
-        <P bg="bg-hs-red">
-          <span className={`${MOSAIC_DISPLAY} text-hs-paper`}>24</span>
-          <p className={`mt-1 ${LBL} text-hs-paper`}>HORAS</p>
+      r4c: (
+        <P bg="bg-hs-paper" className="!justify-evenly !px-2 !py-3">
+          <p className={`${MOSAIC_HEADLINE} text-center text-hs-ink`}>
+            El hackathon para unir a los mejores{" "}
+            <span className="text-hs-red">builders</span> jóvenes de España.
+          </p>
+          <ButtonLink
+            aria-label="Solicitar plaza en HackSpain — abrir formulario"
+            className="shrink-0"
+            href={signupHref}
+            size="compact"
+            variant="gold"
+          >
+            Apúntate
+          </ButtonLink>
         </P>
       ),
       ...bottomRow(0),
@@ -313,68 +319,6 @@ export function buildSections(): Record<string, React.ReactNode>[] {
     },
     {
       hero: (
-        <P bg="bg-hs-sand">
-          <p className={`${LBL} text-hs-ink/40`}>HACKSPAIN 2026</p>
-          <h2 className={`text-center ${MOSAIC_HERO} text-hs-ink`}>
-            {brLines("¿QUÉ NOS HACE\nÚNICOS?")}
-          </h2>
-        </P>
-      ),
-      r3a: (
-        <P align="start" bg="bg-hs-ink">
-          <p className={`${BD} text-hs-paper`}>
-            Estamos totalmente impulsados por la misión.
-          </p>
-        </P>
-      ),
-      r3b: (
-        <P align="start" bg="bg-hs-navy">
-          <p className={`${LBL} text-hs-gold`}>FOCO EN MEDIOS</p>
-          <p className={`${BD} text-hs-paper`}>
-            Ampliar nuestra presencia en redes y medios.
-          </p>
-        </P>
-      ),
-      r2c: (
-        <P
-          align="start"
-          bg="bg-hs-gold"
-          className="!gap-0.5 !p-1.5 @[180px]:!gap-1.5 @[180px]:!p-2.5"
-        >
-          <p className={`${LBL} text-hs-ink/60`}>EMBAJADORES</p>
-          <p className={`${BD} text-hs-ink`}>
-            Universidades y centros educativos
-          </p>
-          <ButtonLink
-            aria-label="Ver programa de embajadores — HackSpain, abrir página"
-            className={`!h-auto !border-hs-ink !bg-hs-navy !whitespace-normal !px-1 !py-1 !text-center !font-bungee !normal-case !text-hs-gold ${MOSAIC_BTN} !transition-[filter,box-shadow] hover:!brightness-110 focus-visible:!border-hs-paper @[220px]:!px-2 @[220px]:!py-1.5 @[220px]:mt-1 mt-0.5 w-full min-w-0 max-w-full self-stretch shadow-[2px_2px_0_0_var(--color-hs-ink)] focus-visible:shadow-[2px_2px_0_0_var(--color-hs-ink),0_0_0_2px_var(--color-hs-ink)]`}
-            href={ambassadorHref}
-            size="compact"
-            variant="gold"
-          >
-            <span className="block w-full [text-wrap:balance]">
-              Ver programa de embajadores
-            </span>
-          </ButtonLink>
-        </P>
-      ),
-      r2g: (
-        <P align="start" bg="bg-hs-teal">
-          <p className={`${LBL} text-white/60`}>CONTENIDO DE CALIDAD</p>
-          <p className={`${BD} text-white`}>Historias reales de l@s hackers</p>
-        </P>
-      ),
-      r4c: (
-        <P bg="bg-hs-orange">
-          <p className={`${BD} text-center text-hs-paper`}>
-            Tracks originales para distintos niveles.
-          </p>
-        </P>
-      ),
-      ...bottomRow(2),
-    },
-    {
-      hero: (
         <P bg="bg-hs-teal">
           <p className={`${LBL} text-white/60`}>HACKSPAIN 2026</p>
           <h2 className={`text-center ${MOSAIC_HERO_LG} text-white`}>
@@ -398,7 +342,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           </p>
         </P>
       ),
-      r4d: (
+      r4c: (
         <P bg="bg-hs-gold">
           <span className={`${MOSAIC_HEADLINE} text-center text-hs-ink`}>
             {brLines("COMPUTE\nGRATIS")}
@@ -412,14 +356,14 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           </p>
         </P>
       ),
-      r2f: (
+      r1c: (
         <P bg="bg-hs-red">
           <span className={`${MOSAIC_HEADLINE} text-center text-hs-paper`}>
-            {brLines("PARA\nTODOS")}
+            PARA TODOS
           </span>
         </P>
       ),
-      ...bottomRow(3),
+      ...bottomRow(2),
     },
     {
       hero: (
@@ -430,7 +374,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           </h2>
         </P>
       ),
-      r2c: (
+      r1b: (
         <P bg="bg-hs-red">
           <img
             alt={sponsorAlt("Exa", eEx)}
@@ -441,7 +385,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           />
         </P>
       ),
-      r2g: (
+      r1d: (
         <P bg="bg-hs-navy">
           <img
             alt={sponsorAlt("K Fund", kEx)}
@@ -452,7 +396,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           />
         </P>
       ),
-      r2f: (
+      r1c: (
         <P bg="bg-hs-paper">
           <img
             alt={sponsorAlt("UPM — Universidad Politécnica de Madrid", uEx)}
@@ -507,14 +451,6 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           />
         </P>
       ),
-      r2d: (
-        <P align="start" bg="bg-hs-cream">
-          <p className={`${LBL} text-hs-ink/40`}>PREMIOS</p>
-          <p className={`${MOSAIC_HEADLINE_SM} text-hs-ink`}>
-            Grandes recompensas para l@s hackers
-          </p>
-        </P>
-      ),
       r4d: (
         <P bg="bg-hs-paper">
           <img
@@ -526,48 +462,15 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           />
         </P>
       ),
-      ...bottomRow(4),
-    },
-    {
-      hero: (
-        <P bg="bg-hs-red">
-          <p className={`${LBL} text-hs-gold`}>VISIÓN A LARGO PLAZO</p>
-          <h2 className={`text-center ${MOSAIC_HERO_LG} text-hs-paper`}>
-            DE MADRID
-            <br />
-            <span className="text-hs-gold">AL MUNDO</span>
-          </h2>
-        </P>
-      ),
-      r2c: (
-        <P bg="bg-hs-orange">
-          <span className={`${MOSAIC_DISPLAY} text-hs-paper`}>5.000</span>
-          <p className={`mt-1 ${LBL} text-hs-paper`}>META EL PRÓXIMO AÑO</p>
-        </P>
-      ),
-      r3a: (
-        <P align="start" bg="bg-hs-ink">
-          <p className={`${BD} text-hs-paper`}>
-            HackSpain no es un evento puntual. Es la base de un movimiento que
-            posiciona a España como líder tech en Europa.
+      o3: (
+        <P bg="bg-hs-cream">
+          <p className={`${LBL} text-hs-ink/40`}>PREMIOS</p>
+          <p className={`${MOSAIC_HEADLINE_SM} text-center text-hs-ink`}>
+            Grandes recompensas para l@s hackers
           </p>
         </P>
       ),
-      r3b: (
-        <P bg="bg-hs-navy">
-          <span className={`${MOSAIC_HEADLINE_SM} text-center text-hs-gold`}>
-            EL MAYOR HACKATHON DE EUROPA
-          </span>
-        </P>
-      ),
-      r4b: (
-        <P bg="bg-hs-gold">
-          <p className={`${BD} text-center text-hs-ink`}>
-            El mayor movimiento de hackathones del sur de Europa.
-          </p>
-        </P>
-      ),
-      ...bottomRow(5),
+      ...bottomRow(3),
     },
   ];
 }
@@ -647,7 +550,6 @@ function compactFooter(centered = false): React.ReactNode {
  */
 export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
   const signupHref = "/pre-signup";
-  const ambassadorHref = "/ambassador";
   const foot = compactFooter();
   const footCentered = compactFooter(true);
 
@@ -706,7 +608,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-gold" className={CARDART}>
           {cardArt(sunSvg, "br")}
           <ParticipantsCountUp
-            ariaLabel="+250 PARTICIPANTES"
+            ariaLabel="250 PARTICIPANTES"
             className={`${CH} text-[clamp(2.2rem,11vw,4.5rem)] text-hs-ink`}
           />
           <p className={`${CLBL} text-hs-ink`}>PARTICIPANTES</p>
@@ -742,52 +644,6 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
             24 horas intensas construyendo con l@s mejores jóvenes programadores
             de España.
           </p>
-        </P>
-      ),
-      foot,
-    },
-    {
-      hero: (
-        <P bg="bg-hs-sand" className={CARD}>
-          <p className={`${CLBL} text-hs-ink/40`}>HACKSPAIN 2026</p>
-          <h2
-            className={`text-center ${CH} text-[clamp(1.8rem,8vw,3.2rem)] text-hs-ink`}
-          >
-            ¿QUÉ NOS HACE ÚNICOS?
-          </h2>
-        </P>
-      ),
-      b1: (
-        <P align="start" bg="bg-hs-ink" className={CARDART}>
-          {cardArt(communitySvg, "br")}
-          <p className={`${CBD} text-hs-paper`}>
-            Estamos totalmente impulsados por la misión.
-          </p>
-          <div>
-            <p className={`${CLBL} text-hs-gold`}>FOCO EN MEDIOS</p>
-            <p className={`${CBD} text-hs-paper/90`}>
-              Ampliar nuestra presencia en redes y medios con historias reales
-              de l@s hackers.
-            </p>
-          </div>
-        </P>
-      ),
-      b2: (
-        <P align="start" bg="bg-hs-gold" className={CARDART}>
-          {cardArt(sparkSvg, "br")}
-          <p className={`${CLBL} text-hs-ink/60`}>EMBAJADORES</p>
-          <p className={`${CBD} text-hs-ink`}>
-            Universidades y centros educativos por toda España.
-          </p>
-          <ButtonLink
-            aria-label="Ver programa de embajadores — HackSpain, abrir página"
-            className="!border-hs-ink !bg-hs-navy !text-hs-gold mt-1 self-start"
-            href={ambassadorHref}
-            size="compact"
-            variant="gold"
-          >
-            Ver programa
-          </ButtonLink>
         </P>
       ),
       foot,
@@ -871,51 +727,6 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           <p className={`${CLBL} text-hs-ink/40`}>PREMIOS</p>
           <p className={`${CH} text-[clamp(1.3rem,5.5vw,2.2rem)] text-hs-ink`}>
             Grandes recompensas para l@s hackers
-          </p>
-        </P>
-      ),
-      foot,
-    },
-    {
-      hero: (
-        <P bg="bg-hs-red" className={CARD}>
-          <p className={`${CLBL} text-hs-gold`}>VISIÓN A LARGO PLAZO</p>
-          <h2
-            className={`text-center ${CH} text-[clamp(1.6rem,7vw,3rem)] text-hs-paper`}
-          >
-            DE MADRID <span className="text-hs-gold">AL MUNDO</span>
-          </h2>
-        </P>
-      ),
-      b1: (
-        <P align="start" bg="bg-hs-ink" className={CARDART}>
-          {cardArt(trophySvg, "br")}
-          <p className={`${CBD} text-hs-paper`}>
-            HackSpain no es un evento puntual. Es la base de un movimiento que
-            posiciona a España como líder tech en Europa.
-          </p>
-          <div className="flex items-baseline gap-2">
-            <span
-              className={`${CH} text-[clamp(1.8rem,8vw,3rem)] text-hs-gold`}
-            >
-              5.000
-            </span>
-            <span className={`${CLBL} text-hs-paper/70`}>
-              META EL PRÓXIMO AÑO
-            </span>
-          </div>
-        </P>
-      ),
-      b2: (
-        <P bg="bg-hs-navy" className={CARDART}>
-          {cardArt(windmillSvg, "br")}
-          <span
-            className={`text-center ${CH} text-[clamp(1.3rem,5.5vw,2.2rem)] text-hs-gold`}
-          >
-            EL MAYOR HACKATHON DE EUROPA
-          </span>
-          <p className={`${CBD} text-center text-hs-paper/90`}>
-            El mayor movimiento de hackathones del sur de Europa.
           </p>
         </P>
       ),

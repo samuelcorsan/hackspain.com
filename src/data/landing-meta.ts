@@ -33,12 +33,6 @@ const PAGES: PageSeo[] = [
     ogImageAlt: "HackSpain 2026 — misión, hackathon España",
   },
   {
-    title: "Qué nos hace únicos — HACKSPAIN 2026",
-    description:
-      "Hackathon España HackSpain: misión clara, foco en medios, embajadores e historias de l@s hackers. hackathon Madrid.",
-    ogImageAlt: "HackSpain — hackathon España único",
-  },
-  {
     title: "Tracks — HACKSPAIN 2026 | hackathon Madrid",
     description:
       "Tracks de ML con compute gratis y track no técnico. Hackathon España para todo tipo de builders. Madrid 2026.",
@@ -49,12 +43,6 @@ const PAGES: PageSeo[] = [
     description:
       "Patrocinadores: Google, K Fund, fal.ai, Exa, UPM, OneCoWork, Cursor, Exponential, Mozart AI — premios para participantes. hackathon España.",
     ogImageAlt: "HackSpain 2026 patrocinadores — hackathon España",
-  },
-  {
-    title: "Visión — HACKSPAIN 2026 | hackathon España",
-    description:
-      "De Madrid al mundo: hackathon España hacia el liderazgo tech europeo. Meta 5.000 participantes.",
-    ogImageAlt: "HackSpain — visión, hackathon España",
   },
 ];
 
@@ -116,10 +104,8 @@ const KEYWORDS_BASE =
 const KEYWORDS_BY_SECTION = [
   "",
   "misión hackathon, coders españoles, hackathon jóvenes España",
-  "hackathon único España, comunidad hackathon Madrid",
   "track ML hackathon, hackathon sin código, talleres código España",
   "patrocinadores hackathon, Google hackathon España, K Fund, fal.ai, Exa, UPM, OneCoWork, Cursor, Exponential, Mozart AI",
-  "visión hackathon Europa, talento tech España",
 ];
 
 export function keywordsForSectionIndex(i: number): string {
@@ -165,7 +151,7 @@ export function jsonLdWebSite() {
     alternateName: ["Hack Spain", "hack spain"],
     url: SITE,
     description:
-      "Sitio oficial de HackSpain: hackathon Madrid 2026, misión, tracks, patrocinadores y visión. Contenido en español.",
+      "Sitio oficial de HackSpain: hackathon Madrid 2026, misión, tracks y patrocinadores. Contenido en español.",
     inLanguage: "es",
     publisher: { "@id": `${SITE}/#organization` },
   };
@@ -294,7 +280,7 @@ export function jsonLdFaq() {
         name: "¿Cuántas personas participan?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "La edición comunica más de 250 participantes en 24 horas; la visión a largo plazo menciona una meta de 5.000 en una edición futura. Cifras oficiales en hackspain.com.",
+          text: "La edición comunica más de 250 participantes en 24 horas. Cifras oficiales en hackspain.com.",
         },
       },
       {

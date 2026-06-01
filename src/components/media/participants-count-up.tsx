@@ -47,7 +47,7 @@ export function ParticipantsCountUp({ className = "", ariaLabel }: Props) {
       className={`tabular-nums ${className}`.trim()}
       role="img"
     >
-      +{value}
+      {value}
     </span>
   );
 }

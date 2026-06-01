@@ -1,4 +1,4 @@
-const SECTIONS = ["mission", "unique", "tracks", "sponsors", "vision"] as const;
+const SECTIONS = ["mission", "tracks", "sponsors"] as const;
 
 const TRAILING_SLASHES = /\/+$/;
 

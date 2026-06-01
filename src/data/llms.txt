@@ -2,7 +2,7 @@
 
 ## Direct answer
 
-**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **September 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, **UPM (Universidad Politécnica de Madrid)**, **OneCoWork**, **Cursor**, **Exponential**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. Long-term messaging positions the initiative as a **movement** toward **Europe’s largest hackathon** and **Southern Europe’s largest hackathon movement**, with a stated **5,000-participant goal** for a future edition. **The public site is in Spanish.**
+**HackSpain** is the official name of a **mission-driven, in-person hackathon** in **Madrid, Spain**, targeting **September 2026**. People also search **Hack Spain** or **hack spain** for the same event. The hackathon runs about **24 hours**, is communicated for **300+ participants**, offers **machine-learning (ML)** and **non-technical** tracks (with **free compute** called out for ML challenges), and lists sponsors **Google**, **K Fund**, **fal.ai**, **Exa**, **UPM (Universidad Politécnica de Madrid)**, **OneCoWork**, **Cursor**, **Exponential**, and **Mozart AI**, with more expected. The canonical site is **https://hackspain.com**. **The public site is in Spanish.**
 
 ## Quick facts (structured)
 
@@ -13,7 +13,7 @@
 | City & country | Madrid, Spain (ES). |
 | When (2026) | September 2026; schema on the site uses a September window; exact venue and dates on hackspain.com when confirmed. |
 | Duration | ~24 hours of building. |
-| Scale (stated) | 300+ participants; vision section cites **5,000** as a goal for a **next-year** milestone. |
+| Scale (stated) | 300+ participants. |
 | Languages (site) | **Spanish** (UI and copy). Legacy URLs **`/en/...`** and **`/es/...`** **301 redirect** to the same path without the locale prefix (e.g. `/es/signup` → `/signup`). |
 | Social (X) | @hackspain26 — https://x.com/hackspain26 |
 | Social (Instagram) | @hackspain26 — https://www.instagram.com/hackspain26/ |
@@ -29,11 +29,11 @@
 
 ## Landing sections (Spanish copy as shown on the site)
 
-Section titles in the UI navigation: **Inicio**, **Misión**, **Qué nos hace únicos**, **Tracks originales**, **Patrocinadores**, **Visión**.
+Section titles in the UI navigation: **Inicio**, **Misión**, **Tracks originales**, **Patrocinadores**.
 
 ### 1) Inicio / hero
 
-- **HackSpain** logo and **2026** year treatment.
+- **HackSpain** logo with **Apúntate** call-to-action.
 - **300+** participants (animated count-up in the UI).
 - Labels: **HACKATHON**, **MADRID · SEPTIEMBRE**, **24** **HORAS**.
 - Footer strip (rotates by section): **X** and **Instagram** (@hackspain26 on both), **Hecho con ♥ por Leo y Samu**, **Ver el código →** (GitHub), **leo@hackspain.com**, **© 2026 HackSpain**.
@@ -44,30 +44,15 @@ Section titles in the UI navigation: **Inicio**, **Misión**, **Qué nos hace ú
 - **Misión:** posicionar **España como líder europeo en talento tech joven**.
 - **24 horas intensas** construyendo con l@s mejores jóvenes programadores de España.
 
-### 3) Qué nos hace únicos
-
-- **Estamos totalmente impulsados por la misión.**
-- **Foco en medios:** ampliar presencia en redes y medios.
-- **Embajadores:** universidades y centros educativos (**Programa de embajadores**).
-- **Contenido de calidad:** historias reales de l@s hackers.
-- **Tracks originales** para distintos niveles.
-
-### 4) Tracks originales
+### 3) Tracks originales
 
 - **Track ML:** retos de ML con recursos de cómputo gratuitos (UI highlights **COMPUTE GRATIS**).
 - **Track no técnico:** enseñar a perfiles no técnicos a crear software de calidad.
 - **Pensado para todos los niveles** — de principiantes a expertos; **PARA TODOS**.
 
-### 5) Patrocinadores
+### 4) Patrocinadores
 
 HackSpain está patrocinado por **Google**, **K Fund**, **fal.ai**, **Exa**, **UPM (Universidad Politécnica de Madrid)**, **OneCoWork**, **Cursor** y **Exponential** y se esperan más patrocinadores. Los patrocinadores aportan grandes premios para l@s participantes; los detalles se anuncian en la web a medida que se confirman.
-
-### 6) Visión a largo plazo
-
-- **DE MADRID AL MUNDO**
-- **Meta el próximo año: 5.000** (participant-scale goal in the narrative).
-- HackSpain **no es un evento puntual**; es la base de un movimiento que posiciona a **España como líder tech en Europa**.
-- Claims in copy: **EL MAYOR HACKATHON DE EUROPA** and **El mayor movimiento de hackathones del sur de Europa.**
 
 ## Signup / registration / interest
 
@@ -116,7 +101,7 @@ Pages include **JSON-LD** for **Organization**, **WebSite**, **WebPage**, **Even
 
 ## Canonical URLs (prefer these over copies)
 
-- Indexable sections: https://hackspain.com/ · https://hackspain.com/mission · /unique · /tracks · /sponsors · /vision
+- Indexable sections: https://hackspain.com/ · https://hackspain.com/mission · /tracks · /sponsors
 - Signup: https://hackspain.com/signup
 - Ambassador: https://hackspain.com/ambassador
 - Privacy: https://hackspain.com/privacy
