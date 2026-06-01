@@ -28,7 +28,6 @@ import {
   logoSvg,
   medalSvg,
   onecoworkLogo,
-  quixoteSvg,
   trophySvg,
   upmLogo,
   windmillSvg,
@@ -783,17 +782,19 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           <h2
             className={`text-center ${CH} text-[clamp(1.6rem,7vw,3rem)] text-hs-paper`}
           >
-            UNIR A JÓVENES <span className="text-hs-red">TALENTOSOS</span>{" "}
-            CODERS ESPAÑOLES
+            ESPAÑA TIENE <span className="text-hs-red">TALENTO.</span>
+            <br />
+            NOSOTROS VAMOS A <span className="text-hs-red">JUNTARLO.</span>
           </h2>
         </P>
       ),
       b1: (
-        <P align="start" bg="bg-hs-paper" className={CARDART}>
-          {cardArt(quixoteSvg, "br")}
-          <p className={`${CLBL} text-hs-ink/40`}>MISIÓN</p>
-          <p className={`${CBD} text-hs-ink`}>
-            Posicionar a España como líder europeo en talento tech joven.
+        <P bg="bg-hs-paper" className={CARD}>
+          <p className={`${CBD} text-center text-hs-ink`}>
+            36 horas. 250 de los mejores{" "}
+            <span className="text-hs-red">builders</span> menores de 30.
+            HackSpain 2026 es el punto de encuentro de los jóvenes que van a
+            posicionar a España como líder de talento tech joven.
           </p>
         </P>
       ),
@@ -801,8 +802,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-teal" className={CARDART}>
           {cardArt(horseSvg, "br")}
           <p className={`${CBD} text-center text-white`}>
-            24 horas intensas construyendo con l@s mejores jóvenes programadores
-            de España.
+            Con los mejores fondos, startups y figuras del ecosistema español.
           </p>
         </P>
       ),
