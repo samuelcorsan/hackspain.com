@@ -316,11 +316,9 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-navy">
           <p className={`${LBL} text-hs-gold`}>MISIÓN</p>
           <h2 className={`text-center ${MOSAIC_HERO} text-hs-paper`}>
-            UNIR A
+            ESPAÑA TIENE <span className="text-hs-red">TALENTO.</span>
             <br />
-            JÓVENES <span className="text-hs-red">TALENTOSOS</span>
-            <br />
-            CODERS ESPAÑOLES
+            NOSOTROS VAMOS A <span className="text-hs-red">JUNTARLO.</span>
           </h2>
         </P>
       ),
@@ -332,11 +330,17 @@ export function buildSections(): Record<string, React.ReactNode>[] {
           </p>
         </P>
       ),
-      r4b: (
-        <P bg="bg-hs-teal">
-          <p className={`${BD} text-center text-white`}>
-            24 horas intensas construyendo con l@s mejores jóvenes programadores
-            de España.
+      r4b: <P bg="bg-hs-teal" />,
+      r4c: (
+        <P bg="bg-hs-paper" className="!justify-evenly !px-10 !py-8">
+          <p className={`${BD} text-center text-hs-ink`}>
+            36 horas. 250 de los mejores{" "}
+            <span className="text-hs-red">builders</span> menores de 30.
+            HackSpain 2026 es el punto de encuentro de los jóvenes que van a
+            posicionar a España como líder de talento tech joven.
+          </p>
+          <p className={`${BD} text-center text-hs-ink/60`}>
+            Con los mejores fondos, startups y figuras del ecosistema español.
           </p>
         </P>
       ),
