@@ -7,11 +7,11 @@ export const HACKSPAIN_SOCIAL_URLS = {
   github: "https://github.com/samuelcorsan/hackspain.com",
 } as const;
 
-/** Open Graph / Twitter / JSON-LD primary share image (`public/banner.png`). */
+/** Open Graph / Twitter / JSON-LD primary share image (`public/og-landing.png`). */
 export const SOCIAL_SHARE_IMAGE = {
-  path: "/banner.png",
-  width: 1873,
-  height: 953,
+  path: "/og-landing.png",
+  width: 1200,
+  height: 630,
 } as const;
 export interface PageSeo {
   description: string;
