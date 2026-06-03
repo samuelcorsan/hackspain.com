@@ -156,7 +156,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
 const CH = `${B} leading-tight`;
 const CLBL = `${D} text-[clamp(0.7rem,3vw,1rem)] font-black uppercase tracking-widest`;
 const CBD = `${D} text-[clamp(0.95rem,4vw,1.6rem)] font-semibold leading-snug`;
-const CARD = "!gap-3 !p-5";
+const CARD = "!gap-2 !p-4";
 // Card variant that hosts a faint decorative illustration behind the text.
 const CARDART = `${CARD} relative isolate overflow-hidden`;
 
@@ -422,7 +422,7 @@ function compactFooter(centered = false): React.ReactNode {
     <P
       align={centered ? "center" : "start"}
       bg="bg-hs-paper"
-      className={`${CARD} !items-center ${centered ? "" : "!pt-6"}`}
+      className="!items-center !justify-evenly !p-3"
     >
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-hs-ink">
         <a
@@ -678,7 +678,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-navy" className={CARD}>
           <p className={`${CLBL} text-hs-gold`}>MISIÓN</p>
           <h2
-            className={`text-center ${CH} text-[clamp(1.9rem,8.5vw,3.6rem)] text-hs-paper`}
+            className={`text-center ${CH} text-[clamp(1.35rem,6.2vw,2.6rem)] text-hs-paper`}
           >
             ESPAÑA TIENE <span className="text-hs-red">TALENTO.</span>
             <br />
