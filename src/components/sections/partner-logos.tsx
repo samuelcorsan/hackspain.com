@@ -5,8 +5,8 @@ import {
   exaLogo,
   falLogo,
   googleLogo,
-  kfundLogo,
-  mozartLogo,
+  // kfundLogo,
+  // mozartLogo,
   onecoworkLogo,
 } from "../theme/assets";
 import { P } from "../ui/panel";
@@ -46,21 +46,21 @@ const PARTNERS: Partner[] = [
     size: LOGO_SIZE,
     src: falLogo.src,
   },
-  {
-    alt: "K Fund — partner de HackSpain",
-    size: LOGO_SIZE,
-    src: kfundLogo.src,
-  },
+  // {
+  //   alt: "K Fund — partner de HackSpain",
+  //   size: LOGO_SIZE,
+  //   src: kfundLogo.src,
+  // },
   {
     alt: "Cursor — partner de HackSpain",
     size: LARGE_LOGO_SIZE,
     src: cursorLogo.src,
   },
-  {
-    alt: "Mozart AI — partner de HackSpain",
-    size: LOGO_SIZE,
-    src: mozartLogo.src,
-  },
+  // {
+  //   alt: "Mozart AI — partner de HackSpain",
+  //   size: LOGO_SIZE,
+  //   src: mozartLogo.src,
+  // },
   {
     alt: "OneCoWork — partner de HackSpain",
     size: LARGE_LOGO_SIZE,
