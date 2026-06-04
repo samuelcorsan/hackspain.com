@@ -99,7 +99,7 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
           {" y "}
           <a
             className="underline underline-offset-2"
-            href="https://x.com/disamdev"
+            href="https://disam.dev"
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -120,16 +120,18 @@ function bottomRow(sectionIdx: number): Record<string, React.ReactNode> {
               // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted SVG strings from ./constants
               dangerouslySetInnerHTML={{ __html: GITHUB_SVG }}
             />
-            <span>Esta página web es open source</span>
+            <span>
+              Esta página web es{" "}
+              <a
+                className="underline underline-offset-2"
+                href={HACKSPAIN_SOCIAL_URLS.github}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                open source
+              </a>
+            </span>
           </div>
-          <a
-            className={`${D} ${MOSAIC_FOOTER_SM} font-bold underline underline-offset-2`}
-            href={HACKSPAIN_SOCIAL_URLS.github}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Ver el código →
-          </a>
         </div>
       </P>
     </Fragment>,
@@ -473,7 +475,7 @@ function compactFooter(centered = false): React.ReactNode {
         {" y "}
         <a
           className="underline underline-offset-2"
-          href="https://x.com/disamdev"
+          href="https://disam.dev"
           rel="noopener noreferrer"
           target="_blank"
         >
