@@ -4,7 +4,10 @@ import { checkBotId } from "botid/server";
 import { start } from "workflow/api";
 import { getDb } from "../../db";
 import { hackathonPreSignups } from "../../db/schema";
-import { notifyDiscordSignupApiIssue } from "../../lib/discord-signup-webhook";
+import {
+  notifyDiscordNewPreSignup,
+  notifyDiscordSignupApiIssue,
+} from "../../lib/discord-signup-webhook";
 import { parsePreSignupBody } from "../../lib/signup-validation";
 import { handlePreSignupFollowup } from "../../workflows/pre-signup-followup";
 
@@ -190,6 +193,30 @@ export const POST: APIRoute = async ({ request }) => {
       emailHint: email,
     });
     return Response.json({ error: "save_failed" }, { status: 500 });
+  }
+
+  // Row persisted — ancillary failures must not change the HTTP outcome.
+  try {
+    await notifyDiscordNewPreSignup({
+      fullName,
+      email,
+      xUrl,
+      linkedinUrl,
+      githubUrl,
+      webUrl,
+    });
+  } catch (e) {
+    console.error(
+      "[pre-signup] Discord notify failed after successful insert:",
+      e
+    );
+    safeSentry(() => {
+      withScope((scope) => {
+        scope.setTag("api", "pre-signup");
+        scope.setTag("outcome", "discord_notify_failed");
+        captureException(e);
+      });
+    });
   }
 
   try {
