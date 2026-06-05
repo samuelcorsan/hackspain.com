@@ -92,6 +92,16 @@ export async function renderSignupConfirmationHtml(
 }
 
 const PRE_SIGNUP_ORGANIZER_NAMES = ["Samu", "Guli", "Leo"] as const;
+const WHITESPACE_SPLIT_RE = /\s+/;
+
+function firstNameFrom(fullName: string): string {
+  const trimmed = fullName.trim();
+  if (!trimmed) {
+    return "hacker";
+  }
+  const first = trimmed.split(WHITESPACE_SPLIT_RE)[0];
+  return first.length > 24 ? first.slice(0, 24) : first;
+}
 
 function pickOrganizerName(): string {
   const i = Math.floor(Math.random() * PRE_SIGNUP_ORGANIZER_NAMES.length);
@@ -112,15 +122,16 @@ export async function sendPreSignupConfirmationEmail(
   }
 
   const organizerName = pickOrganizerName();
-  const text = `¡Hola ${input.fullName}!
+  const firstName = firstNameFrom(input.fullName);
+  const text = `Hola ${firstName},
 
-Soy ${organizerName}, del equipo de HackSpain. Solo quería confirmarte que tus datos nos han llegado bien — muchísimas gracias por el interés tan pronto, significa un montón.
+Soy ${organizerName}, del equipo de HackSpain. Solo quería confirmarte que tus datos nos han llegado bien, muchísimas gracias por el interés tan pronto, significa un montón.
 
 Te iremos escribiendo por aquí con todas las novedades a medida que las tengamos.
 
 Mientras tanto, te recomendamos seguirnos en Twitter para no perderte nada: https://x.com/hackspain26
 
-Nos vemos pronto!
+Nos vemos pronto
 ${organizerName}`;
 
   try {
@@ -131,7 +142,7 @@ ${organizerName}`;
         address: cfg.user,
       },
       to: input.email,
-      subject: "Hemos recibido tu pre-inscripción!",
+      subject: "Hemos recibido tu pre-inscripción",
       text,
       headers: {
         "X-Entity-Ref-ID": `hackspain-pre-signup-${Date.now()}`,
