@@ -1,7 +1,7 @@
 {
-  "name": "HackSpain",
+  "name": "HackSpain 2026",
   "short_name": "HackSpain",
-  "description": "HackSpain 2026 — Madrid hackathon for young coders",
+  "description": "El hackathon para unir a los mejores builders jóvenes de España. MADRID '26, 18 al 20 de Septiembre.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f4ecd8",

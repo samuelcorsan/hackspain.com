@@ -228,7 +228,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper">
           <InlineSvg
             className="h-auto w-full max-w-[380px]"
-            label="HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026"
+            label="HackSpain 2026"
             svg={logoSvg}
           />
         </P>
@@ -369,7 +369,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-teal">
           <p className={`${LBL} text-white/60`}>HACKSPAIN 2026</p>
           <h2 className={`text-center ${MOSAIC_HERO_LG} text-white`}>
-            5 TRACKS,
+            TRACKS ORIGINALES,
             <br />1 <span className="text-hs-gold">GRAN</span> PREMIO
           </h2>
           <p className={`${LBL} text-white/60`}>Compute gratis para todos</p>
@@ -573,7 +573,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           <div className="flex w-full max-w-[320px] flex-col items-center gap-2">
             <InlineSvg
               className="h-auto w-full"
-              label="HackSpain o Hack Spain — hackathon Madrid, hackathon España y Spain 2026"
+              label="HackSpain 2026"
               svg={logoSvg}
             />
             <span
@@ -729,10 +729,11 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           <h2
             className={`text-center ${CH} text-[clamp(2rem,9vw,3.4rem)] text-white`}
           >
-            5 TRACKS, <span className="text-hs-gold">1 GRAN</span> PREMIO
+            TRACKS ORIGINALES, <span className="text-hs-gold">1 GRAN</span>{" "}
+            PREMIO
           </h2>
           <p className={`${CLBL} text-white/60`}>
-            Compute gratis · 5 tracks · Un gran premio
+            Compute gratis · Un gran premio
           </p>
         </P>
       ),
@@ -791,7 +792,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper" className={CARD}>
           <InlineSvg
             className="h-auto w-full max-w-[380px]"
-            label="HackSpain — hackathon Madrid, hackathon España y Spain 2026"
+            label="HackSpain 2026"
             svg={logoSvg}
           />
         </P>

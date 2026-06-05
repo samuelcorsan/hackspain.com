@@ -21,28 +21,27 @@ export interface PageSeo {
 
 const PAGES: PageSeo[] = [
   {
-    title: "HACKSPAIN 2026 — Hack Spain hackathon Madrid | hackathon España",
+    title: "HackSpain 2026 — MADRID '26",
     description:
-      "Hack Spain / HackSpain 2026: hackathon Madrid, hackathon España y hackathon Spain para jóvenes programadores — 24h, +250 participantes. hack spain, hackspain.com",
-    ogImageAlt: "Hack Spain HackSpain — hackathon Madrid y España",
+      "El hackathon para unir a los mejores builders jóvenes de España. 18 al 20 de Septiembre, UPM - ETSIT. 250 participantes.",
+    ogImageAlt: "HackSpain 2026 — MADRID '26",
   },
   {
-    title: "Misión — HACKSPAIN 2026 | hackathon España",
+    title: "España tiene talento. Nosotros vamos a juntarlo. | HackSpain 2026",
     description:
-      "HackSpain reúne a coders jóvenes en un hackathon Madrid / hackathon España de 24 horas. El mayor movimiento de hackathones del sur de Europa.",
-    ogImageAlt: "HackSpain 2026 — misión, hackathon España",
+      "36 horas. 250 de los mejores builders menores de 30. HackSpain 2026 es el punto de encuentro de los jóvenes que van a posicionar a España como líder de talento tech joven.",
+    ogImageAlt: "HackSpain 2026 — España tiene talento",
   },
   {
-    title: "Tracks — HACKSPAIN 2026 | hackathon Madrid",
+    title: "Tracks originales, 1 gran premio | HackSpain 2026",
     description:
-      "Tracks de ML con compute gratis y track no técnico. Hackathon España para todo tipo de builders. Madrid 2026.",
-    ogImageAlt: "HackSpain 2026 — tracks, hackathon España",
+      "Compute gratis para todos. Retos de las mejores startups de España, y un gran premio con un jurado estrella.",
+    ogImageAlt: "HackSpain 2026 — tracks originales, 1 gran premio",
   },
   {
-    title: "Apúntate — HACKSPAIN 2026 | hackathon Madrid",
-    description:
-      "Pre-inscripción abierta para HackSpain 2026: hackathon Madrid, hackathon España. Apúntate ya.",
-    ogImageAlt: "HackSpain 2026 — apúntate, hackathon España",
+    title: "Pre inscripción abierta | HackSpain 2026",
+    description: "Pre inscripción abierta para HackSpain 2026. Apúntate ya.",
+    ogImageAlt: "HackSpain 2026 — pre inscripción abierta",
   },
 ];
 
@@ -55,9 +54,8 @@ export const SIGNUP_KEYWORDS =
 
 export function signupSeo(): PageSeo {
   return {
-    title: "Apúntate — HACKSPAIN 2026 | hackathon Madrid",
-    description:
-      "Registro de interés para HackSpain 2026: hackathon Madrid, hackathon España. Cuéntanos tu perfil y te contactamos.",
+    title: "Apúntate al hackathon | HackSpain 2026",
+    description: "Cuéntanos quién eres — te avisamos sobre HackSpain 2026.",
     ogImageAlt: "HackSpain 2026 — apúntate al hackathon",
   };
 }
@@ -67,10 +65,10 @@ export const PRE_SIGNUP_KEYWORDS =
 
 export function preSignupSeo(): PageSeo {
   return {
-    title: "Pre-inscripción — HACKSPAIN 2026 | hackathon Madrid",
+    title: "Pre-inscripción | HackSpain 2026",
     description:
-      "Pre-inscripción a HackSpain 2026: deja tus datos básicos y te avisamos para completar el registro al hackathon.",
-    ogImageAlt: "HackSpain 2026 — pre-inscripción al hackathon",
+      "Déjanos tus datos básicos — te avisamos para completar la inscripción a HackSpain 2026.",
+    ogImageAlt: "HackSpain 2026 — pre-inscripción",
   };
 }
 
@@ -79,9 +77,9 @@ export const AMBASSADOR_KEYWORDS =
 
 export function ambassadorSeo(): PageSeo {
   return {
-    title: "Embajadores — HACKSPAIN 2026 | hackathon Madrid",
+    title: "Sé la cara de HackSpain en tu campus | HackSpain 2026",
     description:
-      "Programa de embajadores HackSpain: lleva el hackathon a tu universidad, perks y solicitud online. Madrid 2026.",
+      "Junta builders, mueve el boca a boca y empuja hacia el registro — te mantenemos al día con fechas y enlaces oficiales, te aclaramos dudas si las tienes, y tienes contacto directo con el equipo para Madrid 2026.",
     ogImageAlt: "HackSpain 2026 — programa de embajadores",
   };
 }
@@ -99,13 +97,13 @@ export function privacySeo(): PageSeo {
 }
 
 const KEYWORDS_BASE =
-  "hack spain, Hack Spain, hack spain hackathon, hack spain Madrid, hackathon Madrid, hackathon España, hackathon Spain, hack España, HackSpain, hackathon jóvenes, hackday Madrid, programación Madrid, hackspain.com";
+  "HackSpain, Hack Spain, hackathon Madrid, hackathon España, builders jóvenes, UPM ETSIT, hackspain.com";
 
 const KEYWORDS_BY_SECTION = [
-  "",
-  "misión hackathon, coders españoles, hackathon jóvenes España",
-  "track ML hackathon, hackathon sin código, talleres código España",
-  "apuntarse hackathon, pre-inscripción hackathon España, registro hackathon Madrid",
+  "MADRID 2026, 18 al 20 de Septiembre, 250 participantes",
+  "España tiene talento, talento tech joven, 36 horas",
+  "tracks originales, gran premio, compute gratis, startups España",
+  "pre inscripción abierta, apúntate HackSpain",
 ];
 
 export function keywordsForSectionIndex(i: number): string {
@@ -126,7 +124,7 @@ export function jsonLdOrganization() {
     url: SITE,
     logo: `${SITE}/hs-icon.png`,
     description:
-      "Hackathon Madrid y hackathon España — HackSpain. Misión: talento tech joven.",
+      "El hackathon para unir a los mejores builders jóvenes de España.",
     sameAs: [
       HACKSPAIN_SOCIAL_URLS.x,
       HACKSPAIN_SOCIAL_URLS.instagram,
@@ -151,7 +149,7 @@ export function jsonLdWebSite() {
     alternateName: ["Hack Spain", "hack spain"],
     url: SITE,
     description:
-      "Sitio oficial de HackSpain: hackathon Madrid 2026, misión, tracks y patrocinadores. Contenido en español.",
+      "HackSpain 2026 — MADRID '26. 18 al 20 de Septiembre, UPM - ETSIT. Contenido en español.",
     inLanguage: "es",
     publisher: { "@id": `${SITE}/#organization` },
   };
@@ -192,18 +190,18 @@ export function jsonLdEvent() {
       "hackathon Spain",
     ],
     description:
-      "Hackathon en Madrid, España — HackSpain 2026. 24 horas para jóvenes programadores. Septiembre 2026.",
+      "HackSpain 2026: 36 horas, 250 builders menores de 30. 18 al 20 de Septiembre en UPM - ETSIT, Madrid.",
     inLanguage: "es",
     keywords:
-      "hackathon Madrid, hackathon España, Hack Spain, hack spain, HackSpain, ML, patrocinadores",
+      "hackathon Madrid, hackathon España, HackSpain, builders jóvenes, tracks originales, compute gratis",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     eventStatus: "https://schema.org/EventScheduled",
-    startDate: "2026-09-01",
-    endDate: "2026-09-02",
+    startDate: "2026-09-18",
+    endDate: "2026-09-20",
     organizer: { "@id": `${SITE}/#organization` },
     location: {
       "@type": "Place",
-      name: "Madrid, España",
+      name: "UPM - ETSIT, Madrid, España",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Madrid",
@@ -224,7 +222,7 @@ export function jsonLdFaq() {
         name: '¿Qué es HackSpain o "Hack Spain"?',
         acceptedAnswer: {
           "@type": "Answer",
-          text: "HackSpain (también buscado como Hack Spain o hack spain) es un hackathon con misión social en Madrid, España, en 2026: 24 horas, cientos de jóvenes programadores, tracks de ML y no técnicos, y patrocinadores como Google. Web oficial: hackspain.com.",
+          text: "HackSpain es el hackathon para unir a los mejores builders jóvenes de España. Edición 2026: 36 horas, 250 participantes, 18 al 20 de Septiembre en UPM - ETSIT (Madrid). Web oficial: hackspain.com.",
         },
       },
       {
@@ -232,7 +230,7 @@ export function jsonLdFaq() {
         name: "¿Cuándo es HackSpain 2026 y dónde se celebra?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "En Madrid, España. La edición de 2026 está prevista en septiembre; las fechas exactas y el lugar definitivo se publican en hackspain.com.",
+          text: "18 al 20 de Septiembre de 2026 en UPM - ETSIT, Madrid, España. Más detalles en hackspain.com.",
         },
       },
       {
@@ -272,7 +270,7 @@ export function jsonLdFaq() {
         name: "¿Qué tracks tiene HackSpain?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Un track de ML con retos y recursos de cómputo gratuitos, y un track no técnico para aprender a crear software de calidad. Detalles en hackspain.com/tracks.",
+          text: "Tracks originales con retos de las mejores startups de España, compute gratis para todos y un gran premio con jurado estrella. Detalles en hackspain.com/tracks.",
         },
       },
       {
@@ -280,7 +278,7 @@ export function jsonLdFaq() {
         name: "¿Cuántas personas participan?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "La edición comunica más de 250 participantes en 24 horas. Cifras oficiales en hackspain.com.",
+          text: "250 participantes en 36 horas. Cifras oficiales en hackspain.com.",
         },
       },
       {
