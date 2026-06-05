@@ -7,7 +7,7 @@ import {
 export async function handlePreSignupFollowup(input: PreSignupEmailInput) {
   "use workflow";
 
-  await sleep("10 minutes");
+  await sleep("9.5 minutes");
   await sendPreSignupConfirmationEmailStep(input);
 
   return { status: "sent" };
