@@ -14,6 +14,7 @@ import exaPng from "../../assets/sponsors/exa.png";
 import exponentialPng from "../../assets/sponsors/exponential.png";
 import falPng from "../../assets/sponsors/fal.png";
 import googlePng from "../../assets/sponsors/google.png";
+import happyrobotPng from "../../assets/sponsors/happyrobot.png";
 // import kfundPng from "../../assets/sponsors/kfund.png";
 // import mozartPng from "../../assets/sponsors/mozart.png";
 import onecoworkSvg from "../../assets/sponsors/onecowork.svg";
@@ -33,6 +34,7 @@ export const compassSvg = prepareIllustrationSvg(compassRaw);
 export const medalSvg = prepareIllustrationSvg(medalRaw);
 export const logoSvg = prepareLogoSvg(logoRaw);
 export const googleLogo = googlePng;
+export const happyrobotLogo = happyrobotPng;
 
 export const exaLogo = exaPng;
 export const falLogo = falPng;

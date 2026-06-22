@@ -5,6 +5,7 @@ import {
   exaLogo,
   falLogo,
   googleLogo,
+  happyrobotLogo,
   // kfundLogo,
   // mozartLogo,
   onecoworkLogo,
@@ -45,6 +46,11 @@ const PARTNERS: Partner[] = [
     alt: "fal.ai — partner de HackSpain",
     size: LOGO_SIZE,
     src: falLogo.src,
+  },
+  {
+    alt: "HappyRobot — partner de HackSpain",
+    size: LOGO_SIZE,
+    src: happyrobotLogo.src,
   },
   // {
   //   alt: "K Fund — partner de HackSpain",
