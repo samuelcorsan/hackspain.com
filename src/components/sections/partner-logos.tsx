@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import {
   cursorLogo,
+  embatLogo,
   exaLogo,
   falLogo,
   googleLogo,
@@ -71,6 +72,11 @@ const PARTNERS: Partner[] = [
     alt: "OneCoWork — partner de HackSpain",
     size: LARGE_LOGO_SIZE,
     src: onecoworkLogo.src,
+  },
+  {
+    alt: "Embat — partner de HackSpain",
+    size: LOGO_SIZE,
+    src: embatLogo.src,
   },
 ];
 
