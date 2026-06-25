@@ -15,6 +15,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
+import { getStoredReferralCode } from "../../lib/referral-code";
 import {
   normalizeSocialUrl,
   parsePreSignupBodyClient,
@@ -205,6 +206,10 @@ export function PreSignupPage() {
     });
 
     const payload = { ...data };
+    const referralCode = getStoredReferralCode();
+    if (referralCode) {
+      Object.assign(payload, { referralCode });
+    }
     const parsed = parsePreSignupBodyClient(payload);
     if (!parsed.ok) {
       addBreadcrumb({

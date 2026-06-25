@@ -60,6 +60,8 @@ const googleVerify = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerify = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
 const yandexVerify = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
 
+const REFERRAL_CODE_INLINE_PATTERN = "^[a-zA-Z0-9_-]+$";
+
 const orgJson = JSON.stringify(jsonLdOrganization());
 const webSiteJson = JSON.stringify(jsonLdWebSite());
 const eventJson = JSON.stringify(jsonLdEvent());
@@ -157,6 +159,26 @@ const faqJson = JSON.stringify(jsonLdFaq());
           }
           return event;
         };
+      })();
+    </script>
+    <script is:inline define:vars={{ REFERRAL_CODE_INLINE_PATTERN }}>
+      (() => {
+        try {
+          const raw = new URLSearchParams(window.location.search).get("ref");
+          if (!raw) {
+            return;
+          }
+          const trimmed = raw.trim();
+          if (!trimmed || trimmed.length > 64) {
+            return;
+          }
+          if (!new RegExp(REFERRAL_CODE_INLINE_PATTERN).test(trimmed)) {
+            return;
+          }
+          sessionStorage.setItem("hackspain-referral-code-v1", trimmed);
+        } catch {
+          /* sessionStorage may be unavailable */
+        }
       })();
     </script>
     <Analytics />

@@ -219,9 +219,9 @@ function TracksInfoModal() {
   );
 }
 
-export function buildSections(): Record<string, React.ReactNode>[] {
-  const signupHref = "/pre-signup";
-
+export function buildSections(
+  signupHref = "/pre-signup"
+): Record<string, React.ReactNode>[] {
   return [
     {
       hero: (
@@ -406,7 +406,7 @@ export function buildSections(): Record<string, React.ReactNode>[] {
         <P bg="bg-hs-paper" className="!justify-evenly !px-10 !py-8">
           <ButtonLink
             aria-label="Apúntate ya a HackSpain 2026"
-            href="/pre-signup"
+            href={signupHref}
             size="compact"
             variant="gold"
           >
@@ -562,8 +562,9 @@ function orn(
  * footer, merging the desktop section's scattered tiles into a few readable
  * cards. Keyed by the compact cell ids: `hero`, `b1`, `b2`, `foot`.
  */
-export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
-  const signupHref = "/pre-signup";
+export function buildSectionsCompact(
+  signupHref = "/pre-signup"
+): Record<string, React.ReactNode>[] {
   const foot = compactFooter();
 
   return [
@@ -780,7 +781,7 @@ export function buildSectionsCompact(): Record<string, React.ReactNode>[] {
           <ButtonLink
             aria-label="Apúntate ya a HackSpain 2026"
             className="!px-8 !py-4 !text-[clamp(1rem,4vw,1.4rem)]"
-            href="/pre-signup"
+            href={signupHref}
             size="compact"
             variant="gold"
           >

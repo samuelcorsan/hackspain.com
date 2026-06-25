@@ -1,5 +1,6 @@
 import { MosaicBackground } from "../mosaic/mosaic-background";
 import { useLayoutProfile } from "../mosaic/use-layout-profile";
+import { useReferralAwareHref } from "../referral/use-referral-href";
 import { ButtonLink } from "../ui/button";
 
 const panelBorder = "border-[3px] border-hs-ink bg-hs-ink";
@@ -19,7 +20,7 @@ const PERKS = [
 
 export function AmbassadorPage() {
   const profile = useLayoutProfile();
-  const signupHref = "/pre-signup";
+  const signupHref = useReferralAwareHref("/pre-signup");
 
   return (
     <div className="relative z-0 min-h-dvh w-full">

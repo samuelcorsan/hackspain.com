@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeReferralCode } from "./referral-code";
 
 const SIGNUP_MAX = {
   name: 200,
@@ -315,6 +316,11 @@ function socialField(kind: SocialKind) {
     });
 }
 
+const referralCodeField = z.preprocess(
+  (v) => (typeof v === "string" ? v : ""),
+  z.string().transform((s) => normalizeReferralCode(s) ?? "")
+);
+
 const signupBodySchema = z
   .object({
     fullName: z
@@ -366,6 +372,7 @@ const signupBodySchema = z
         .max(SIGNUP_MAX.heardFromOther)
         .transform((s) => s.trim())
     ),
+    referralCode: referralCodeField,
   })
   .superRefine((data, ctx) => {
     const has =
@@ -469,6 +476,7 @@ const preSignupBodySchema = z
     linkedinUrl: socialField("linkedin"),
     githubUrl: socialField("github"),
     webUrl: socialField("web"),
+    referralCode: referralCodeField,
   })
   .superRefine((data, ctx) => {
     const has =

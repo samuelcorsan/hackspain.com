@@ -10,6 +10,7 @@ import { artboardFor } from "../mosaic/artboard";
 import { cellsForProfile } from "../mosaic/cells";
 import { MosaicBackground } from "../mosaic/mosaic-background";
 import { useLayoutProfile } from "../mosaic/use-layout-profile";
+import { useReferralAwareHref } from "../referral/use-referral-href";
 import { illustrationsForSection } from "../sections/illustration-themes";
 import { PartnerLogoCell, usePartnerRotation } from "../sections/partner-logos";
 import { buildSections, buildSectionsCompact } from "../sections/sections";
@@ -77,10 +78,14 @@ export function LandingPage({ initialSection = 0 }: Props) {
 
   const artboard = useMemo(() => artboardFor(profile), [profile]);
   const cells = useMemo(() => cellsForProfile(profile), [profile]);
+  const signupHref = useReferralAwareHref("/pre-signup");
 
   const sections = useMemo(
-    () => (profile === "compact" ? buildSectionsCompact() : buildSections()),
-    [profile]
+    () =>
+      profile === "compact"
+        ? buildSectionsCompact(signupHref)
+        : buildSections(signupHref),
+    [profile, signupHref]
   );
   const ills = useMemo(
     () => illustrationsForSection(section, profile),

@@ -36,6 +36,13 @@
       "when": 1779636942195,
       "tag": "0004_goofy_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782401491240,
+      "tag": "0005_marvelous_apocalypse",
+      "breakpoints": true
     }
   ]
 }

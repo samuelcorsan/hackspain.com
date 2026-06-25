@@ -17,6 +17,7 @@ export const hackathonSignups = pgTable("hackathon_signups", {
   ambassadorMotivation: text("ambassador_motivation"),
   ambassadorStudyWhere: text("ambassador_study_where"),
   heardFrom: text("heard_from"),
+  referralCode: text("referral_code"),
 });
 
 export const hackathonPreSignups = pgTable("hackathon_pre_signups", {
@@ -30,6 +31,7 @@ export const hackathonPreSignups = pgTable("hackathon_pre_signups", {
   linkedinUrl: text("linkedin_url"),
   githubUrl: text("github_url"),
   webUrl: text("web_url"),
+  referralCode: text("referral_code"),
 });
 
 export const ambassadorApplications = pgTable("ambassador_applications", {

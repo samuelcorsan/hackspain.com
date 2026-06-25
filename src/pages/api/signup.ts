@@ -218,6 +218,7 @@ export const POST: APIRoute = async ({ request }) => {
     ambassadorMotivation,
     ambassadorStudyWhere,
     heardFrom,
+    referralCode,
   } = parsed.data;
 
   const motivationDb = wantsAmbassador
@@ -242,6 +243,7 @@ export const POST: APIRoute = async ({ request }) => {
         ambassadorMotivation: motivationDb,
         ambassadorStudyWhere: studyDb,
         heardFrom: emptyToNull(heardFrom),
+        referralCode: emptyToNull(referralCode),
       });
     } catch (e: unknown) {
       if (isPostgresUniqueViolation(e)) {

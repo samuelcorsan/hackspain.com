@@ -157,7 +157,15 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ error: parsed.error }, { status: parsed.status });
   }
 
-  const { fullName, email, xUrl, linkedinUrl, githubUrl, webUrl } = parsed.data;
+  const {
+    fullName,
+    email,
+    xUrl,
+    linkedinUrl,
+    githubUrl,
+    webUrl,
+    referralCode,
+  } = parsed.data;
 
   try {
     const db = getDb();
@@ -169,6 +177,7 @@ export const POST: APIRoute = async ({ request }) => {
         linkedinUrl: emptyToNull(linkedinUrl),
         githubUrl: emptyToNull(githubUrl),
         webUrl: emptyToNull(webUrl),
+        referralCode: emptyToNull(referralCode),
       });
     } catch (e: unknown) {
       if (isPostgresUniqueViolation(e)) {

@@ -16,6 +16,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { HACKSPAIN_SOCIAL_URLS } from "../../data/landing-meta";
+import { getStoredReferralCode } from "../../lib/referral-code";
 import {
   HEARD_FROM_OPTIONS,
   HEARD_FROM_SOURCE_IDS,
@@ -338,6 +339,10 @@ export function SignupPage() {
       return;
     }
     const payload = { ...data };
+    const referralCode = getStoredReferralCode();
+    if (referralCode) {
+      Object.assign(payload, { referralCode });
+    }
     const parsed = parseSignupBodyClient(payload);
     if (!parsed.ok) {
       addBreadcrumb({
