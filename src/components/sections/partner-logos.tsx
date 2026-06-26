@@ -10,6 +10,7 @@ import {
   // kfundLogo,
   // mozartLogo,
   onecoworkLogo,
+  theckerLogo,
 } from "../theme/assets";
 import { P } from "../ui/panel";
 
@@ -24,16 +25,39 @@ interface Partner {
 const LOGO_SIZE = "h-[26cqh]";
 /** Squarer or wider marks need more height than wordmarks. */
 const LARGE_LOGO_SIZE = "h-[44cqh]";
+/** Cursor mark reads smaller at the same clamp as OneCoWork. */
+const CURSOR_LOGO_SIZE = "h-[54cqh]";
 
 const LARGE_GRID_HEIGHT = "h-[clamp(2.1rem,10.5vw,4rem)]";
 const DEFAULT_GRID_HEIGHT = "h-[clamp(1.75rem,9vw,3.25rem)]";
+const CURSOR_GRID_HEIGHT = "h-[clamp(2.5rem,12.5vw,4.75rem)]";
 const LARGE_REEL_HEIGHT = "h-[clamp(1.4rem,6.75vw,2.35rem)]";
 const DEFAULT_REEL_HEIGHT = "h-[clamp(1.1rem,5.5vw,1.85rem)]";
+const CURSOR_REEL_HEIGHT = "h-[clamp(1.65rem,8vw,2.75rem)]";
 
-// Cursor and OneCoWork marks are squarer/wider than wordmarks; the mobile grid
-// and footer reel pick taller clamps for these srcs (desktop uses LARGE_LOGO_SIZE
-// on each Partner.size in the mosaic open-row cells).
-const LARGE_PARTNER_SRC = new Set([cursorLogo.src, onecoworkLogo.src]);
+// OneCoWork is squarer/wider than wordmarks; Cursor needs an extra step up.
+const LARGE_PARTNER_SRC = new Set([onecoworkLogo.src]);
+const CURSOR_PARTNER_SRC = new Set([cursorLogo.src]);
+
+function partnerGridHeight(src: string): string {
+  if (CURSOR_PARTNER_SRC.has(src)) {
+    return CURSOR_GRID_HEIGHT;
+  }
+  if (LARGE_PARTNER_SRC.has(src)) {
+    return LARGE_GRID_HEIGHT;
+  }
+  return DEFAULT_GRID_HEIGHT;
+}
+
+function partnerReelHeight(src: string): string {
+  if (CURSOR_PARTNER_SRC.has(src)) {
+    return CURSOR_REEL_HEIGHT;
+  }
+  if (LARGE_PARTNER_SRC.has(src)) {
+    return LARGE_REEL_HEIGHT;
+  }
+  return DEFAULT_REEL_HEIGHT;
+}
 
 /** The list order doubles as the rotation order. */
 const PARTNERS: Partner[] = [
@@ -42,7 +66,11 @@ const PARTNERS: Partner[] = [
     size: LOGO_SIZE,
     src: googleLogo.src,
   },
-  { alt: "Exa — partner de HackSpain", size: LOGO_SIZE, src: exaLogo.src },
+  {
+    alt: "Cursor — partner de HackSpain",
+    size: CURSOR_LOGO_SIZE,
+    src: cursorLogo.src,
+  },
   {
     alt: "fal.ai — partner de HackSpain",
     size: LOGO_SIZE,
@@ -58,11 +86,7 @@ const PARTNERS: Partner[] = [
   //   size: LOGO_SIZE,
   //   src: kfundLogo.src,
   // },
-  {
-    alt: "Cursor — partner de HackSpain",
-    size: LARGE_LOGO_SIZE,
-    src: cursorLogo.src,
-  },
+  { alt: "Exa — partner de HackSpain", size: LOGO_SIZE, src: exaLogo.src },
   // {
   //   alt: "Mozart AI — partner de HackSpain",
   //   size: LOGO_SIZE,
@@ -77,6 +101,11 @@ const PARTNERS: Partner[] = [
     alt: "Embat — partner de HackSpain",
     size: LOGO_SIZE,
     src: embatLogo.src,
+  },
+  {
+    alt: "THEKER Robotics — partner de HackSpain",
+    size: LOGO_SIZE,
+    src: theckerLogo.src,
   },
 ];
 
@@ -143,11 +172,7 @@ export function PartnerLogoGrid() {
           <motion.span
             animate={{ opacity: 1 }}
             aria-label={p.alt}
-            className={`block w-full bg-hs-ink/60 ${
-              LARGE_PARTNER_SRC.has(p.src)
-                ? LARGE_GRID_HEIGHT
-                : DEFAULT_GRID_HEIGHT
-            }`}
+            className={`block w-full bg-hs-ink/60 ${partnerGridHeight(p.src)}`}
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             role="img"
@@ -179,9 +204,7 @@ export function PartnerLogoReel() {
   const logoRow = PARTNERS.map((p) => (
     <span
       aria-label={p.alt}
-      className={`mx-4 block w-[clamp(3.5rem,16vw,6rem)] shrink-0 bg-hs-ink/60 ${
-        LARGE_PARTNER_SRC.has(p.src) ? LARGE_REEL_HEIGHT : DEFAULT_REEL_HEIGHT
-      }`}
+      className={`mx-4 block w-[clamp(3.5rem,16vw,6rem)] shrink-0 bg-hs-ink/60 ${partnerReelHeight(p.src)}`}
       key={p.src}
       role="img"
       style={{
